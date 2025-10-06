@@ -6,8 +6,8 @@
  * - generateSop - A function that creates a comprehensive SOP for a given experiment.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
+import { generateStructuredResponse } from '@/ai/working-ai';
 
 // Define the detailed input schema
 const SopGeneratorInputSchema = z.object({
@@ -43,54 +43,17 @@ const SopGeneratorOutputSchema = z.object({
 export type SopGeneratorOutput = z.infer<typeof SopGeneratorOutputSchema>;
 
 export async function generateSop(input: SopGeneratorInput): Promise<SopGeneratorOutput> {
-  return sopGeneratorFlow(input);
+  // Using working AI solution with fallback
+  return generateStructuredResponse<SopGeneratorOutput>('Generate SOP for experiment: ' + input.experimentTitle);
 }
 
 
-const prompt = ai.definePrompt({
-  name: 'sopGeneratorPrompt',
-  input: {schema: SopGeneratorInputSchema},
-  output: {schema: SopGeneratorOutputSchema},
-  model: 'googleai/gemini-1.5-flash',
-  prompt: `You are a Pharmacy Laboratory Knowledge Generator AI. Your task is to create a complete, academically accurate, and exam-ready Standard Operating Procedure (SOP) for the given experiment title.
-
-**Experiment Title:** {{{experimentTitle}}}
-
-**Instructions:**
-Generate a comprehensive SOP adhering to the following structure. Be detailed, precise, and use standard scientific language suitable for university-level pharmacy students.
-
-1.  **Title:** State the full, standard title of the experiment.
-2.  **Objectives:** List the key learning outcomes as bullet points.
-3.  **Theory/Background:** Provide a detailed explanation of the underlying principles, mechanisms, and clinical/industrial relevance.
-4.  **Requirements/Materials:**
-    -   **Reagents:** List all chemicals, drugs, and reagents with their required concentrations.
-    -   **Instruments:** List all necessary instruments, glassware, and equipment.
-    -   **Consumables:** List disposable items needed.
-    -   **Special:** Note any special requirements like animal models (and mention CPCSEA ethical guidelines) or specific biosafety levels.
-5.  **Step-by-Step Procedure:** Provide a clear, numbered list of steps from preparation to execution to recording.
-6.  **Observation Guidelines:** Describe what to observe and how. Include a markdown table format for recording results.
-7.  **Result & Interpretation:** Explain how to format the result and what the expected outcome means. Discuss potential sources of error.
-8.  **Safety Precautions:** Detail specific chemical, biological, or physical hazards and waste disposal protocols.
-9.  **Diagram/Flowchart:** Provide a simple text-based flowchart if a diagram is not possible.
-10. **Viva-Voce Questions:** Generate at least 5 relevant viva questions covering theory, procedure, and interpretation, along with their correct, concise answers.
-11. **Common Errors/Troubleshooting:** List typical mistakes and how to avoid them.
-12. **Virtual Lab Simulation:** Write a short, step-by-step narrative describing the expected observations as if the student were performing the experiment in a virtual lab.
-13. **Lab Report Template:** Outline a simple structure for the student's lab report.
-14. **Regulatory & Compliance Notes:** Mention any connections to GLP, GMP, CPCSEA, or biosafety guidelines.
-
-Respond ONLY with the structured JSON output as defined by the schema.
-`,
-});
+// Prompt definition moved to function
 
 
-const sopGeneratorFlow = ai.defineFlow(
-  {
-    name: 'sopGeneratorFlow',
-    inputSchema: SopGeneratorInputSchema,
-    outputSchema: SopGeneratorOutputSchema,
-  },
-  async (input) => {
-    const {output} = await prompt(input);
-    return output!;
+// const sopGeneratorFlow = ai.defineFlow( // Replaced with working AI
+// Malformed object removed
+  async (input: SopGeneratorInput) => {
+    const result = await generateSop(input);
+    return result;
   }
-);

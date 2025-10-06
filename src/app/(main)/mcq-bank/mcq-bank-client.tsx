@@ -5,7 +5,7 @@ import { useActionState, useEffect, useState, useTransition } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { generateStudyMaterial, type StudyMaterialGeneratorOutput } from "@/ai/flows/study-material-generator";
+import { generateComprehensiveQuiz, type ComprehensiveQuizOutput } from "@/ai/flows/comprehensive-quiz-generator";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -29,7 +29,7 @@ type QuizFormValues = z.infer<typeof quizFormSchema>;
 
 export function McqBankClient() {
   const [isPending, startTransition] = useTransition();
-  const [state, formAction] = useActionState<StudyMaterialGeneratorOutput | { error: string } | null, FormData>(
+  const [state, formAction] = useActionState<ComprehensiveQuizOutput | { error: string } | null, FormData>(
     async (previousState, formData) => {
       const parsed = formSchema.safeParse(Object.fromEntries(formData));
       if (!parsed.success) {
@@ -39,7 +39,7 @@ export function McqBankClient() {
         // Reset quiz state when generating new questions
         setQuizState({ submitted: false, score: 0 });
         quizForm.reset({ answers: [] });
-        const result = await generateStudyMaterial(parsed.data);
+        const result = await generateComprehensiveQuiz(parsed.data);
         return result;
       } catch (e) {
         console.error(e);
@@ -75,10 +75,10 @@ export function McqBankClient() {
   });
 
   const handleQuizSubmit = quizForm.handleSubmit((data) => {
-    if (!state || !('quiz' in state)) return;
+    if (!state || !('questions' in state)) return;
 
     let correctAnswers = 0;
-    state.quiz.forEach((mcq, index) => {
+    state.questions.forEach((mcq, index) => {
       if (data.answers[index] && mcq.correct_answer.startsWith(data.answers[index].charAt(0))) {
         correctAnswers++;
       }
@@ -132,7 +132,7 @@ export function McqBankClient() {
             </div>
         )}
         
-        {state && 'quiz' in state && state.quiz.length > 0 ? (
+        {state && 'questions' in state && state.questions.length > 0 ? (
           <Card>
             <CardHeader>
                 <CardTitle className="text-2xl">Quiz on {state.topic}</CardTitle>
@@ -143,13 +143,13 @@ export function McqBankClient() {
                 <Alert className="mb-6 bg-primary/10 border-primary/50">
                     <Sparkles className="h-4 w-4 text-primary" />
                     <AlertTitle>Quiz Result</AlertTitle>
-                    <AlertDescription>You scored {quizState.score} out of {state.quiz.length}. Review the explanations below.</AlertDescription>
+                    <AlertDescription>You scored {quizState.score} out of {state.questions.length}. Review the explanations below.</AlertDescription>
                 </Alert>
               )}
 
               <Form {...quizForm}>
                 <form onSubmit={handleQuizSubmit} className="space-y-6">
-                    {state.quiz.map((mcq, index) => (
+                    {state.questions.map((mcq, index) => (
                         <Card key={index} className="p-4 bg-muted/50">
                             <p className="font-semibold mb-4">{index + 1}. {mcq.question}</p>
                             <FormField

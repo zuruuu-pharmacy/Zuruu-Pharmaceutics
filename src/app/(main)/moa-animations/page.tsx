@@ -6,9 +6,9 @@ export default function MoaAnimationPage() {
   return (
     <div>
       <BackButton />
-      <h1 className="text-3xl font-bold mb-2 font-headline">MOA Animation Library</h1>
+      <h1 className="text-3xl font-bold mb-2 font-headline">MOA Animation Search</h1>
       <p className="text-muted-foreground mb-6">
-        A curated library of short, engaging animations explaining drug mechanisms of action.
+        Search for drug mechanism of action animations from trusted educational platforms and websites.
       </p>
       <MoaAnimationClient />
     </div>

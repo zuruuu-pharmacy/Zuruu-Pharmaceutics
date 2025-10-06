@@ -1,4 +1,4 @@
-# **App Name**: Zuruu AI Pharmacy
+# **App Name**: Zuruu Pharmaceutics
 
 ## Core Features:
 

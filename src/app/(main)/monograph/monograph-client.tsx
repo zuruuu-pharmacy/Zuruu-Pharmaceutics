@@ -12,7 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Pill, FlaskConical, AlertTriangle, User, GitCompareArrows, BookText } from 'lucide-react';
+import { Loader2, Pill, FlaskConical, AlertTriangle, User, GitCompareArrows, BookText, Activity, Microscope, Heart, Stethoscope, Shield, Eye, Brain } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 
@@ -124,74 +124,168 @@ export function MonographClient() {
       <div className="md:col-span-2">
         {isPending && <div className="flex justify-center items-center h-full"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}
         {formularyData ? (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold font-headline">{formularyData.genericName}</CardTitle>
-              <CardDescription>{formularyData.therapeuticClass}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Card className="p-4 bg-muted/50">
-                        <h4 className="font-semibold text-sm mb-2">Brand Names</h4>
-                        <p className="text-sm text-muted-foreground">{formularyData.brandNames}</p>
-                    </Card>
-                    <Card className="p-4 bg-muted/50">
-                        <h4 className="font-semibold text-sm mb-2">Dosage Forms</h4>
-                        <p className="text-sm text-muted-foreground">{formularyData.dosageForms}</p>
-                    </Card>
+          <div className="space-y-6">
+            {/* Header Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-3xl font-bold font-headline">{formularyData.genericName}</CardTitle>
+                <CardDescription className="text-lg">{formularyData.therapeuticClass}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card className="p-4 bg-muted/50">
+                    <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                      <Pill className="h-4 w-4 text-primary"/> Brand Names
+                    </h4>
+                    <p className="text-sm text-muted-foreground">{formularyData.brandNames}</p>
+                  </Card>
+                  <Card className="p-4 bg-muted/50">
+                    <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                      <FlaskConical className="h-4 w-4 text-primary"/> Dosage Forms
+                    </h4>
+                    <p className="text-sm text-muted-foreground">{formularyData.dosageForms}</p>
+                  </Card>
+                  <Card className="p-4 bg-muted/50">
+                    <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                      <Activity className="h-4 w-4 text-primary"/> Therapeutic Class
+                    </h4>
+                    <p className="text-sm text-muted-foreground">{formularyData.therapeuticClass}</p>
+                  </Card>
                 </div>
-                
-                <Alert variant="default" className="border-primary/50 bg-primary/10">
-                    <GitCompareArrows className="h-4 w-4 text-primary"/>
-                    <AlertTitle>Formulary Comparison Notes (BNF vs. USP vs. Local)</AlertTitle>
-                    <AlertDescription>
-                       {formularyData.formularyComparisonNotes}
-                    </AlertDescription>
-                </Alert>
+              </CardContent>
+            </Card>
 
-                <Accordion type="multiple" className="w-full space-y-4" defaultValue={['dosing', 'indications']}>
-                    <AccordionItem value="dosing" className="border rounded-lg bg-background/50">
-                        <AccordionTrigger className="p-4 text-lg font-semibold hover:no-underline"><User className="mr-2"/>Dosing Information</AccordionTrigger>
-                        <AccordionContent className="px-6 pb-4 space-y-4">
-                            <InfoSection title="Adult" content={formularyData.dosing.adult} icon={User}/>
-                            <InfoSection title="Pediatric" content={formularyData.dosing.pediatric} icon={User}/>
-                            <InfoSection title="Renal Impairment" content={formularyData.dosing.renalImpairment} icon={User}/>
-                            <InfoSection title="Hepatic Impairment" content={formularyData.dosing.hepaticImpairment} icon={User}/>
-                        </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="indications" className="border rounded-lg bg-background/50">
-                        <AccordionTrigger className="p-4 text-lg font-semibold hover:no-underline"><Pill className="mr-2"/>Indications</AccordionTrigger>
-                        <AccordionContent className="px-6 pb-4">
-                           <p className="text-muted-foreground whitespace-pre-wrap">{formularyData.indications}</p>
-                        </AccordionContent>
-                    </AccordionItem>
-                     <AccordionItem value="contraindications" className="border rounded-lg bg-background/50">
-                        <AccordionTrigger className="p-4 text-lg font-semibold hover:no-underline"><AlertTriangle className="mr-2 text-destructive"/>Contraindications & Warnings</AccordionTrigger>
-                        <AccordionContent className="px-6 pb-4">
-                           <p className="text-muted-foreground whitespace-pre-wrap">{formularyData.contraindicationsAndWarnings}</p>
-                        </AccordionContent>
-                    </AccordionItem>
-                     <AccordionItem value="adrs" className="border rounded-lg bg-background/50">
-                        <AccordionTrigger className="p-4 text-lg font-semibold hover:no-underline"><AlertTriangle className="mr-2 text-yellow-500"/>Adverse Drug Reactions</AccordionTrigger>
-                        <AccordionContent className="px-6 pb-4">
-                           <p className="text-muted-foreground whitespace-pre-wrap">{formularyData.adverseDrugReactions}</p>
-                        </AccordionContent>
-                    </AccordionItem>
-                     <AccordionItem value="interactions" className="border rounded-lg bg-background/50">
-                        <AccordionTrigger className="p-4 text-lg font-semibold hover:no-underline"><FlaskConical className="mr-2"/>Drug Interactions</AccordionTrigger>
-                        <AccordionContent className="px-6 pb-4">
-                           <p className="text-muted-foreground whitespace-pre-wrap">{formularyData.drugInteractions}</p>
-                        </AccordionContent>
-                    </AccordionItem>
-                     <AccordionItem value="alternatives" className="border rounded-lg bg-background/50">
-                        <AccordionTrigger className="p-4 text-lg font-semibold hover:no-underline"><GitCompareArrows className="mr-2"/>Therapeutic Alternatives</AccordionTrigger>
-                        <AccordionContent className="px-6 pb-4">
-                           <p className="text-muted-foreground whitespace-pre-wrap">{formularyData.therapeuticAlternatives}</p>
-                        </AccordionContent>
-                    </AccordionItem>
-                </Accordion>
-            </CardContent>
-          </Card>
+            {/* Clinical Notes Alert */}
+            {formularyData.clinicalNotes && (
+              <Alert variant="default" className="border-blue-200 bg-blue-50">
+                <Brain className="h-4 w-4 text-blue-600"/>
+                <AlertTitle className="text-blue-800">Clinical Pearls</AlertTitle>
+                <AlertDescription className="text-blue-700">
+                  {formularyData.clinicalNotes}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Formulary Comparison Alert */}
+            {formularyData.formularyComparisonNotes && (
+              <Alert variant="default" className="border-primary/50 bg-primary/10">
+                <GitCompareArrows className="h-4 w-4 text-primary"/>
+                <AlertTitle>Formulary Comparison Notes</AlertTitle>
+                <AlertDescription>
+                  {formularyData.formularyComparisonNotes}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Comprehensive Accordion */}
+            <Accordion type="multiple" className="w-full space-y-4" defaultValue={['mechanism', 'dosing', 'indications']}>
+              
+              {/* Mechanism of Action */}
+              {formularyData.mechanismOfAction && (
+                <AccordionItem value="mechanism" className="border rounded-lg bg-background/50">
+                  <AccordionTrigger className="p-4 text-lg font-semibold hover:no-underline">
+                    <Microscope className="mr-2 text-blue-600"/> Mechanism of Action
+                  </AccordionTrigger>
+                  <AccordionContent className="px-6 pb-4">
+                    <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">{formularyData.mechanismOfAction}</p>
+                  </AccordionContent>
+                </AccordionItem>
+              )}
+
+              {/* Pharmacokinetics */}
+              {formularyData.pharmacokinetics && (
+                <AccordionItem value="pharmacokinetics" className="border rounded-lg bg-background/50">
+                  <AccordionTrigger className="p-4 text-lg font-semibold hover:no-underline">
+                    <Activity className="mr-2 text-green-600"/> Pharmacokinetics
+                  </AccordionTrigger>
+                  <AccordionContent className="px-6 pb-4">
+                    <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">{formularyData.pharmacokinetics}</p>
+                  </AccordionContent>
+                </AccordionItem>
+              )}
+
+              {/* Dosing Information */}
+              <AccordionItem value="dosing" className="border rounded-lg bg-background/50">
+                <AccordionTrigger className="p-4 text-lg font-semibold hover:no-underline">
+                  <User className="mr-2 text-purple-600"/> Dosing Information
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-4 space-y-4">
+                  <InfoSection title="Adult Dosing" content={formularyData.dosing.adult} icon={User}/>
+                  <InfoSection title="Pediatric Dosing" content={formularyData.dosing.pediatric} icon={User}/>
+                  {formularyData.dosing.geriatric && (
+                    <InfoSection title="Geriatric Considerations" content={formularyData.dosing.geriatric} icon={User}/>
+                  )}
+                  <InfoSection title="Renal Impairment" content={formularyData.dosing.renalImpairment} icon={User}/>
+                  <InfoSection title="Hepatic Impairment" content={formularyData.dosing.hepaticImpairment} icon={User}/>
+                  {formularyData.dosing.pregnancy && (
+                    <InfoSection title="Pregnancy & Lactation" content={formularyData.dosing.pregnancy} icon={Heart}/>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Indications */}
+              <AccordionItem value="indications" className="border rounded-lg bg-background/50">
+                <AccordionTrigger className="p-4 text-lg font-semibold hover:no-underline">
+                  <Pill className="mr-2 text-indigo-600"/> Indications
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-4">
+                  <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">{formularyData.indications}</p>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Contraindications & Warnings */}
+              <AccordionItem value="contraindications" className="border rounded-lg bg-background/50">
+                <AccordionTrigger className="p-4 text-lg font-semibold hover:no-underline">
+                  <AlertTriangle className="mr-2 text-red-600"/> Contraindications & Warnings
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-4">
+                  <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">{formularyData.contraindicationsAndWarnings}</p>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Adverse Drug Reactions */}
+              <AccordionItem value="adrs" className="border rounded-lg bg-background/50">
+                <AccordionTrigger className="p-4 text-lg font-semibold hover:no-underline">
+                  <AlertTriangle className="mr-2 text-yellow-600"/> Adverse Drug Reactions
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-4">
+                  <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">{formularyData.adverseDrugReactions}</p>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Drug Interactions */}
+              <AccordionItem value="interactions" className="border rounded-lg bg-background/50">
+                <AccordionTrigger className="p-4 text-lg font-semibold hover:no-underline">
+                  <FlaskConical className="mr-2 text-orange-600"/> Drug Interactions
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-4">
+                  <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">{formularyData.drugInteractions}</p>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Monitoring Parameters */}
+              {formularyData.monitoringParameters && (
+                <AccordionItem value="monitoring" className="border rounded-lg bg-background/50">
+                  <AccordionTrigger className="p-4 text-lg font-semibold hover:no-underline">
+                    <Eye className="mr-2 text-cyan-600"/> Monitoring Parameters
+                  </AccordionTrigger>
+                  <AccordionContent className="px-6 pb-4">
+                    <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">{formularyData.monitoringParameters}</p>
+                  </AccordionContent>
+                </AccordionItem>
+              )}
+
+              {/* Therapeutic Alternatives */}
+              <AccordionItem value="alternatives" className="border rounded-lg bg-background/50">
+                <AccordionTrigger className="p-4 text-lg font-semibold hover:no-underline">
+                  <GitCompareArrows className="mr-2 text-teal-600"/> Therapeutic Alternatives
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-4">
+                  <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">{formularyData.therapeuticAlternatives}</p>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
         ) : (
             !isPending && (
                 <Card className="flex flex-col items-center justify-center h-full min-h-[300px] text-center p-6 bg-muted/50">

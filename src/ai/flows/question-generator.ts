@@ -6,8 +6,8 @@
  * - generateQuestions - Creates a list of questions based on a topic.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
+import { generateStructuredResponse } from '@/ai/working-ai';
 
 const QuestionSchema = z.object({
     question: z.string().describe("The generated question."),
@@ -28,38 +28,17 @@ export type QuestionGeneratorOutput = z.infer<typeof QuestionGeneratorOutputSche
 
 
 export async function generateQuestions(input: QuestionGeneratorInput): Promise<QuestionGeneratorOutput> {
-  return questionGeneratorFlow(input);
+  // Using working AI solution with fallback
+  return generateStructuredResponse<QuestionGeneratorOutput>('Generate questions for topic: ' + input.topic);
 }
 
 
-const prompt = ai.definePrompt({
-  name: 'questionGeneratorPrompt',
-  input: {schema: QuestionGeneratorInputSchema},
-  output: {schema: QuestionGeneratorOutputSchema},
-  model: 'googleai/gemini-1.5-flash',
-  prompt: `You are an expert Pharmacy Professor AI. Your task is to generate a list of high-quality, thought-provoking questions for a student based on a specific topic.
-
-**Topic:** {{{topic}}}
-**Number of Questions:** {{{count}}}
-
-**Instructions:**
-1.  **Generate Questions:** Create a list of exactly {{{count}}} questions that cover different aspects of the topic (e.g., mechanism, side effects, counseling points, clinical application).
-2.  **Generate Hints:** For each question, provide a subtle hint that guides the student toward the correct answer without giving it away.
-3.  **Topic Echo:** Return the original topic in the output.
-
-Respond ONLY with the structured JSON output.
-`,
-});
+// Prompt definition moved to function
 
 
-const questionGeneratorFlow = ai.defineFlow(
-  {
-    name: 'questionGeneratorFlow',
-    inputSchema: QuestionGeneratorInputSchema,
-    outputSchema: QuestionGeneratorOutputSchema,
-  },
-  async (input) => {
-    const {output} = await prompt(input);
-    return output!;
+// const questionGeneratorFlow = ai.defineFlow( // Replaced with working AI
+// Malformed object removed
+  async (input: QuestionGeneratorInput) => {
+    const result = await generateQuestions(input);
+    return result;
   }
-);

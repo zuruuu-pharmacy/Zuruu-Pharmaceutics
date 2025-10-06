@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { toast } from "@/hooks/use-toast";
-import { Camera, Loader2, Pill, FlaskConical, AlertTriangle, ScanLine, ShieldCheck, FileText, BookCopy, HelpCircle, Leaf, Barcode, CheckCircle, Flag, Save, TestTube, User, Stethoscope, GitCompareArrows, Archive, Microscope, Book, Package, Volume2, Camera as CameraIcon } from "lucide-react";
+import { Camera, Loader2, Pill, FlaskConical, AlertTriangle, ScanLine, ShieldCheck, FileText, BookCopy, HelpCircle, Leaf, Barcode, CheckCircle, Flag, Save, TestTube, User, Stethoscope, GitCompareArrows, Archive, Microscope, Book, Package, Volume2, Camera as CameraIcon, Calendar } from "lucide-react";
 import { drugTreeData, Drug } from "@/app/(main)/drug-classification-tree/data";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import Image from "next/image";

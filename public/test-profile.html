@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Profile Picture</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+        .test-image { width: 200px; height: 200px; border-radius: 50%; border: 3px solid #007bff; margin: 20px; }
+        .status { background: #f0f8ff; padding: 15px; margin: 20px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>🖼️ Test Profile Picture</h1>
+    
+    <div class="status">
+        <h3>Testing Profile Picture Loading...</h3>
+        <p>This page will test if your profile picture is working correctly.</p>
+    </div>
+    
+    <div>
+        <h3>Current Profile Picture:</h3>
+        <img id="profileImg" class="test-image" src="/profile-picture.jpg" alt="Profile Picture" 
+             onload="showSuccess()" onerror="showError()">
+    </div>
+    
+    <div id="status" class="status">
+        <p>Loading...</p>
+    </div>
+    
+    <div>
+        <h3>Quick Fix Options:</h3>
+        <button onclick="createSimpleProfile()">Create Simple Profile Picture</button>
+        <button onclick="testDirectImage()">Test Direct Image</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        function showSuccess() {
+            document.getElementById('status').innerHTML = 
+                '<div class="success"><h3>✅ SUCCESS!</h3><p>Your profile picture is loading correctly!</p></div>';
+        }
+        
+        function showError() {
+            document.getElementById('status').innerHTML = 
+                '<div class="error"><h3>❌ ERROR!</h3><p>Profile picture is not loading. Let me fix this for you.</p></div>';
+            
+            // Auto-create a simple profile picture
+            setTimeout(createSimpleProfile, 2000);
+        }
+        
+        function createSimpleProfile() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 400;
+            
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 400, 400);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            
+            // Draw circle
+            ctx.beginPath();
+            ctx.arc(200, 200, 200, 0, 2 * Math.PI);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Add border
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 8;
+            ctx.stroke();
+            
+            // Add initials
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 120px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('MS', 200, 200);
+            
+            // Convert to data URL and update image
+            const dataURL = canvas.toDataURL('image/jpeg', 0.9);
+            document.getElementById('profileImg').src = dataURL;
+            
+            // Download the image
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'profile-picture.jpg';
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                document.getElementById('result').innerHTML = 
+                    '<div class="success"><h3>✅ Profile Picture Created!</h3><p>Downloaded as profile-picture.jpg. Save it in the public folder.</p></div>';
+            }, 'image/jpeg', 0.9);
+        }
+        
+        function testDirectImage() {
+            // Test with a direct image URL
+            document.getElementById('profileImg').src = 'data:image/svg+xml;base64,' + btoa(`
+                <svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="200" cy="200" r="200" fill="url(#grad)" stroke="white" stroke-width="8"/>
+                    <text x="200" y="220" font-family="Arial" font-size="120" font-weight="bold" text-anchor="middle" fill="white">MS</text>
+                </svg>
+            `);
+        }
+    </script>
+</body>
+</html>

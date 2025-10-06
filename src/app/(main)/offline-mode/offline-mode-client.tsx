@@ -372,7 +372,7 @@ export function OfflineModeClient() {
                             <li><strong>UI Complete:</strong> All UI components described in the wireframes are implemented and responsive.</li>
                             <li><strong>Core Download:</strong> Users can successfully download at least three different content types (e.g., PDF, Video, Quiz data).</li>
                             <li><strong>Offline Access:</strong> All downloaded content is fully accessible and functional when the device is in airplane mode.</li>
-                            <li><strong>Basic Sync:</strong> Local changes (quiz attempts, annotations) are successfully synced to the server upon reconnection with a success rate of >99%.</li>
+                            <li><strong>Basic Sync:</strong> Local changes (quiz attempts, annotations) are successfully synced to the server upon reconnection with a success rate of &gt;99%.</li>
                             <li><strong>Storage Management:</strong> Users can view their storage usage and successfully clear the cache.</li>
                         </ul>
                     </CardContent>

@@ -104,39 +104,60 @@ export function IvRateCalculatorClient() {
         {isPending && <div className="flex justify-center items-center h-full"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}
         {state && 'infusionRateMlHr' in state && (
           <div className="space-y-6">
-            <Card className="bg-gradient-to-br from-background to-secondary/30">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold text-primary">IV Rate Calculation Results</CardTitle>
+            {/* Main Results Card */}
+            <Card className="bg-gradient-to-br from-emerald-50 to-green-100 border-emerald-200">
+              <CardHeader className="text-center pb-4">
+                <CardTitle className="text-2xl font-bold text-emerald-800">IV Infusion Rate Results</CardTitle>
+                <CardDescription className="text-emerald-600">
+                  Calculated infusion rates for IV administration
+                </CardDescription>
               </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
-                <div className="p-4 bg-primary/10 rounded-lg">
-                  <h3 className="text-lg font-semibold text-primary-foreground/80">Infusion Rate</h3>
-                  <p className="text-3xl font-bold text-primary">{state.infusionRateMlHr}</p>
-                </div>
-                <div className="p-4 bg-primary/10 rounded-lg">
-                  <h3 className="text-lg font-semibold text-primary-foreground/80">Drop Rate</h3>
-                  <p className="text-3xl font-bold text-primary">{state.dropsPerMinute}</p>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="p-6 bg-white rounded-xl shadow-sm border border-emerald-200 text-center">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-2">Infusion Rate</h3>
+                    <p className="text-4xl font-bold text-emerald-600 mb-1">{state.infusionRateMlHr}</p>
+                    <p className="text-sm text-gray-500">Volume per hour</p>
+                  </div>
+                  <div className="p-6 bg-white rounded-xl shadow-sm border border-emerald-200 text-center">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-2">Drop Rate</h3>
+                    <p className="text-4xl font-bold text-emerald-600 mb-1">{state.dropsPerMinute}</p>
+                    <p className="text-sm text-gray-500">Drops per minute</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            
-              <Card>
+            {/* Calculation Details */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card className="bg-gradient-to-br from-blue-50 to-indigo-100 border-blue-200">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><Beaker className="h-5 w-5 text-primary"/>Calculation Steps</CardTitle>
+                  <CardTitle className="text-lg font-semibold text-blue-800 flex items-center gap-2">
+                    <Droplets className="h-5 w-5" />
+                    mL/hour Calculation
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h3 className="font-semibold flex items-center gap-2 mb-2"><Droplets className="h-4 w-4"/>mL/hour Calculation</h3>
-                    <p className="p-4 bg-muted/50 rounded-md whitespace-pre-wrap font-code">{state.mlHrCalculationSteps}</p>
-                  </div>
-                   <div>
-                    <h3 className="font-semibold flex items-center gap-2 mb-2"><Droplets className="h-4 w-4"/>gtt/minute Calculation</h3>
-                    <p className="p-4 bg-muted/50 rounded-md whitespace-pre-wrap font-code">{state.gttMinCalculationSteps}</p>
+                <CardContent>
+                  <div className="p-4 bg-white rounded-lg border border-blue-200">
+                    <p className="whitespace-pre-wrap text-sm text-gray-700">{state.mlHrCalculationSteps}</p>
                   </div>
                 </CardContent>
               </Card>
-            
+
+              <Card className="bg-gradient-to-br from-cyan-50 to-sky-100 border-cyan-200">
+                <CardHeader>
+                  <CardTitle className="text-lg font-semibold text-cyan-800 flex items-center gap-2">
+                    <Droplets className="h-5 w-5" />
+                    gtt/minute Calculation
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="p-4 bg-white rounded-lg border border-cyan-200">
+                    <p className="whitespace-pre-wrap text-sm text-gray-700">{state.gttMinCalculationSteps}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         )}
       </div>

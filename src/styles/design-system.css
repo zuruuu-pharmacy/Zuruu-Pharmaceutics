@@ -1,0 +1,297 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Zuruu AI Pharmacy Design System */
+
+/* Color Palette */
+:root {
+  /* Primary Zuruu Blue */
+  --zuruu-blue: #1F59FF;
+  --zuruu-blue-light: #4A7CFF;
+  --zuruu-blue-dark: #0D47D9;
+  --zuruu-blue-50: #F0F4FF;
+  --zuruu-blue-100: #E0E9FF;
+  --zuruu-blue-200: #C7D6FF;
+  --zuruu-blue-300: #A5B8FF;
+  --zuruu-blue-400: #7A95FF;
+  --zuruu-blue-500: #1F59FF;
+  --zuruu-blue-600: #0D47D9;
+  --zuruu-blue-700: #0A3BB8;
+  --zuruu-blue-800: #083099;
+  --zuruu-blue-900: #06257A;
+
+  /* Teal Accents */
+  --teal-50: #F0FDFA;
+  --teal-100: #CCFBF1;
+  --teal-200: #99F6E4;
+  --teal-300: #5EEAD4;
+  --teal-400: #2DD4BF;
+  --teal-500: #14B8A6;
+  --teal-600: #0D9488;
+  --teal-700: #0F766E;
+  --teal-800: #115E59;
+  --teal-900: #134E4A;
+
+  /* Clinical Neutrals */
+  --clinical-50: #FAFBFC;
+  --clinical-100: #F4F6F8;
+  --clinical-200: #E8ECF0;
+  --clinical-300: #D1D9E0;
+  --clinical-400: #B8C2CC;
+  --clinical-500: #8A95A1;
+  --clinical-600: #6B7280;
+  --clinical-700: #4B5563;
+  --clinical-800: #374151;
+  --clinical-900: #1F2937;
+
+  /* Glass Effects */
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-blur: 12px;
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.15);
+
+  /* Font Families */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Cascadia Code', monospace;
+
+  /* Professional Font Sizes */
+  --text-xs: 0.75rem;      /* 12px - Captions */
+  --text-sm: 0.875rem;     /* 14px - Small text */
+  --text-base: 1rem;       /* 16px - Body text */
+  --text-lg: 1.125rem;     /* 18px - Large body */
+  --text-xl: 1.25rem;      /* 20px - Subheadings */
+  --text-2xl: 1.5rem;      /* 24px - Small headings */
+  --text-3xl: 1.875rem;    /* 30px - Medium headings */
+  --text-4xl: 2.25rem;     /* 36px - Large headings */
+  --text-5xl: 3rem;        /* 48px - Display text */
+  --text-6xl: 3.75rem;     /* 60px - Hero text */
+  --text-7xl: 4.5rem;      /* 72px - Large hero */
+  --text-8xl: 6rem;        /* 96px - Massive display */
+
+  /* Spacing Scale */
+  --space-1: 0.25rem;      /* 4px */
+  --space-2: 0.5rem;       /* 8px */
+  --space-3: 0.75rem;      /* 12px */
+  --space-4: 1rem;         /* 16px */
+  --space-5: 1.25rem;      /* 20px */
+  --space-6: 1.5rem;       /* 24px */
+  --space-8: 2rem;         /* 32px */
+  --space-10: 2.5rem;      /* 40px */
+  --space-12: 3rem;        /* 48px */
+  --space-16: 4rem;        /* 64px */
+  --space-20: 5rem;        /* 80px */
+  --space-24: 6rem;        /* 96px */
+  --space-32: 8rem;        /* 128px */
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;    /* 4px */
+  --radius-md: 0.5rem;     /* 8px */
+  --radius-lg: 0.75rem;    /* 12px */
+  --radius-xl: 1rem;       /* 16px */
+  --radius-2xl: 1.5rem;    /* 24px */
+  --radius-full: 9999px;   /* Full rounded */
+
+  /* Z-Index Scale */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+}
+
+/* Accessibility Styles */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--zuruu-blue-700);
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 600;
+  z-index: 1000;
+  transition: top 0.3s;
+}
+
+.skip-to-content:focus {
+  top: 6px;
+}
+
+/* Focus indicators */
+.focus-visible {
+  outline: 2px solid var(--zuruu-blue-500);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .glass-card {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 2px solid var(--clinical-800);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .no-motion {
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Glass Card Components */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card-subtle {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.glass-card-strong {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Floating Glass Login Panel */
+.floating-login-panel {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+.login-card {
+  min-width: 260px;
+  min-height: 180px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.login-card:active {
+  transform: scale(0.98);
+}
+
+.login-card:focus {
+  outline: 2px solid var(--zuruu-blue);
+  outline-offset: 2px;
+}
+
+/* Ripple Effect */
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.login-card:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Icon Animation */
+.icon-draw {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 320ms ease-in-out forwards;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Panel Entrance Animation */
+.panel-entrance {
+  animation: panelPopIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes panelPopIn {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) rotateX(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .floating-login-panel {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 16px 16px 0 0;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  .login-card {
+    min-width: 100%;
+    min-height: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .floating-login-panel {
+    padding: 16px;
+  }
+  
+  .login-card {
+    min-height: 120px;
+  }
+}

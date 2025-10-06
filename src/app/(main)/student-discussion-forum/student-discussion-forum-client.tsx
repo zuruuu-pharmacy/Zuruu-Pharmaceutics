@@ -173,7 +173,7 @@ export function StudentDiscussionForumClient() {
             return;
         }
     }
-    addPost({ ...data, author: authorName, category: data.category as ForumCategory, attachments: newAttachments });
+    addPost({ ...data, id: Date.now().toString(), author: authorName, category: data.category as ForumCategory, attachments: newAttachments });
     toast({ title: "Post Created!", description: "Your new discussion topic is live." });
     newPostForm.reset();
     setIsNewPostModalOpen(false);

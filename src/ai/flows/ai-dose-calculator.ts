@@ -9,8 +9,8 @@
  * - CalculateDosageOutput - The return type for the calculateDosage function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
+import { generateStructuredResponse } from '@/ai/working-ai';
 
 const CalculateDosageInputSchema = z.object({
   drugName: z.string().describe('The name of the drug.'),
@@ -46,48 +46,63 @@ const CalculateDosageOutputSchema = z.object({
 export type CalculateDosageOutput = z.infer<typeof CalculateDosageOutputSchema>;
 
 export async function calculateDosage(input: CalculateDosageInput): Promise<CalculateDosageOutput> {
-  return calculateDosageFlow(input);
+  const prompt = `You are an expert clinical pharmacist specializing in accurate drug dosage calculations based on patient-specific factors and clinical indications.
+
+**CRITICAL EVALUATION STEP:**
+First, carefully evaluate if the provided drug is appropriate for the given indication. Consider:
+
+1. **Primary Indications**: Standard, FDA-approved uses
+2. **Off-label Uses**: Clinically accepted but not FDA-approved uses
+3. **Contraindications**: Drugs that should NOT be used for certain conditions
+4. **Drug Class Appropriateness**: Whether the drug class is suitable for the condition
+
+**Indication Matching Rules:**
+- Set 'isIndicationMismatch' to TRUE only if the drug is:
+  * Completely contraindicated for the condition
+  * From a completely wrong therapeutic class (e.g., antibiotic for heart failure)
+  * Known to worsen the condition
+  * Not used in any clinical setting for this indication
+
+- Set 'isIndicationMismatch' to FALSE for:
+  * Standard approved indications
+  * Common off-label uses with clinical evidence
+  * Adjuvant or supportive therapy
+  * When the indication is vague but could be reasonable
+
+**Dosage Calculation Guidelines:**
+- Use evidence-based dosing guidelines from major references (Lexicomp, Clinical Pharmacology, BNF, USP)
+- Consider patient age, weight, renal/hepatic function
+- Provide specific dosing ranges and frequencies
+- Include loading doses when appropriate
+- Consider drug interactions and contraindications
+- Use standard clinical formulas (mg/kg/day, mg/m², etc.)
+
+**Safety Rules:**
+- Use leading zeros for decimals (0.5 mg, not .5 mg)
+- Avoid trailing zeros (1 mg, not 1.0 mg)
+- Include maximum daily dose limits
+- Warn about dose adjustments needed for special populations
+
+**Input Data:**
+Drug Name: ${input.drugName}
+Indication: ${input.indication}
+Patient Weight: ${input.patientWeightKg} kg
+Patient Age: ${input.patientAgeYears} years
+Renal Function: ${input.renalFunction || 'Not specified'}
+Hepatic Function: ${input.hepaticFunction || 'Not specified'}
+Available Formulations: ${input.availableFormulations || 'Not specified'}
+
+**Provide comprehensive, clinically accurate dosage information with detailed explanations.**
+
+Respond ONLY with this JSON format:
+{
+  "isIndicationMismatch": false,
+  "mismatchWarning": null,
+  "calculatedDosage": "Specific dosage with frequency and route",
+  "calculationSteps": "Detailed step-by-step calculation with formulas",
+  "references": "Clinical references and guidelines used",
+  "roundedDosageSuggestion": "Practical dosing recommendation based on available formulations"
+}`;
+
+  return generateStructuredResponse<CalculateDosageOutput>(prompt);
 }
-
-const prompt = ai.definePrompt({
-  name: 'calculateDosagePrompt',
-  input: {schema: CalculateDosageInputSchema},
-  output: {schema: CalculateDosageOutputSchema},
-  model: 'googleai/gemini-1.5-flash',
-  prompt: `You are an expert pharmacist specializing in calculating drug dosages based on patient-specific factors and the indication for the medication.
-
-  First, critically evaluate if the provided 'Drug Name' is a plausible treatment for the given 'Indication'.
-  
-  - If the drug is completely inappropriate for the indication (e.g., using an antibiotic for heartburn), set 'isIndicationMismatch' to true and provide a concise warning in 'mismatchWarning' explaining why (e.g., "{{drugName}} is not used to treat {{indication}}."). Do not proceed with any dosage calculation.
-
-  - For all other cases, even if the indication is an off-label use, assume it is a valid clinical decision. Set 'isIndicationMismatch' to false and proceed with the dosage calculation.
-
-  When calculating, use standard clinical formulas (e.g., mg/kg/day). Show all calculation steps and references. The dosage is highly dependent on the reason the patient is taking the medication.
-  If available formulations are provided, and if appropriate, consider recommending a rounded dosage in the 'roundedDosageSuggestion' field.
-  If renal or hepatic function are not provided, calculate a general dose and add a note that the dose may need adjustment in patients with kidney or liver disease.
-  
-  Adhere to safe presentation rules:
-  - Use leading zeros for decimals (e.g., 0.5 mg).
-  - Avoid trailing zeros (e.g., 1 mg, not 1.0 mg).
-
-  Drug Name: {{{drugName}}}
-  Indication: {{{indication}}}
-  Patient Weight (kg): {{{patientWeightKg}}}
-  Patient Age (years): {{{patientAgeYears}}}
-  Renal Function: {{{renalFunction}}}
-  Hepatic Function: {{{hepaticFunction}}}
-  Available Formulations: {{{availableFormulations}}}
-`,
-});
-
-const calculateDosageFlow = ai.defineFlow(
-  {
-    name: 'calculateDosageFlow',
-    inputSchema: CalculateDosageInputSchema,
-    outputSchema: CalculateDosageOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
-  }
-);

@@ -9,8 +9,8 @@
  * - CheckDrugInteractionsOutput - The return type for the checkDrugInteractions function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
+import { generateStructuredResponse } from '@/ai/working-ai';
 
 const CheckDrugInteractionsInputSchema = z.object({
   medications: z
@@ -43,47 +43,49 @@ export type CheckDrugInteractionsOutput = z.infer<
 export async function checkDrugInteractions(
   input: CheckDrugInteractionsInput
 ): Promise<CheckDrugInteractionsOutput> {
-  return checkDrugInteractionsFlow(input);
+  const prompt = `You are an expert pharmacist analyzing drug interactions. Check for ALL types of interactions between the provided medications and common foods/substances.
+
+**Instructions:**
+1. Check for drug-drug interactions between all medications
+2. Check for drug-food interactions (grapefruit, dairy, alcohol, etc.)
+3. Check for drug-disease interactions
+4. Assess severity levels (High, Moderate, Low)
+5. Provide specific recommendations for each interaction
+
+**Medications to analyze:** ${input.medications.join(', ')}
+**Lab Results:** ${input.labResults || 'Not provided'}
+
+**Common drug-food interactions to check:**
+- Grapefruit juice interactions (inhibits CYP3A4)
+- Dairy/calcium interactions (binds to medications)
+- Alcohol interactions (affects drug metabolism)
+- Caffeine interactions (stimulant effects)
+- High-fat meal interactions (affects absorption)
+- Vitamin/mineral interactions (affects absorption)
+
+**For each interaction found, provide:**
+- Severity level (High, Moderate, Low)
+- Mechanism of how the interaction occurs
+- Specific actions to take
+- Which drugs/foods are involved
+- Clinical consequences
+- Safer alternatives if available
+- Educational explanation
+
+**IMPORTANT: Respond with ONLY this exact JSON format:**
+{
+  "interactions": [
+    {
+      "severity": "High",
+      "mechanism": "Detailed mechanism explanation",
+      "suggestedActions": "Specific recommendations",
+      "interactingDrugs": ["Drug1", "Drug2 or Food"],
+      "clinicalConsequences": "What happens if not managed",
+      "saferAlternative": "Alternative if available",
+      "educationalNote": "Simple explanation"
+    }
+  ]
+}`;
+
+  return generateStructuredResponse<CheckDrugInteractionsOutput>(prompt);
 }
-
-const prompt = ai.definePrompt({
-  name: 'checkDrugInteractionsPrompt',
-  input: {schema: CheckDrugInteractionsInputSchema},
-  output: {schema: CheckDrugInteractionsOutputSchema},
-  model: 'googleai/gemini-1.5-flash',
-  prompt: `You are a clinical pharmacist expert in drug interactions, acting as a Drug Interaction Simulator for students.
-
-You will analyze the provided list of medications and lab results (if any) to identify potential drug-drug and drug-food interactions.
-For each interaction, you must be comprehensive and educational.
-
-Medications: {{medications}}
-Lab Results: {{labResults}}
-
-**For each interaction found, you MUST provide:**
-1.  **Severity:** Classify as High, Moderate, or Low.
-2.  **Interacting Drugs:** List all drugs involved (or 'Food').
-3.  **Mechanism:** Explain the pharmacokinetic or pharmacodynamic mechanism.
-4.  **Clinical Consequences:** Describe the potential adverse outcomes for the patient.
-5.  **Suggested Actions:** Provide clear, actionable advice (e.g., avoid, monitor, adjust dose).
-6.  **Safer Alternative:** If applicable, suggest a safer alternative drug and briefly explain why it's safer.
-7.  **Educational Note:** A concise, easy-to-understand summary of the interaction, perfect for a flashcard.
-
-Consider the following:
-*   Pay attention to potential interactions, even if the patient does not have lab results.
-*   For each interaction include all the drugs involved, not just the primary pair.
-*   When identifying a drug-food interaction, list the drug and "Food" in the interactingDrugs array.
-*   Be concise and clear in your explanations.
-`,
-});
-
-const checkDrugInteractionsFlow = ai.defineFlow(
-  {
-    name: 'checkDrugInteractionsFlow',
-    inputSchema: CheckDrugInteractionsInputSchema,
-    outputSchema: CheckDrugInteractionsOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
-  }
-);

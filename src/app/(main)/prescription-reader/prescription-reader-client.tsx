@@ -98,6 +98,7 @@ export function PrescriptionReaderClient() {
         }
     }
 
+
     const hasGeneratedFields = state && 'medications' in state && state.medications.some(m => m.generatedFields && m.generatedFields.length > 0);
 
   return (
@@ -197,7 +198,7 @@ export function PrescriptionReaderClient() {
                       <TableRow key={index}>
                         <TableCell className="font-medium">
                           <div className="flex items-center gap-2">
-                            {med.status === 'uncertain' && <AlertTriangle className="h-4 w-4 text-destructive" title="Uncertain Recognition" />}
+                            {med.status === 'uncertain' && <AlertTriangle className="h-4 w-4 text-destructive" />}
                             {med.name}
                           </div>
                         </TableCell>

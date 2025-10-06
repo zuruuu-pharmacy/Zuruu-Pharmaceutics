@@ -19,7 +19,7 @@ const formSchema = z.object({
   medications: z.array(z.object({
     medicineName: z.string().min(2, "Required"),
     dosageStrength: z.string().min(2, "Required"),
-    frequency: z.string().optional(),
+    frequency: z.string().min(1, "Required"),
     dosesPrescribed: z.coerce.number().int().min(0, "Must be >= 0"),
     dosesTaken: z.coerce.number().int().min(0, "Cannot be negative"),
   })).min(1, "At least one medication is required"),

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useActionState, useEffect, useState, useTransition } from "react";
@@ -11,19 +10,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Sparkles, Pilcrow, Check, Lightbulb } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Loader2, Search, Check, X, Sparkles, Trophy, Lightbulb, Repeat } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
-
+// Zod schema for the topic selection form
 const topicFormSchema = z.object({
   topic: z.string().min(3, "Please enter a topic."),
 });
 type TopicFormValues = z.infer<typeof topicFormSchema>;
-
-type GridState = (string | null)[][];
-type CheckState = ('correct' | 'incorrect' | 'unchecked')[][];
 
 export function CrosswordClient() {
   const [isPending, startTransition] = useTransition();
@@ -32,31 +26,43 @@ export function CrosswordClient() {
       const parsed = topicFormSchema.safeParse(Object.fromEntries(formData));
       if (!parsed.success) return { error: "Invalid topic." };
       try {
-        const result = await generateCrossword({ topic: parsed.data.topic, size: 10, wordCount: 8 });
+        const result = await generateCrossword({ topic: parsed.data.topic });
         return result;
       } catch (e) {
-        console.error(e);
-        return { error: "Failed to generate crossword. The AI might be having trouble with this topic." };
+        return { error: "Failed to generate crossword." };
       }
     },
     null
   );
 
   const { toast } = useToast();
-  const topicForm = useForm<TopicFormValues>({ resolver: zodResolver(topicFormSchema), defaultValues: { topic: "" } });
   
-  const [gridState, setGridState] = useState<GridState>([]);
-  const [checkState, setCheckState] = useState<CheckState>([]);
-  const [showAnswers, setShowAnswers] = useState(false);
+  const [gameState, setGameState] = useState({
+      score: 0,
+      currentClue: 0,
+      showResult: false,
+      isCorrect: false,
+      userAnswers: {} as Record<string, string>,
+      selectedCell: null as {row: number, col: number} | null,
+      inputValue: '',
+  });
+
+  const topicForm = useForm<TopicFormValues>({ resolver: zodResolver(topicFormSchema), defaultValues: { topic: "" } });
 
   useEffect(() => {
     if (state?.error) {
       toast({ variant: "destructive", title: "Error", description: state.error });
     } else if (state?.grid) {
-      const size = state.grid.length;
-      setGridState(Array(size).fill(null).map(() => Array(size).fill('')));
-      setCheckState(Array(size).fill(null).map(() => Array(size).fill('unchecked')));
-      setShowAnswers(false);
+      // Reset game when new crossword is loaded
+      setGameState({ 
+        score: 0, 
+        currentClue: 0, 
+        showResult: false, 
+        isCorrect: false, 
+        userAnswers: {},
+        selectedCell: null,
+        inputValue: ''
+      });
     }
   }, [state, toast]);
 
@@ -65,56 +71,86 @@ export function CrosswordClient() {
     formData.append("topic", data.topic);
     startTransition(() => formAction(formData));
   });
+  
+  const handleCellClick = (row: number, col: number) => {
+    if (!state?.grid) return;
+    
+    const cell = state.grid[row][col];
+    if (!cell.letter) return; // Can't select black cells
+    
+    setGameState(prev => ({
+      ...prev,
+      selectedCell: { row, col },
+      inputValue: prev.userAnswers[`${row}-${col}`] || ''
+    }));
+  };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, row: number, col: number) => {
-    const value = e.target.value.toUpperCase();
-    const newGridState = [...gridState];
-    newGridState[row][col] = value.slice(-1);
-    setGridState(newGridState);
+  const handleInputChange = (value: string) => {
+    setGameState(prev => ({ ...prev, inputValue: value.toUpperCase() }));
+  };
 
-    // Move focus to the next input if a letter is entered
-    if (value && e.target.nextElementSibling instanceof HTMLInputElement) {
-        e.target.nextElementSibling.focus();
+  const handleInputSubmit = () => {
+    if (!gameState.selectedCell || !state?.grid) return;
+    
+    const { row, col } = gameState.selectedCell;
+    const cell = state.grid[row][col];
+    
+    if (!cell.letter) return;
+    
+    setGameState(prev => ({
+      ...prev,
+      userAnswers: { ...prev.userAnswers, [`${row}-${col}`]: prev.inputValue },
+      selectedCell: null,
+      inputValue: ''
+    }));
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleInputSubmit();
     }
   };
 
-  const handleCheckAnswers = () => {
-    if (!state?.grid) return;
-    const newCheckState = gridState.map((row, rIdx) => 
-        row.map((cell, cIdx) => {
-            if (!state.grid[rIdx][cIdx].letter) return 'unchecked';
-            return cell === state.grid[rIdx][cIdx].letter ? 'correct' : 'incorrect';
-        })
-    );
-    setCheckState(newCheckState);
-    toast({ title: "Answers Checked!", description: "Correct letters are green, incorrect are red." });
+  const getCellValue = (row: number, col: number) => {
+    return gameState.userAnswers[`${row}-${col}`] || '';
   };
+
+  const isCellSelected = (row: number, col: number) => {
+    return gameState.selectedCell?.row === row && gameState.selectedCell?.col === col;
+  };
+
+  const handleRestart = () => {
+     setGameState({ 
+       score: 0, 
+       currentClue: 0, 
+       showResult: false, 
+       isCorrect: false, 
+       userAnswers: {},
+       selectedCell: null,
+       inputValue: ''
+     });
+  }
   
-  const handleRevealAnswers = () => {
-     if (!state?.grid) return;
-     const newGridState = state.grid.map(row => row.map(cell => cell.letter || ''));
-     setGridState(newGridState);
-     const newCheckState = state.grid.map(row => row.map(cell => cell.letter ? 'correct' : 'unchecked'));
-     setCheckState(newCheckState);
-     setShowAnswers(true);
+  const handleNewGame = () => {
+    topicForm.reset({ topic: ""});
+    setGameState({ 
+      score: 0, 
+      currentClue: 0, 
+      showResult: false, 
+      isCorrect: false, 
+      userAnswers: {},
+      selectedCell: null,
+      inputValue: ''
+    });
+    startTransition(() => formAction(new FormData()));
   }
 
-  if (isPending) {
-    return (
-      <div className="flex flex-col items-center justify-center h-64 gap-4">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        <p className="text-muted-foreground">Generating your crossword for "{topicForm.getValues('topic')}"...</p>
-        <p className="text-xs text-muted-foreground">(This may take up to a minute)</p>
-      </div>
-    );
-  }
-
-  if (!state?.grid) {
+  if (!state?.grid || state.grid.length === 0) {
     return (
       <Card className="max-w-xl mx-auto">
         <CardHeader>
-          <CardTitle>Generate a Crossword</CardTitle>
-          <CardDescription>Enter a topic to generate a new puzzle.</CardDescription>
+          <CardTitle>Generate Crossword</CardTitle>
+          <CardDescription>Enter a topic to generate a new crossword puzzle.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...topicForm}>
@@ -122,12 +158,15 @@ export function CrosswordClient() {
               <FormField name="topic" control={topicForm.control} render={({ field }) => (
                 <FormItem>
                   <FormLabel>Game Topic</FormLabel>
-                  <FormControl><Input placeholder="e.g., Antihypertensives" {...field} /></FormControl>
+                  <FormControl>
+                    <Input placeholder="e.g., Antibiotics, Cardiovascular Drugs..." {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
               <Button type="submit" className="w-full" disabled={isPending}>
-                <Sparkles className="mr-2 h-4 w-4" /> Generate Game
+                {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                Generate Crossword
               </Button>
             </form>
           </Form>
@@ -136,127 +175,120 @@ export function CrosswordClient() {
     );
   }
 
-  // Guard clause to prevent rendering before state is ready
-  if (checkState.length !== state.grid.length) {
-    return (
-        <div className="flex flex-col items-center justify-center h-64 gap-4">
-            <Loader2 className="h-12 w-12 animate-spin text-primary" />
-            <p className="text-muted-foreground">Initializing game board...</p>
-        </div>
-    );
-  }
-
+  const allClues = [...(state.clues.across || []), ...(state.clues.down || [])];
+  const currentClue = allClues[gameState.currentClue];
 
   return (
-    <div className="space-y-6">
-        <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-            <Card>
-            <CardHeader>
-                <CardTitle>Crossword: {state.topic}</CardTitle>
-                <CardDescription>Fill in the grid based on the clues. Good luck!</CardDescription>
-            </CardHeader>
-            <CardContent className="overflow-x-auto">
-                <div className="grid gap-0.5" style={{ gridTemplateColumns: `repeat(${state.grid.length}, minmax(0, 1fr))` }}>
-                {state.grid.map((row, rIdx) =>
-                    row.map((cell, cIdx) => (
-                    <div key={`${rIdx}-${cIdx}`} className="relative aspect-square">
-                        {cell.letter ? (
-                        <>
-                            {cell.number && <span className="absolute top-0 left-0.5 text-xs font-bold text-muted-foreground">{cell.number}</span>}
-                            <Input
-                            type="text"
-                            maxLength={1}
-                            value={gridState[rIdx]?.[cIdx] || ''}
-                            onChange={(e) => handleInputChange(e, rIdx, cIdx)}
-                            className={cn(
-                                "w-full h-full p-0 text-center text-lg font-bold uppercase",
-                                checkState[rIdx]?.[cIdx] === 'correct' && 'bg-green-200 dark:bg-green-800',
-                                checkState[rIdx]?.[cIdx] === 'incorrect' && 'bg-red-200 dark:bg-red-800'
-                            )}
-                            />
-                        </>
-                        ) : (
-                        <div className="w-full h-full bg-foreground" />
-                        )}
-                    </div>
-                    ))
-                )}
-                </div>
-            </CardContent>
-            </Card>
-        </div>
-        <div>
-            <div className="space-y-4">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Across</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <ul className="space-y-2 text-sm">
-                            {state.clues.across.map(c => <li key={`a-${c.number}`}><strong>{c.number}.</strong> {c.clue}</li>)}
-                        </ul>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Down</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <ul className="space-y-2 text-sm">
-                            {state.clues.down.map(c => <li key={`d-${c.number}`}><strong>{c.number}.</strong> {c.clue}</li>)}
-                        </ul>
-                    </CardContent>
-                </Card>
-                <Alert>
-                    <Lightbulb className="h-4 w-4"/>
-                    <AlertTitle>Actions</AlertTitle>
-                    <AlertDescription>
-                        Finished or stuck? Check your answers or give up to see the solution.
-                    </AlertDescription>
-                    <div className="flex gap-4 mt-4">
-                        <Button onClick={handleCheckAnswers} variant="default"><Check className="mr-2"/>Check Answers</Button>
-                        <Button onClick={handleRevealAnswers} variant="secondary">Give Up</Button>
-                    </div>
-                </Alert>
+    <div className="max-w-6xl mx-auto space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle>Crossword Puzzle: {state.topic}</CardTitle>
+            <div className="flex gap-4">
+              <div className="text-lg font-bold">Score: {gameState.score}</div>
+              <Button onClick={handleRestart} variant="outline" size="sm">
+                <Repeat className="mr-2 h-4 w-4" />
+                Restart
+              </Button>
+              <Button onClick={handleNewGame} variant="outline" size="sm">
+                <Sparkles className="mr-2 h-4 w-4" />
+                New Game
+              </Button>
             </div>
-        </div>
-        </div>
-        {showAnswers && (
-             <Card>
-                <CardHeader><CardTitle>Answers</CardTitle></CardHeader>
-                <CardContent className="grid md:grid-cols-2 gap-x-8 gap-y-4">
-                    <div>
-                        <h3 className="font-semibold text-lg mb-2">Across</h3>
-                        <Table>
-                            <TableHeader><TableRow><TableHead>#</TableHead><TableHead>Answer</TableHead></TableRow></TableHeader>
-                            <TableBody>
-                                {state.clues.across.map(c => (
-                                    <TableRow key={`ans-a-${c.number}`}>
-                                        <TableCell className="font-bold">{c.number}</TableCell>
-                                        <TableCell>{c.answer}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+          </div>
+          <CardDescription>Click on a cell to fill in the answer. Use the clues to help you solve the puzzle.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Crossword Grid */}
+            <div className="lg:col-span-2 space-y-4">
+              <h3 className="font-semibold">Crossword Grid</h3>
+              <div className="grid grid-cols-10 gap-1 border-2 border-gray-300 p-2 bg-white">
+                {state.grid.map((row, rowIndex) => (
+                  row.map((cell, colIndex) => (
+                    <div
+                      key={`${rowIndex}-${colIndex}`}
+                      className={`w-8 h-8 border border-gray-200 flex items-center justify-center text-sm font-bold relative cursor-pointer transition-colors ${
+                        cell.letter 
+                          ? isCellSelected(rowIndex, colIndex)
+                            ? 'bg-blue-200 border-blue-400' 
+                            : 'bg-white hover:bg-gray-50'
+                          : 'bg-gray-800 cursor-not-allowed'
+                      }`}
+                      onClick={() => handleCellClick(rowIndex, colIndex)}
+                    >
+                      {cell.number && (
+                        <span className="absolute top-0 left-0 text-xs text-gray-600 -mt-1 -ml-1">
+                          {cell.number}
+                        </span>
+                      )}
+                      {cell.letter && (
+                        <span className="text-gray-800">
+                          {getCellValue(rowIndex, colIndex) || cell.letter}
+                        </span>
+                      )}
                     </div>
-                     <div>
-                        <h3 className="font-semibold text-lg mb-2">Down</h3>
-                         <Table>
-                            <TableHeader><TableRow><TableHead>#</TableHead><TableHead>Answer</TableHead></TableRow></TableHeader>
-                            <TableBody>
-                                {state.clues.down.map(c => (
-                                    <TableRow key={`ans-d-${c.number}`}>
-                                        <TableCell className="font-bold">{c.number}</TableCell>
-                                        <TableCell>{c.answer}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </CardContent>
-             </Card>
-        )}
+                  ))
+                ))}
+              </div>
+              
+              {/* Input Section */}
+              {gameState.selectedCell && (
+                <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                  <h4 className="font-medium mb-2">Enter Answer for Selected Cell:</h4>
+                  <div className="flex gap-2">
+                    <Input
+                      value={gameState.inputValue}
+                      onChange={(e) => handleInputChange(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      placeholder="Enter letter..."
+                      maxLength={1}
+                      className="w-20 text-center font-bold text-lg"
+                    />
+                    <Button onClick={handleInputSubmit} size="sm">
+                      <Check className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      onClick={() => setGameState(prev => ({ ...prev, selectedCell: null, inputValue: '' }))} 
+                      variant="outline" 
+                      size="sm"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Clues */}
+            <div className="space-y-4">
+              <h3 className="font-semibold">Clues</h3>
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-medium text-sm text-gray-600 mb-2">Across</h4>
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {state.clues.across?.map((clue) => (
+                      <div key={clue.number} className="text-sm p-2 bg-gray-50 rounded">
+                        <span className="font-bold text-blue-600">{clue.number}.</span> {clue.clue}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm text-gray-600 mb-2">Down</h4>
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {state.clues.down?.map((clue) => (
+                      <div key={clue.number} className="text-sm p-2 bg-gray-50 rounded">
+                        <span className="font-bold text-green-600">{clue.number}.</span> {clue.clue}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

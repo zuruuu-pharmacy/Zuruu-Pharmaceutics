@@ -9,8 +9,8 @@
  * - CompoundingCalculatorOutput - The return type for the function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
+import { generateStructuredResponse } from '@/ai/working-ai';
 
 const CompoundingCalculatorInputSchema = z.object({
   preparationType: z.enum(['w/v', 'v/v', 'w/w']).describe('The type of preparation (% w/v, % v/v, or % w/w).'),
@@ -28,55 +28,36 @@ const CompoundingCalculatorOutputSchema = z.object({
 export type CompoundingCalculatorOutput = z.infer<typeof CompoundingCalculatorOutputSchema>;
 
 export async function compoundingCalculator(input: CompoundingCalculatorInput): Promise<CompoundingCalculatorOutput> {
-  return compoundingCalculatorFlow(input);
-}
-
-
-const prompt = ai.definePrompt({
-  name: 'compoundingCalculatorPrompt',
-  input: {schema: CompoundingCalculatorInputSchema},
-  output: {schema: CompoundingCalculatorOutputSchema},
-  model: 'googleai/gemini-1.5-flash',
-  prompt: `You are an expert pharmacist specializing in pharmaceutical compounding calculations. Your task is to perform the calculation with extreme precision and show all your work.
-
-**Preparation Parameters:**
-- Preparation Type: {{{preparationType}}}
-- Desired Volume: {{{desiredVolumeMl}}} mL
-- Desired Weight: {{{desiredWeightG}}} g
-- Percentage Strength: {{{percentageStrength}}}%
-
-**Your Task:**
-1.  **Define the Strength:** Start by defining what the percentage strength means in this context.
-    -   For '% w/v', it's 'grams of solute in 100 mL of solution'.
-    -   For '% v/v', it's 'mL of solute in 100 mL of solution'.
-    -   For '% w/w', it's 'grams of solute in 100 g of final product'.
-2.  **State the Formula:** Set up a simple ratio and proportion equation to solve for the unknown amount of solute.
-    -   Example for w/v: (X g / Desired Volume mL) = (Percentage Strength g / 100 mL)
-3.  **Solve for X:** Show the substitution and solve for X, which is the 'soluteNeeded'. Ensure the units are correct (g for w/v and w/w, mL for v/v).
-4.  **Combine Steps:** Combine the definition, formula, and solution into a clear, readable 'calculationSteps' string.
-5.  **Explain:** Provide a brief, clear 'explanation' of the calculation type.
-
-Respond ONLY in the structured JSON format defined by the output schema.
-`,
-});
-
-
-const compoundingCalculatorFlow = ai.defineFlow(
-  {
-    name: 'compoundingCalculatorFlow',
-    inputSchema: CompoundingCalculatorInputSchema,
-    outputSchema: CompoundingCalculatorOutputSchema,
-  },
-  async input => {
-    // Basic validation to ensure the correct inputs are provided for the type
-    if (input.preparationType.includes('v') && !input.desiredVolumeMl) {
-        throw new Error('Desired volume (mL) is required for w/v and v/v preparations.');
-    }
-    if (input.preparationType === 'w/w' && !input.desiredWeightG) {
-        throw new Error('Desired weight (g) is required for w/w preparations.');
-    }
-
-    const {output} = await prompt(input);
-    return output!;
+  // Basic validation to ensure the correct inputs are provided for the type
+  if (input.preparationType.includes('v') && !input.desiredVolumeMl) {
+      throw new Error('Desired volume (mL) is required for w/v and v/v preparations.');
   }
-);
+  if (input.preparationType === 'w/w' && !input.desiredWeightG) {
+      throw new Error('Desired weight (g) is required for w/w preparations.');
+  }
+
+  const prompt = `You are an expert pharmacist calculating compounding quantities.
+
+**Input:**
+- Preparation Type: ${input.preparationType}
+- Percentage Strength: ${input.percentageStrength}%
+${input.desiredVolumeMl ? `- Desired Volume: ${input.desiredVolumeMl} mL` : ''}
+${input.desiredWeightG ? `- Desired Weight: ${input.desiredWeightG} g` : ''}
+
+**Instructions:**
+1. Calculate the amount of solute needed based on the percentage strength
+2. For w/v: (percentage/100) × volume in mL = solute in g
+3. For v/v: (percentage/100) × volume in mL = solute in mL  
+4. For w/w: (percentage/100) × weight in g = solute in g
+5. Show all calculation steps clearly
+6. Provide explanation of this compounding calculation
+
+**Respond ONLY with this JSON format:**
+{
+  "soluteNeeded": "X.XX g (or mL)",
+  "calculationSteps": "Step-by-step calculation with formulas",
+  "explanation": "Brief explanation of this compounding calculation type"
+}`;
+
+  return generateStructuredResponse<CompoundingCalculatorOutput>(prompt);
+}

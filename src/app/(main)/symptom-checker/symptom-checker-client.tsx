@@ -5,7 +5,7 @@ import { useActionState, useEffect, useState, useTransition } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { getSymptomAnalysis, type GetSymptomAnalysisOutput } from "@/ai/flows/symptom-checker";
+import { getSymptomAnalysis, testSymptomChecker, type GetSymptomAnalysisOutput } from "@/ai/flows/symptom-checker";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -69,14 +69,22 @@ export function SymptomCheckerClient() {
       }
 
       try {
+        console.log('Getting symptom analysis for:', initialSymptoms);
         const result = await getSymptomAnalysis({ 
             initialSymptoms, 
             detailedHistory: activePatientRecord?.history,
             answers: answers.length > 0 ? answers : undefined,
         });
-        return result;
+        console.log('Symptom analysis result:', result);
+        
+        if (result && (result.triageQuestions || result.analysis)) {
+          return result;
+        } else {
+          console.warn('Invalid symptom analysis result received');
+          return { error: "Failed to get complete analysis. Please try again." };
+        }
       } catch (e) {
-        console.error(e);
+        console.error('Error getting symptom analysis:', e);
         return { error: "Failed to get analysis. Please try again." };
       }
     },
@@ -92,6 +100,19 @@ export function SymptomCheckerClient() {
   const [currentStep, setCurrentStep] = useState<'symptoms' | 'questions' | 'analysis'>('symptoms');
   const [saveToHistoryModalOpen, setSaveToHistoryModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  const testAI = async () => {
+    try {
+      const isWorking = await testSymptomChecker();
+      if (isWorking) {
+        toast({ title: "AI Test Passed", description: "Symptom checker is working correctly" });
+      } else {
+        toast({ variant: "destructive", title: "AI Test Failed", description: "Symptom checker is not responding properly" });
+      }
+    } catch (error) {
+      toast({ variant: "destructive", title: "Test Error", description: "Failed to test AI functionality" });
+    }
+  }
   
   const symptomForm = useForm<SymptomFormValues>({ resolver: zodResolver(symptomFormSchema) });
   const answerForm = useForm<AnswerFormValues>();
@@ -228,18 +249,61 @@ export function SymptomCheckerClient() {
                     <AlertDescription>{analysis.disclaimer}</AlertDescription>
                 </Alert>
 
-                <div className="space-y-3">
-                    <h3 className="font-semibold text-xl">Possible Conditions</h3>
+                <div className="space-y-4">
+                    <h3 className="font-semibold text-xl">Differential Diagnosis</h3>
                     <p className="text-sm text-muted-foreground">Most Relevant System: <Badge variant="outline">{analysis.mostRelevantSystem}</Badge></p>
                     {analysis.possibleConditions.map((cond, i) => (
-                        <div key={i} className="p-3 bg-muted/50 rounded-md">
-                           <div className="flex justify-between items-center">
-                             <p className="font-semibold text-primary">{cond.name}</p>
-                             <Badge variant={cond.likelihood === 'High' ? 'default' : 'secondary'}>{cond.likelihood} Likelihood</Badge>
+                        <div key={i} className="p-4 bg-muted/50 rounded-lg border">
+                           <div className="flex justify-between items-start mb-2">
+                             <p className="font-semibold text-primary text-lg">{cond.name}</p>
+                             <Badge variant={cond.likelihood === 'High' ? 'default' : cond.likelihood === 'Moderate' ? 'secondary' : 'outline'}>
+                               {cond.likelihood} Likelihood
+                             </Badge>
                            </div>
+                           {cond.reasoning && (
+                             <p className="text-sm text-muted-foreground">{cond.reasoning}</p>
+                           )}
                         </div>
                     ))}
                 </div>
+                
+                {analysis.redFlags && analysis.redFlags.length > 0 && (
+                    <Alert variant="destructive">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertTitle>Red Flags Identified</AlertTitle>
+                        <AlertDescription>
+                            <ul className="list-disc list-inside mt-2">
+                                {analysis.redFlags.map((flag, i) => (
+                                    <li key={i} className="font-semibold">{flag}</li>
+                                ))}
+                            </ul>
+                        </AlertDescription>
+                    </Alert>
+                )}
+                
+                {analysis.suggestedDoctors && analysis.suggestedDoctors.length > 0 && (
+                    <div className="space-y-3">
+                        <h3 className="font-semibold text-xl">Recommended Specialists</h3>
+                        {analysis.suggestedDoctors.map((doctor, i) => (
+                            <div key={i} className="p-3 bg-muted/30 rounded-lg border-l-4 border-primary">
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <p className="font-semibold">{doctor.name}</p>
+                                        <p className="text-sm text-muted-foreground">{doctor.specialty}</p>
+                                        {doctor.reason && (
+                                            <p className="text-xs text-muted-foreground mt-1">{doctor.reason}</p>
+                                        )}
+                                    </div>
+                                    {doctor.urgency && (
+                                        <Badge variant={doctor.urgency === 'Immediate' ? 'destructive' : doctor.urgency === 'Within 24 hours' ? 'default' : 'secondary'}>
+                                            {doctor.urgency}
+                                        </Badge>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
                 
                 <Alert>
                     <AlertTriangle className="h-4 w-4" />
@@ -338,6 +402,11 @@ export function SymptomCheckerClient() {
             Describe your symptoms in plain language. Example: "I have a fever, cough, and chest pain."
             {activePatientRecord && ` Analyzing for ${activePatientRecord.history.name}.`}
         </CardDescription>
+        <div className="flex gap-2 mt-2">
+          <Button variant="outline" size="sm" onClick={testAI}>
+            Test AI
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <Form {...symptomForm}>

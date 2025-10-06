@@ -4,8 +4,8 @@
  * @fileOverview Tools for finding healthcare providers and pharmacies.
  */
 
-import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { z } from 'zod';
+import { generateStructuredResponse } from '@/ai/working-ai';
 
 const PharmacySchema = z.object({
   name: z.string(),
@@ -23,18 +23,9 @@ const MOCK_PHARMACIES = [
     { name: 'Green Plus Pharmacy - Johar Town', address: '101 Tech Ave, Lahore', phone: '04235179991', hasStock: true, deliveryAvailable: true },
 ];
 
-export const findNearbyPharmaciesWithStock = ai.defineTool(
-  {
-    name: 'findNearbyPharmaciesWithStock',
-    description: 'Returns a list of nearby pharmacies that have a specific medication in stock.',
-    inputSchema: z.object({
-        medicationName: z.string().describe('The name of the medication to check for.'),
-    }),
-    outputSchema: z.array(PharmacySchema),
-  },
-  async ({ medicationName }) => {
-    // In a real app, this would query a database. Here, we'll just return mock data.
-    // We'll pretend that Fazal Din is always out of stock for this example.
-    return MOCK_PHARMACIES.filter(p => p.hasStock);
-  }
-);
+// Mock function for finding pharmacies with stock
+export const findNearbyPharmaciesWithStock = async ({ medicationName }: { medicationName: string }) => {
+  // In a real app, this would query a database. Here, we'll just return mock data.
+  // We'll pretend that Fazal Din is always out of stock for this example.
+  return MOCK_PHARMACIES.filter(p => p.hasStock);
+};

@@ -1,6 +1,6 @@
 
 import { BackButton } from "@/components/back-button";
-import { ProgressTrackerClient } from "./progress-tracker-client";
+import { AnalyticsDashboardClient } from "@/app/(main)/progress-tracker/progress-tracker-client";
 
 export default function ProgressTrackerPage() {
   return (
@@ -10,7 +10,7 @@ export default function ProgressTrackerPage() {
       <p className="text-muted-foreground mb-6">
         Track your subject mastery, view AI-powered recommendations, and see your progress at a glance.
       </p>
-      <ProgressTrackerClient />
+      <AnalyticsDashboardClient />
     </div>
   );
 }

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Working Profile Picture</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; text-align: center; background: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .profile-pic { width: 200px; height: 200px; border-radius: 50%; border: 4px solid #007bff; margin: 20px auto; display: block; }
+        .button { background: #007bff; color: white; padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px; }
+        .button:hover { background: #0056b3; }
+        .success { background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .instructions { background: #e7f3ff; padding: 20px; border-radius: 5px; margin: 20px 0; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ Working Profile Picture</h1>
+        
+        <div class="instructions">
+            <h3>This will create a working profile picture for you!</h3>
+            <p>Click the button below to create and download your profile picture.</p>
+        </div>
+        
+        <canvas id="canvas" width="400" height="400" style="display: none;"></canvas>
+        <img id="preview" class="profile-pic" style="display: none;">
+        
+        <button onclick="createProfile()">Create Profile Picture</button>
+        <button onclick="downloadProfile()">Download Profile Picture</button>
+        
+        <div id="status"></div>
+        
+        <div class="instructions">
+            <h3>After creating:</h3>
+            <ol>
+                <li>Click "Download Profile Picture"</li>
+                <li>Save the file as <strong>profile-picture.jpg</strong></li>
+                <li>Put it in: <code>C:\Users\hp\Music\hi hi\studio\public\</code></li>
+                <li>Go to <a href="/" target="_blank">http://localhost:9002</a> to see it!</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let profileCreated = false;
+        
+        function createProfile() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 400, 400);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            
+            // Draw circle
+            ctx.beginPath();
+            ctx.arc(200, 200, 200, 0, 2 * Math.PI);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Add border
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 8;
+            ctx.stroke();
+            
+            // Add initials
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 120px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('MS', 200, 200);
+            
+            // Show preview
+            const dataURL = canvas.toDataURL('image/jpeg', 0.9);
+            const preview = document.getElementById('preview');
+            preview.src = dataURL;
+            preview.style.display = 'block';
+            
+            profileCreated = true;
+            document.getElementById('status').innerHTML = 
+                '<div class="success">✅ Profile picture created! Now click "Download Profile Picture" to save it.</div>';
+        }
+        
+        function downloadProfile() {
+            if (!profileCreated) {
+                alert('Please create the profile picture first!');
+                return;
+            }
+            
+            const canvas = document.getElementById('canvas');
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'profile-picture.jpg';
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                document.getElementById('status').innerHTML = 
+                    '<div class="success">✅ Profile picture downloaded! Save it in the public folder and refresh your main page.</div>';
+            }, 'image/jpeg', 0.9);
+        }
+    </script>
+</body>
+</html>

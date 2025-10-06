@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mohsin Saleem - CV</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: #f5f5f5;
+        }
+        .cv-container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 40px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .header { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 30px; 
+            border-bottom: 3px solid #007bff; 
+            padding-bottom: 20px;
+        }
+        .profile-pic { 
+            width: 120px; 
+            height: 120px; 
+            border-radius: 50%; 
+            margin-right: 30px; 
+            border: 4px solid #007bff;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+        }
+        .header-info h1 { 
+            margin: 0; 
+            color: #333; 
+            font-size: 2.5em;
+        }
+        .header-info h2 { 
+            margin: 5px 0; 
+            color: #007bff; 
+            font-weight: normal;
+        }
+        .contact { 
+            color: #666; 
+            margin-top: 10px;
+        }
+        .section { 
+            margin: 30px 0; 
+        }
+        .section h3 { 
+            color: #007bff; 
+            border-bottom: 2px solid #e9ecef; 
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        .skills { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px;
+        }
+        .skill { 
+            background: #007bff; 
+            color: white; 
+            padding: 5px 15px; 
+            border-radius: 20px; 
+            font-size: 14px;
+        }
+        .experience-item { 
+            margin: 20px 0; 
+            padding: 15px; 
+            background: #f8f9fa; 
+            border-radius: 8px;
+        }
+        .experience-item h4 { 
+            margin: 0 0 10px 0; 
+            color: #333;
+        }
+        .experience-item .period { 
+            color: #007bff; 
+            font-weight: bold;
+        }
+        .download-btn {
+            background: #28a745;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px 0;
+        }
+        .download-btn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="cv-container">
+        <div class="header">
+            <div class="profile-pic">MS</div>
+            <div class="header-info">
+                <h1>MOHSIN SALEEM</h1>
+                <h2>Pharmacist (3rd year)</h2>
+                <div class="contact">
+                    📞 +923287989758<br>
+                    📧 mohsinsaleem239773@gmail.com<br>
+                    📍 House no 60B, Al kabir town phase II, Lahore. Punjab, Pakistan
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>About Me</h3>
+            <p>Future pharmacist and AI-in-pharmacy researcher passionate about combining science and technology to build smarter, patient-centered healthcare solutions.</p>
+        </div>
+
+        <div class="section">
+            <h3>Education</h3>
+            <div class="experience-item">
+                <h4>Doctor of Pharmacy (Pharm D)</h4>
+                <div class="period">2023-2028</div>
+                <p>University of Management and Technology Lahore</p>
+            </div>
+            <div class="experience-item">
+                <h4>FSC Pre Medical</h4>
+                <div class="period">2021-2023</div>
+                <p>Misali Zakariya Group of School and Colleges Burewala Road Arifwala</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Skills</h3>
+            <div class="skills">
+                <span class="skill">AI in Pharmacy</span>
+                <span class="skill">AI-powered Healthcare Applications</span>
+                <span class="skill">Problem Solving</span>
+                <span class="skill">Machine Learning for Drug Research</span>
+                <span class="skill">Pharmaceutical Research</span>
+                <span class="skill">Healthcare Technology</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Work Experience</h3>
+            <div class="experience-item">
+                <h4>Independent Researcher - AI in Pharmacy & Robotics</h4>
+                <div class="period">Jan 2023 - Present</div>
+                <ul>
+                    <li>Analyzed 50+ research articles on AI applications in pharmacy</li>
+                    <li>Explored emerging technologies including AI-powered drug discovery and smart dosage systems</li>
+                    <li>Developed understanding of AI-driven healthcare applications</li>
+                    <li>Applied research insights to academic projects</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Languages</h3>
+            <p>English, Urdu</p>
+        </div>
+
+        <button class="download-btn" onclick="downloadCV()">📄 Download PDF Version</button>
+    </div>
+
+    <script>
+        function downloadCV() {
+            // Create a simple text-based CV for download
+            const cvContent = `
+MOHSIN SALEEM
+Pharmacist (3rd year)
+
+CONTACT INFORMATION:
+Phone: +923287989758
+Email: mohsinsaleem239773@gmail.com
+Address: House no 60B, Al kabir town phase II, Lahore. Punjab, Pakistan
+
+ABOUT ME:
+Future pharmacist and AI-in-pharmacy researcher passionate about combining science and technology to build smarter, patient-centered healthcare solutions.
+
+EDUCATION:
+• Doctor of Pharmacy (Pharm D) - University of Management and Technology Lahore (2023-2028)
+• FSC Pre Medical - Misali Zakariya Group of School and Colleges Burewala Road Arifwala (2021-2023)
+
+SKILLS:
+• AI in Pharmacy
+• AI-powered Healthcare Applications
+• Problem Solving
+• Machine Learning for Drug Research
+• Pharmaceutical Research
+• Healthcare Technology
+
+WORK EXPERIENCE:
+Independent Researcher - AI in Pharmacy & Robotics (Jan 2023 - Present)
+• Analyzed 50+ research articles on AI applications in pharmacy
+• Explored emerging technologies including AI-powered drug discovery and smart dosage systems
+• Developed understanding of AI-driven healthcare applications
+• Applied research insights to academic projects
+
+LANGUAGES:
+English, Urdu
+            `;
+            
+            const blob = new Blob([cvContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'mohsin-saleem-cv.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert('✅ CV downloaded as text file! You can also print this page as PDF using Ctrl+P.');
+        }
+    </script>
+</body>
+</html>

@@ -180,11 +180,13 @@ function DrugCard({ drug }: { drug: Drug }) {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="general" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-6">
                 <TabsTrigger value="general">General</TabsTrigger>
                 <TabsTrigger value="clinical">Clinical</TabsTrigger>
                 <TabsTrigger value="pharma">Pharma</TabsTrigger>
                 <TabsTrigger value="analysis">Analysis</TabsTrigger>
+                <TabsTrigger value="pharmacokinetics">PK/PD</TabsTrigger>
+                <TabsTrigger value="safety">Safety</TabsTrigger>
             </TabsList>
             <TabsContent value="general" className="pt-4 space-y-4">
                 <DetailSection title="Mechanism of Action" content={drug.moa} icon={BrainCircuit} />
@@ -207,6 +209,60 @@ function DrugCard({ drug }: { drug: Drug }) {
                  <DetailSection title="Qualitative Analysis" content={drug.analyticalMethods.qualitative} icon={Microscope} />
                  <DetailSection title="Quantitative Analysis" content={drug.analyticalMethods.quantitative} icon={TestTube} />
                  <DetailSection title="Pharmacopoeial Standards" content={drug.analyticalMethods.pharmacopoeial} icon={Library} />
+            </TabsContent>
+            <TabsContent value="pharmacokinetics" className="pt-4 space-y-4">
+                {drug.pharmacokinetics && (
+                    <>
+                        <DetailSection title="Absorption" content={drug.pharmacokinetics.absorption} icon={Package} />
+                        <DetailSection title="Distribution" content={drug.pharmacokinetics.distribution} icon={PackageOpen} />
+                        <DetailSection title="Metabolism" content={drug.pharmacokinetics.metabolism} icon={Beaker} />
+                        <DetailSection title="Elimination" content={drug.pharmacokinetics.elimination} icon={FlaskConical} />
+                        <DetailSection title="Half-Life" content={drug.pharmacokinetics.halfLife} icon={TestTube} />
+                    </>
+                )}
+                {drug.dosing && (
+                    <>
+                        <DetailSection title="Adult Dosing" content={drug.dosing.adult} icon={Stethoscope} />
+                        <DetailSection title="Pediatric Dosing" content={drug.dosing.pediatric} icon={Stethoscope} />
+                        <DetailSection title="Geriatric Dosing" content={drug.dosing.geriatric} icon={Stethoscope} />
+                        <DetailSection title="Renal Impairment" content={drug.dosing.renal} icon={AlertTriangle} />
+                        <DetailSection title="Hepatic Impairment" content={drug.dosing.hepatic} icon={AlertTriangle} />
+                    </>
+                )}
+                {drug.monitoring && (
+                    <>
+                        <DetailSection title="Laboratory Monitoring" content={drug.monitoring.laboratory} icon={Microscope} />
+                        <DetailSection title="Clinical Monitoring" content={drug.monitoring.clinical} icon={Stethoscope} />
+                        <DetailSection title="Therapeutic Monitoring" content={drug.monitoring.therapeutic} icon={ShieldCheck} />
+                    </>
+                )}
+            </TabsContent>
+            <TabsContent value="safety" className="pt-4 space-y-4">
+                {drug.blackBoxWarnings && (
+                    <div className="p-4 bg-red-100/50 dark:bg-red-900/20 border-l-4 border-red-500 rounded-r-md">
+                        <h4 className="font-semibold flex items-center gap-2 text-red-700 dark:text-red-400"><AlertTriangle/>Black Box Warnings</h4>
+                        <p className="text-sm text-muted-foreground mt-1">{drug.blackBoxWarnings}</p>
+                    </div>
+                )}
+                {drug.pregnancyCategory && (
+                    <DetailSection title="Pregnancy Category" content={drug.pregnancyCategory} icon={ShieldCheck} />
+                )}
+                {drug.breastfeeding && (
+                    <DetailSection title="Breastfeeding" content={drug.breastfeeding} icon={ShieldCheck} />
+                )}
+                {drug.drugInteractions && (
+                    <>
+                        <DetailSection title="Major Drug Interactions" content={drug.drugInteractions.major} icon={AlertTriangle} />
+                        <DetailSection title="Moderate Drug Interactions" content={drug.drugInteractions.moderate} icon={AlertTriangle} />
+                        <DetailSection title="Minor Drug Interactions" content={drug.drugInteractions.minor} icon={AlertTriangle} />
+                    </>
+                )}
+                {drug.mechanismDetails && (
+                    <DetailSection title="Detailed Mechanism" content={drug.mechanismDetails} icon={BrainCircuit} />
+                )}
+                {drug.clinicalPharmacology && (
+                    <DetailSection title="Clinical Pharmacology" content={drug.clinicalPharmacology} icon={FileText} />
+                )}
             </TabsContent>
         </Tabs>
         
@@ -328,9 +384,9 @@ export function DrugClassificationTreeClient() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Drug Classification Tree</CardTitle>
+        <CardTitle>Comprehensive Drug Classification Tree</CardTitle>
         <CardDescription>
-          Explore drug classes and their relationships. Click on a category to expand it.
+          Explore detailed drug information across all major therapeutic classes. Each drug includes comprehensive data on pharmacokinetics, drug interactions, dosing guidelines, safety information, and clinical pharmacology. Click on categories to expand and discover detailed drug profiles.
         </CardDescription>
          <div className="relative pt-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />

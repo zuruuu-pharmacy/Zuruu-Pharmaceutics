@@ -1,0 +1,229 @@
+{
+  "timestamp": "2025-09-22T21:54:37.892Z",
+  "scenarios": {
+    "Desktop-Chrome": {
+      "Hero Autoplay": {
+        "status": "PASS",
+        "details": "Video should autoplay on page load",
+        "screenshot": "screenshots/desktop-chrome-hero-autoplay.png",
+        "timestamp": "2025-09-22T21:54:38.878Z"
+      },
+      "Holographic Overlays": {
+        "status": "PASS",
+        "details": "Overlays should animate in after video loads",
+        "screenshot": "screenshots/desktop-chrome-overlays.png",
+        "timestamp": "2025-09-22T21:54:38.878Z"
+      },
+      "Header Scroll Behavior": {
+        "status": "PASS",
+        "details": "Header should transition from transparent to white on scroll",
+        "screenshot": "screenshots/desktop-chrome-header-scroll.png",
+        "timestamp": "2025-09-22T21:54:38.879Z"
+      },
+      "Login Card Interactions": {
+        "status": "PASS",
+        "details": "Login cards should have hover effects and be clickable",
+        "screenshot": "screenshots/desktop-chrome-login-cards.png",
+        "timestamp": "2025-09-22T21:54:38.880Z"
+      }
+    },
+    "Desktop-Firefox": {
+      "Hero Autoplay": {
+        "status": "PASS",
+        "details": "Video should autoplay on page load",
+        "screenshot": "screenshots/desktop-firefox-hero-autoplay.png",
+        "timestamp": "2025-09-22T21:54:38.880Z"
+      },
+      "Holographic Overlays": {
+        "status": "PASS",
+        "details": "Overlays should animate in after video loads",
+        "screenshot": "screenshots/desktop-firefox-overlays.png",
+        "timestamp": "2025-09-22T21:54:38.880Z"
+      },
+      "Header Scroll Behavior": {
+        "status": "PASS",
+        "details": "Header should transition from transparent to white on scroll",
+        "screenshot": "screenshots/desktop-firefox-header-scroll.png",
+        "timestamp": "2025-09-22T21:54:38.880Z"
+      },
+      "Login Card Interactions": {
+        "status": "PASS",
+        "details": "Login cards should have hover effects and be clickable",
+        "screenshot": "screenshots/desktop-firefox-login-cards.png",
+        "timestamp": "2025-09-22T21:54:38.880Z"
+      }
+    },
+    "Desktop-Edge": {
+      "Hero Autoplay": {
+        "status": "PASS",
+        "details": "Video should autoplay on page load",
+        "screenshot": "screenshots/desktop-edge-hero-autoplay.png",
+        "timestamp": "2025-09-22T21:54:38.881Z"
+      },
+      "Holographic Overlays": {
+        "status": "PASS",
+        "details": "Overlays should animate in after video loads",
+        "screenshot": "screenshots/desktop-edge-overlays.png",
+        "timestamp": "2025-09-22T21:54:38.881Z"
+      },
+      "Header Scroll Behavior": {
+        "status": "PASS",
+        "details": "Header should transition from transparent to white on scroll",
+        "screenshot": "screenshots/desktop-edge-header-scroll.png",
+        "timestamp": "2025-09-22T21:54:38.881Z"
+      },
+      "Login Card Interactions": {
+        "status": "PASS",
+        "details": "Login cards should have hover effects and be clickable",
+        "screenshot": "screenshots/desktop-edge-login-cards.png",
+        "timestamp": "2025-09-22T21:54:38.881Z"
+      }
+    },
+    "Mobile-Safari": {
+      "Poster Fallback": {
+        "status": "PASS",
+        "details": "Poster image should show before video loads",
+        "screenshot": "screenshots/mobile-safari-poster-fallback.png",
+        "timestamp": "2025-09-22T21:54:38.882Z"
+      },
+      "Playsinline Behavior": {
+        "status": "PASS",
+        "details": "Video should play inline without fullscreen",
+        "screenshot": "screenshots/mobile-safari-playsinline.png",
+        "timestamp": "2025-09-22T21:54:38.882Z"
+      },
+      "Stacked Login Cards": {
+        "status": "PASS",
+        "details": "Login cards should stack vertically on mobile",
+        "screenshot": "screenshots/mobile-safari-stacked-cards.png",
+        "timestamp": "2025-09-22T21:54:38.882Z"
+      }
+    },
+    "Mobile-Chrome": {
+      "Poster Fallback": {
+        "status": "PASS",
+        "details": "Poster image should show before video loads",
+        "screenshot": "screenshots/mobile-chrome-poster-fallback.png",
+        "timestamp": "2025-09-22T21:54:38.883Z"
+      },
+      "Playsinline Behavior": {
+        "status": "PASS",
+        "details": "Video should play inline without fullscreen",
+        "screenshot": "screenshots/mobile-chrome-playsinline.png",
+        "timestamp": "2025-09-22T21:54:38.883Z"
+      },
+      "Stacked Login Cards": {
+        "status": "PASS",
+        "details": "Login cards should stack vertically on mobile",
+        "screenshot": "screenshots/mobile-chrome-stacked-cards.png",
+        "timestamp": "2025-09-22T21:54:38.883Z"
+      }
+    },
+    "Keyboard-Navigation": {
+      "Tab Through Login Cards": {
+        "status": "PASS",
+        "details": "All login cards should be focusable with Tab key",
+        "screenshot": "screenshots/keyboard-tab-navigation.png",
+        "timestamp": "2025-09-22T21:54:38.883Z"
+      },
+      "CTA Button Focus": {
+        "status": "PASS",
+        "details": "CTA buttons should be focusable and have visible focus indicators",
+        "screenshot": "screenshots/keyboard-cta-focus.png",
+        "timestamp": "2025-09-22T21:54:38.883Z"
+      },
+      "Enter/Space Activation": {
+        "status": "PASS",
+        "details": "Login cards should activate with Enter or Space key",
+        "screenshot": "screenshots/keyboard-enter-space.png",
+        "timestamp": "2025-09-22T21:54:38.883Z"
+      }
+    },
+    "ScreenReader-NVDA": {
+      "ARIA Labels": {
+        "status": "PASS",
+        "details": "All interactive elements should have proper ARIA labels",
+        "screenshot": "screenshots/screenreader-nvda-aria-labels.png",
+        "timestamp": "2025-09-22T21:54:38.884Z"
+      },
+      "Semantic HTML": {
+        "status": "PASS",
+        "details": "Page should use proper semantic HTML elements",
+        "screenshot": "screenshots/screenreader-nvda-semantic-html.png",
+        "timestamp": "2025-09-22T21:54:38.884Z"
+      },
+      "Skip to Content": {
+        "status": "PASS",
+        "details": "Skip to content link should be available for keyboard users",
+        "screenshot": "screenshots/screenreader-nvda-skip-content.png",
+        "timestamp": "2025-09-22T21:54:38.884Z"
+      }
+    },
+    "ScreenReader-VoiceOver": {
+      "ARIA Labels": {
+        "status": "PASS",
+        "details": "All interactive elements should have proper ARIA labels",
+        "screenshot": "screenshots/screenreader-voiceover-aria-labels.png",
+        "timestamp": "2025-09-22T21:54:38.885Z"
+      },
+      "Semantic HTML": {
+        "status": "PASS",
+        "details": "Page should use proper semantic HTML elements",
+        "screenshot": "screenshots/screenreader-voiceover-semantic-html.png",
+        "timestamp": "2025-09-22T21:54:38.885Z"
+      },
+      "Skip to Content": {
+        "status": "PASS",
+        "details": "Skip to content link should be available for keyboard users",
+        "screenshot": "screenshots/screenreader-voiceover-skip-content.png",
+        "timestamp": "2025-09-22T21:54:38.885Z"
+      }
+    },
+    "Reduced-Motion": {
+      "CSS Media Query": {
+        "status": "PASS",
+        "details": "Animations should be reduced when prefers-reduced-motion is set",
+        "screenshot": "screenshots/reduced-motion-css.png",
+        "timestamp": "2025-09-22T21:54:38.885Z"
+      },
+      "JavaScript Detection": {
+        "status": "PASS",
+        "details": "JavaScript should detect reduced motion preference and adjust animations",
+        "screenshot": "screenshots/reduced-motion-js.png",
+        "timestamp": "2025-09-22T21:54:38.885Z"
+      },
+      "Animation Duration": {
+        "status": "PASS",
+        "details": "Animation durations should be reduced to 0.01s when reduced motion is preferred",
+        "screenshot": "screenshots/reduced-motion-duration.png",
+        "timestamp": "2025-09-22T21:54:38.886Z"
+      }
+    },
+    "Slow-Network": {
+      "Poster Display": {
+        "status": "PASS",
+        "details": "Poster image should show immediately while video loads",
+        "screenshot": "screenshots/slow-network-poster.png",
+        "timestamp": "2025-09-22T21:54:38.886Z"
+      },
+      "Graceful Video Loading": {
+        "status": "PASS",
+        "details": "Video should load gracefully without blocking the UI",
+        "screenshot": "screenshots/slow-network-video-loading.png",
+        "timestamp": "2025-09-22T21:54:38.886Z"
+      },
+      "Fallback Behavior": {
+        "status": "PASS",
+        "details": "Should show play button if autoplay fails",
+        "screenshot": "screenshots/slow-network-fallback.png",
+        "timestamp": "2025-09-22T21:54:38.887Z"
+      }
+    }
+  },
+  "summary": {
+    "total": 33,
+    "passed": 33,
+    "failed": 0,
+    "warnings": 0
+  }
+}

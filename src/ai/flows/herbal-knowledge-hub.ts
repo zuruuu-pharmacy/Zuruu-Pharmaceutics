@@ -8,8 +8,8 @@
  * - HerbalInfoOutput - The return type for the getHerbalInfo function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
+import { generateStructuredResponse } from '@/ai/working-ai';
 
 const HerbalInfoInputSchema = z.object({
   plantName: z.string().describe('The botanical or common name of the plant.'),
@@ -33,16 +33,7 @@ export type HerbalInfoInput = z.infer<typeof HerbalInfoInputSchema>;
 export type HerbalInfoOutput = z.infer<typeof HerbalInfoOutputSchema>;
 
 export async function getHerbalInfo(input: HerbalInfoInput): Promise<HerbalInfoOutput> {
-  return herbalKnowledgeHubFlow(input);
-}
-
-
-const prompt = ai.definePrompt({
-  name: 'herbalKnowledgeHubPrompt',
-  input: {schema: HerbalInfoInputSchema},
-  output: {schema: HerbalInfoOutputSchema},
-  model: 'googleai/gemini-1.5-flash',
-  prompt: `You are an expert pharmaco-botanist, creating a detailed knowledge card for a pharmacy student about the medicinal plant: {{{plantName}}}.
+  const prompt = `You are an expert pharmaco-botanist, creating a detailed knowledge card for a pharmacy student about the medicinal plant: ${input.plantName}.
 
 Provide a comprehensive, structured response covering the following areas. Be concise and accurate.
 
@@ -58,19 +49,20 @@ Provide a comprehensive, structured response covering the following areas. Be co
 -   **Synthetic Alternatives**: A relevant modern drug that can be used as a comparison.
 -   **Historical/Cultural Use**: Its significance in traditional medicine systems.
 
-Respond ONLY with the structured JSON output.
-`,
-});
+Respond ONLY with the structured JSON output in this exact format:
+{
+  "botanicalName": "Scientific name",
+  "commonNames": "Common names",
+  "family": "Plant family",
+  "morphologicalFeatures": "Key features",
+  "activeConstituents": "Active compounds",
+  "therapeuticUses": "Therapeutic uses",
+  "dosageForms": "Dosage forms",
+  "preparationExtraction": "Preparation method",
+  "herbalDrugInteractions": "Drug interactions",
+  "syntheticAlternatives": "Synthetic alternatives",
+  "historicalCulturalUse": "Historical use"
+}`;
 
-
-const herbalKnowledgeHubFlow = ai.defineFlow(
-  {
-    name: 'herbalKnowledgeHubFlow',
-    inputSchema: HerbalInfoInputSchema,
-    outputSchema: HerbalInfoOutputSchema,
-  },
-  async (input) => {
-    const {output} = await prompt(input);
-    return output!;
-  }
-);
+  return generateStructuredResponse<HerbalInfoOutput>(prompt);
+}

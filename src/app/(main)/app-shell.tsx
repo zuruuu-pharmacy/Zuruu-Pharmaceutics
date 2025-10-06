@@ -20,7 +20,7 @@ import {
 import { ModeToggle } from "@/components/mode-toggle";
 import { useMode } from "@/contexts/mode-context";
 import { usePatient } from "@/contexts/patient-context";
-import { Avatar, AvatarFallback } from "./ui/avatar";
+// import { Avatar, AvatarFallback } from "./ui/avatar"; // Commented out - component not found
 import { motion } from "framer-motion";
 
 const pharmacistTools = [
@@ -77,7 +77,6 @@ const studentMenuSections = {
     { href: "/mnemonic-generator", label: "Mnemonic Generator", icon: Combine },
   ],
   "🧑‍🎓 Student Tools & Productivity": [
-    { href: "/study-material-generator", label: "Study Material Generator", icon: GraduationCap },
     { href: "/flashcard-generator", label: "Flashcard Generator", icon: FileHeart },
     { href: "/mcq-bank", label: "MCQ Bank", icon: HelpCircle },
     { href: "/reference-generator", label: "Reference Citation Tool", icon: BookA },
@@ -137,7 +136,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <SidebarHeader>
             <div className="flex items-center gap-2 p-2">
               <div>
-                <h1 className="text-xl font-bold font-headline text-primary">Zuruu AI</h1>
+                <h1 className="heading-4 text-primary">Zuruu Pharmaceutics</h1>
                 <p className="text-xs text-muted-foreground">By DR.Mohsin Saleem</p>
               </div>
             </div>
@@ -184,9 +183,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           </SidebarContent>
           <SidebarFooter>
              <div className="flex items-center gap-3 p-2">
-                <Avatar>
-                    <AvatarFallback>{getInitials(userName)}</AvatarFallback>
-                </Avatar>
+                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                    {getInitials(userName)}
+                </div>
                 <div className="flex flex-col">
                     <span className="text-sm font-semibold text-sidebar-foreground truncate">{userName}</span>
                     <span className="text-xs text-sidebar-foreground/70">{activeUser?.role || mode}</span>

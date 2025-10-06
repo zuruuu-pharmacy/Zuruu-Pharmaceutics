@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Converter</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .step { background: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        .button:hover { background: #0056b3; }
+        #preview { max-width: 200px; border-radius: 50%; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ Profile Picture Converter</h1>
+        
+        <div class="step">
+            <h3>Step 1: Select Your Image</h3>
+            <input type="file" id="imageInput" accept="image/*">
+        </div>
+        
+        <div class="step">
+            <h3>Step 2: Preview</h3>
+            <img id="preview" style="display: none;">
+        </div>
+        
+        <div class="step">
+            <h3>Step 3: Download</h3>
+            <button class="button" onclick="downloadImage()">Download as profile-picture.jpg</button>
+        </div>
+        
+        <div class="step">
+            <h3>Instructions:</h3>
+            <ol>
+                <li>Click "Choose File" and select your profile picture</li>
+                <li>Preview will show your image in a circle</li>
+                <li>Click "Download" to get the file</li>
+                <li>Save it as "profile-picture.jpg" in the public folder</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const preview = document.getElementById('preview');
+        
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        function downloadImage() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = document.getElementById('preview');
+            
+            if (!img.src) {
+                alert('Please select an image first!');
+                return;
+            }
+            
+            // Set canvas size
+            canvas.width = 400;
+            canvas.height = 400;
+            
+            // Draw circular image
+            ctx.beginPath();
+            ctx.arc(200, 200, 200, 0, 2 * Math.PI);
+            ctx.clip();
+            
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, 400, 400);
+                
+                // Convert to blob and download
+                canvas.toBlob(function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'profile-picture.jpg';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                }, 'image/jpeg', 0.9);
+            };
+            
+            // Trigger image load
+            const newImg = new Image();
+            newImg.crossOrigin = 'anonymous';
+            newImg.onload = function() {
+                ctx.drawImage(newImg, 0, 0, 400, 400);
+                
+                canvas.toBlob(function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'profile-picture.jpg';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                }, 'image/jpeg', 0.9);
+            };
+            newImg.src = img.src;
+        }
+    </script>
+</body>
+</html>

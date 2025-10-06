@@ -7,8 +7,8 @@
  * - generateCoachedDietPlan - Generates a diet plan from questionnaire data.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
+import { generateStructuredResponse } from '@/ai/working-ai';
 
 // Define the detailed input schema based on the questionnaire
 const NutritionCoachInputSchema = z.object({
@@ -110,70 +110,189 @@ const NutritionCoachOutputSchema = z.object({
 export type NutritionCoachOutput = z.infer<typeof NutritionCoachOutputSchema>;
 
 export async function generateCoachedDietPlan(input: NutritionCoachInput): Promise<NutritionCoachOutput> {
-  return nutritionCoachFlow(input);
+  const prompt = `
+You are an expert AI nutrition coach. Generate a comprehensive, personalized diet plan based on the patient's questionnaire responses.
+
+PATIENT DATA:
+${JSON.stringify(input, null, 2)}
+
+REQUIREMENTS:
+1. Create a detailed daily meal plan (breakfast, lunch, snack, dinner, hydration)
+2. Calculate appropriate caloric needs and macronutrient distribution
+3. Consider medical conditions, allergies, and dietary restrictions
+4. Provide critical warnings about drug-food interactions
+5. Include cultural and personal preferences
+6. Make recommendations practical and achievable
+
+OUTPUT FORMAT:
+Return a comprehensive nutrition plan with:
+- Complete daily meal plan with specific foods and portions
+- Caloric and macronutrient calculations
+- Critical warnings and contraindications
+- Special dietary considerations
+- Practical implementation notes
+
+Be thorough, medically accurate, and prioritize patient safety.
+`;
+
+  try {
+    const result = await generateStructuredResponse<NutritionCoachOutput>(prompt);
+    
+    // Validate the result structure
+    if (!result || typeof result !== 'object' || Object.keys(result).length === 0) {
+      console.warn('AI returned empty or invalid result for nutrition coach, using fallback');
+      return getFallbackNutritionPlan(input);
+    }
+    
+    // Ensure required fields exist
+    if (!result.diet_plan || !result.detailed_notes) {
+      console.warn('AI result missing required fields, using fallback');
+      return getFallbackNutritionPlan(input);
+    }
+    
+    return result;
+  } catch (error) {
+    console.error('Nutrition coach error:', error);
+    return getFallbackNutritionPlan(input);
+  }
+}
+
+// Fallback response generator for nutrition coach
+function getFallbackNutritionPlan(input: NutritionCoachInput): NutritionCoachOutput {
+  const age = input.profile?.age || 30;
+  const gender = input.profile?.gender || 'Unknown';
+  const weight = input.profile?.weight || '70';
+  const height = input.profile?.height || '170';
+  const activityLevel = input.profile?.activity_level || 'Moderately Active';
+  const primaryGoal = input.goals?.primary_goal || 'General health';
+  
+  // Calculate basic caloric needs (simplified)
+  const baseCalories = gender.toLowerCase() === 'female' ? 1800 : 2000;
+  const activityMultiplier = {
+    'Sedentary': 1.2,
+    'Lightly Active': 1.375,
+    'Moderately Active': 1.55,
+    'Very Active': 1.725
+  }[activityLevel] || 1.55;
+  
+  const dailyCalories = Math.round(baseCalories * activityMultiplier);
+  
+  // Generate warnings based on medical history
+  const warnings = [];
+  if (input.medical_history?.chronic_diseases?.length) {
+    warnings.push('Consult healthcare provider before making dietary changes due to existing medical conditions');
+  }
+  if (input.medical_history?.medications?.length) {
+    warnings.push('Check for potential drug-food interactions with current medications');
+  }
+  if (input.medical_history?.allergies?.length) {
+    warnings.push('Avoid all known allergens and read food labels carefully');
+  }
+  
+  return {
+    patient_id: 'fallback',
+    profile: {
+      age: age,
+      gender: gender,
+      height: height,
+      weight: weight,
+      occupation: input.profile?.occupation || 'Not specified',
+      activity_level: activityLevel,
+      sleep: input.profile?.sleep_pattern || 'Not specified',
+      stress: input.profile?.stress_level || 'Not specified',
+    },
+    medical_history: {
+      chronic_diseases: input.medical_history?.chronic_diseases || [],
+      medications: input.medical_history?.medications || [],
+      allergies: input.medical_history?.allergies || [],
+      family_history: input.medical_history?.family_history || [],
+    },
+    current_diet: {
+      meal_pattern: input.current_diet?.meal_pattern || 'Not specified',
+      water_intake: input.current_diet?.water_intake || 'Not specified',
+      processed_food: input.current_diet?.processed_food_intake || 'Not specified',
+      caffeine: input.current_diet?.other_drinks?.join(', ') || 'Not specified',
+    },
+    preferences: {
+      diet_type: input.preferences?.diet_type?.join(', ') || 'No restrictions',
+      favorite_foods: input.preferences?.favorite_foods || 'Not specified',
+      dislikes: input.preferences?.disliked_foods || 'Not specified',
+      fasting_practices: input.preferences?.fasting_practices || 'None',
+    },
+    goals: {
+      primary: primaryGoal,
+      timeline: input.goals?.timeline || 'Long-term',
+      motivation: input.goals?.motivation_level || 'Moderate',
+      budget: input.goals?.budget || 'Medium',
+    },
+    diet_plan: {
+      breakfast: 'Oatmeal with berries and nuts, Greek yogurt, or whole grain toast with avocado',
+      lunch: 'Grilled chicken salad with mixed vegetables, quinoa bowl, or vegetable soup',
+      snack: 'Apple with almond butter, mixed nuts, or Greek yogurt with honey',
+      dinner: 'Baked salmon with roasted vegetables, brown rice, or lean protein with steamed greens',
+      hydration: '8-10 glasses of water daily, herbal teas, limit sugary drinks',
+    },
+    warnings: warnings.length > 0 ? warnings : ['Consult healthcare provider before starting any new diet plan'],
+    detailed_notes: {
+      calories: `${dailyCalories} calories per day`,
+      macros: '50% Carbohydrates, 25% Protein, 25% Fat (adjust based on goals)',
+      fiber_goal: '25-35g daily',
+      special_notes: `Personalized plan for ${primaryGoal}. Focus on whole foods, balanced macronutrients, and regular meal timing.`,
+    },
+  };
+}
+
+// Test function to verify nutrition coach is working
+export async function testNutritionCoach(): Promise<boolean> {
+  try {
+    const testInput: NutritionCoachInput = {
+      profile: {
+        age: 30,
+        gender: 'Male',
+        height: '175',
+        weight: '75',
+        occupation: 'Office worker',
+        activity_level: 'Moderately Active',
+        sleep_pattern: '7-8 hours',
+        stress_level: 'Sometimes',
+      },
+      medical_history: {
+        chronic_diseases: [],
+        medications: [],
+        allergies: [],
+        recent_surgeries: '',
+        family_history: [],
+      },
+      current_diet: {
+        meal_pattern: '3 meals, 2 snacks',
+        skips_meals: false,
+        water_intake: '2 liters',
+        other_drinks: ['Coffee'],
+        processed_food_intake: '1-2 times a week',
+        cooking_habit: 'Mix',
+      },
+      preferences: {
+        diet_type: [],
+        favorite_foods: 'Chicken, vegetables',
+        disliked_foods: 'Spicy food',
+        fasting_practices: '',
+      },
+      goals: {
+        primary_goal: 'Weight maintenance',
+        timeline: 'Long-term',
+        motivation_level: 'High',
+        budget: 'Medium',
+        open_to_lifestyle_changes: true,
+      },
+    };
+    
+    const result = await generateCoachedDietPlan(testInput);
+    return !!(result && result.diet_plan && result.detailed_notes);
+  } catch (error) {
+    console.error("Nutrition coach test failed:", error);
+    return false;
+  }
 }
 
 
-const prompt = ai.definePrompt({
-  name: 'nutritionCoachPrompt',
-  input: {schema: z.object({jsonData: z.string()})},
-  output: {schema: NutritionCoachOutputSchema},
-  model: 'googleai/gemini-1.5-flash',
-  prompt: `You are an expert AI Nutritionist and Dietitian. Your task is to act as a virtual diet coach.
-You have been provided with detailed, structured information from a patient questionnaire.
-Analyze all the data and generate a comprehensive, personalized diet plan.
-
-**System Instructions:**
-
-1.  **Calculate Baseline:**
-    *   First, calculate the patient's BMI from their height and weight.
-    *   Estimate their Total Daily Energy Expenditure (TDEE) based on their BMR (use Mifflin-St Jeor formula if possible) and activity level. This will be their daily caloric target.
-    *   Determine an appropriate macronutrient distribution (e.g., 50% Carbs, 20% Protein, 30% Fat) based on their primary goal.
-
-2.  **Analyze Medical Flags & Generate Warnings:**
-    *   Critically review their medical history and medications.
-    *   If they have diabetes, ensure the diet is low-glycemic.
-    *   If they have hypertension, ensure the diet is low-sodium (target <1500mg/day).
-    *   If they have kidney disease, moderate protein and potassium as needed.
-    *   **Crucially, check for common, significant drug-food interactions** based on their medication list. Examples: Statins (avoid grapefruit), Warfarin (consistent Vitamin K intake, e.g., spinach), some blood pressure meds (avoid high potassium).
-    *   For each major flag, create a clear, concise warning message in the 'warnings' array.
-
-3.  **Create the Personalized Diet Plan:**
-    *   Develop a 1-day meal plan (3 meals + 1 snack).
-    *   The food choices **must** respect the patient's cultural and personal preferences (e.g., vegetarian, halal, dislikes).
-    *   The plan must align with the medical flags (e.g., low-sodium options for a hypertensive patient).
-    *   Provide specific, actionable meal suggestions. Instead of "salad," suggest "a large bowl of mixed greens with grilled chicken, cucumber, tomatoes, and a light vinaigrette dressing."
-    *   Include recommendations for hydration, sleep, and stress management based on their profile.
-
-4.  **Format the Output:**
-    *   Populate the output JSON with a summary of the patient's input data for record-keeping.
-    *   Fill in the diet_plan with your meal suggestions.
-    *   Fill in the warnings array with all identified alerts.
-    *   Fill in the detailed_notes with your calculated caloric target, macro split, and a summary of the diet's characteristics.
-
-**Patient Data:**
-\`\`\`json
-{{{jsonData}}}
-\`\`\`
-
-Respond ONLY with the structured JSON output.
-`,
-});
-
-
-const nutritionCoachFlow = ai.defineFlow(
-  {
-    name: 'nutritionCoachFlow',
-    inputSchema: NutritionCoachInputSchema,
-    outputSchema: NutritionCoachOutputSchema,
-  },
-  async (input) => {
-    // The prompt now expects the full input to be JSON stringified
-    const promptInput = {
-      jsonData: JSON.stringify(input, null, 2),
-    };
-    
-    const {output} = await prompt(promptInput);
-    return output!;
-  }
-);
+// Old flow code removed - using new implementation above

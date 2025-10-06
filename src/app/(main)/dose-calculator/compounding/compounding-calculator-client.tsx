@@ -103,18 +103,51 @@ export function CompoundingCalculatorClient() {
 
                 { (prepType === 'w/v' || prepType === 'v/v') && (
                     <FormField name="desiredVolumeMl" control={form.control} render={({ field }) => (
-                      <FormItem><FormLabel>Final Volume (mL)</FormLabel><FormControl><Input type="number" placeholder="e.g., 250" {...field} /></FormControl><FormMessage /></FormItem>
+                      <FormItem>
+                        <FormLabel>Final Volume (mL)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number" 
+                            placeholder="e.g., 250" 
+                            {...field} 
+                            value={field.value ?? ""}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )} />
                 )}
 
                  { prepType === 'w/w' && (
                     <FormField name="desiredWeightG" control={form.control} render={({ field }) => (
-                      <FormItem><FormLabel>Final Weight (g)</FormLabel><FormControl><Input type="number" placeholder="e.g., 100" {...field} /></FormControl><FormMessage /></FormItem>
+                      <FormItem>
+                        <FormLabel>Final Weight (g)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number" 
+                            placeholder="e.g., 100" 
+                            {...field} 
+                            value={field.value ?? ""}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )} />
                 )}
 
                 <FormField name="percentageStrength" control={form.control} render={({ field }) => (
-                  <FormItem><FormLabel>Percentage Strength (%)</FormLabel><FormControl><Input type="number" placeholder="e.g., 5" {...field} /></FormControl><FormMessage /></FormItem>
+                  <FormItem>
+                    <FormLabel>Percentage Strength (%)</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        placeholder="e.g., 5" 
+                        {...field} 
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )} />
 
                 <Button type="submit" disabled={isPending} className="w-full">
@@ -130,33 +163,59 @@ export function CompoundingCalculatorClient() {
       <div className="md:col-span-2">
         {isPending && <div className="flex justify-center items-center h-full"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}
         {state && 'soluteNeeded' in state && (
-            <Card className="bg-gradient-to-br from-background to-secondary/30">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold text-primary">Compounding Calculation Results</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="p-6 bg-primary/10 rounded-lg text-center">
-                    <h3 className="text-lg font-semibold text-primary-foreground/80">Amount of Solute Needed</h3>
-                    <p className="text-4xl font-bold text-primary">{state.soluteNeeded}</p>
-                </div>
-                
-                  <>
-                    <Separator />
-                    {state.calculationSteps && (
-                      <div className="space-y-4">
-                        <h3 className="text-xl font-semibold flex items-center gap-2"><Beaker className="h-5 w-5 text-primary"/>Calculation Steps</h3>
-                        <p className="p-4 bg-muted/50 rounded-md whitespace-pre-wrap font-code">{state.calculationSteps}</p>
+            <div className="space-y-6">
+              {/* Main Result Card */}
+              <Card className="bg-gradient-to-br from-violet-50 to-purple-100 border-violet-200">
+                <CardHeader className="text-center pb-4">
+                  <CardTitle className="text-2xl font-bold text-violet-800">Compounding Calculation Results</CardTitle>
+                  <CardDescription className="text-violet-600">
+                    Calculated solute amount for compounded preparation
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <div className="p-8 bg-white rounded-xl shadow-sm border border-violet-200">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-2">Solute Amount Needed</h3>
+                    <p className="text-5xl font-bold text-violet-600 mb-2">{state.soluteNeeded}</p>
+                    <p className="text-sm text-gray-500">Based on percentage strength</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Details Section */}
+              <div className="grid md:grid-cols-2 gap-6">
+                {state.calculationSteps && (
+                  <Card className="bg-gradient-to-br from-indigo-50 to-blue-100 border-indigo-200">
+                    <CardHeader>
+                      <CardTitle className="text-lg font-semibold text-indigo-800 flex items-center gap-2">
+                        <Beaker className="h-5 w-5" />
+                        Calculation Steps
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="p-4 bg-white rounded-lg border border-indigo-200">
+                        <p className="whitespace-pre-wrap text-sm text-gray-700">{state.calculationSteps}</p>
                       </div>
-                    )}
-                    {state.explanation && (
-                      <div className="space-y-4">
-                        <h3 className="text-xl font-semibold flex items-center gap-2"><FileText className="h-5 w-5 text-primary"/>Explanation</h3>
-                        <p className="p-4 bg-muted/50 rounded-md whitespace-pre-wrap text-sm">{state.explanation}</p>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {state.explanation && (
+                  <Card className="bg-gradient-to-br from-slate-50 to-gray-100 border-slate-200">
+                    <CardHeader>
+                      <CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                        <FileText className="h-5 w-5" />
+                        About Compounding
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="p-4 bg-white rounded-lg border border-slate-200">
+                        <p className="whitespace-pre-wrap text-sm text-gray-700">{state.explanation}</p>
                       </div>
-                    )}
-                  </>
-              </CardContent>
-            </Card>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            </div>
         )}
       </div>
     </div>

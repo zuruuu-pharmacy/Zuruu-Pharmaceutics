@@ -6,9 +6,9 @@ export default function DrugClassificationTreePage() {
   return (
     <div>
       <BackButton />
-      <h1 className="text-3xl font-bold mb-2 font-headline">Interactive Drug Classification Tree</h1>
+      <h1 className="text-3xl font-bold mb-2 font-headline">Comprehensive Drug Classification Tree</h1>
       <p className="text-muted-foreground mb-6">
-        Visually explore pharmacology by navigating through an interactive classification tree.
+        Explore detailed pharmacology with comprehensive drug information including pharmacokinetics, drug interactions, dosing guidelines, and safety data. Navigate through an interactive classification tree covering all major drug classes.
       </p>
       <DrugClassificationTreeClient />
     </div>

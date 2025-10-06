@@ -8,8 +8,8 @@
  * - DrugFormularyOutput - The return type for the drugFormularyLookup function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
+import { generateStructuredResponse } from '@/ai/working-ai';
 
 const DrugFormularyInputSchema = z.object({
   drugName: z.string().describe('The generic name of the drug to look up.'),
@@ -21,51 +21,85 @@ const DrugFormularyOutputSchema = z.object({
   brandNames: z.string().describe('A comma-separated list of common local and international brand names.'),
   therapeuticClass: z.string().describe('The primary therapeutic and pharmacological class of the drug.'),
   dosageForms: z.string().describe('A list of available dosage forms and their strengths (e.g., "Tablet: 250mg, 500mg; Suspension: 125mg/5mL").'),
+  mechanismOfAction: z.string().describe('Detailed explanation of how the drug works at the molecular and cellular level.'),
+  pharmacokinetics: z.string().describe('Information about absorption, distribution, metabolism, and excretion of the drug.'),
   dosing: z.object({
-      adult: z.string().describe('Standard adult dosing guidelines, including route and frequency.'),
-      pediatric: z.string().describe('Standard pediatric dosing guidelines.'),
-      renalImpairment: z.string().describe('Dosing adjustments for patients with renal impairment.'),
+      adult: z.string().describe('Comprehensive adult dosing guidelines with specific ranges, routes, and frequencies.'),
+      pediatric: z.string().describe('Detailed pediatric dosing guidelines with age-specific recommendations.'),
+      geriatric: z.string().describe('Special considerations for elderly patients.'),
+      renalImpairment: z.string().describe('Detailed dosing adjustments for different stages of renal impairment.'),
       hepaticImpairment: z.string().describe('Dosing adjustments for patients with hepatic impairment.'),
+      pregnancy: z.string().describe('Dosing considerations during pregnancy and lactation.'),
   }),
-  indications: z.string().describe('A list of approved and common off-label clinical uses.'),
-  contraindicationsAndWarnings: z.string().describe('A list of absolute contraindications and key warnings/precautions (e.g., for pregnancy, elderly).'),
-  adverseDrugReactions: z.string().describe('A list of common and serious adverse drug reactions.'),
-  drugInteractions: z.string().describe('A summary of the most clinically significant drug-drug and drug-food interactions.'),
-  formularyComparisonNotes: z.string().describe('A summary of key differences in dosing, indications, or availability between major formularies like BNF, USP, and local guidelines.'),
-  therapeuticAlternatives: z.string().describe('A list of suggested therapeutic alternatives, both within the same class and from different classes.'),
+  indications: z.string().describe('Comprehensive list of approved and common off-label clinical uses with detailed descriptions.'),
+  contraindicationsAndWarnings: z.string().describe('Detailed list of absolute contraindications and key warnings/precautions.'),
+  adverseDrugReactions: z.string().describe('Comprehensive list of common and serious adverse drug reactions with frequency and severity.'),
+  drugInteractions: z.string().describe('Detailed summary of clinically significant drug-drug and drug-food interactions.'),
+  monitoringParameters: z.string().describe('Laboratory tests and clinical parameters that should be monitored.'),
+  formularyComparisonNotes: z.string().describe('Detailed comparison of key differences between major formularies.'),
+  therapeuticAlternatives: z.string().describe('Alternative medications with similar therapeutic effects and comparison notes.'),
+  clinicalNotes: z.string().describe('Important clinical pearls and practical considerations for healthcare providers.'),
 });
 export type DrugFormularyOutput = z.infer<typeof DrugFormularyOutputSchema>;
 
 export async function drugFormularyLookup(input: DrugFormularyInput): Promise<DrugFormularyOutput> {
-  return drugFormularyLookupFlow(input);
-}
+  const prompt = `You are an expert clinical pharmacist providing comprehensive, detailed drug monograph information for healthcare professionals.
 
-const prompt = ai.definePrompt({
-  name: 'drugFormularyLookupPrompt',
-  input: {schema: DrugFormularyInputSchema},
-  output: {schema: DrugFormularyOutputSchema},
-  model: 'googleai/gemini-1.5-pro',
-  prompt: `You are an expert Clinical Drug Formulary Generator. Your task is to create a concise, structured, and clinically useful summary for {{{drugName}}}, drawing from BNF, USP, and standard Local Formularies.
+**Drug Name:** ${input.drugName}
 
-Provide a comprehensive summary adhering to the specified JSON format. The information must be accurate, relevant, and targeted for pharmacy/medical students and clinicians.
+**Instructions:**
+Provide a complete, evidence-based drug monograph with the following requirements:
 
-**Key Instructions:**
-1.  **Be Specific:** For dosage forms, list the strengths (e.g., Tablet: 10mg, 20mg).
-2.  **Be Comprehensive:** Cover adult and pediatric dosing, and adjustments for renal/hepatic impairment.
-3.  **Highlight Differences:** The 'formularyComparisonNotes' field is critical. Explicitly state any significant differences between major formularies (BNF, USP, Local) regarding dosing, approved uses, or warnings.
-4.  **Be Practical:** For 'therapeuticAlternatives', suggest viable alternatives a clinician might consider if the primary drug is unavailable or contraindicated.
-5.  **Focus on Clinical Relevance:** For interactions and ADRs, focus on the most common and clinically significant ones.
-`,
-});
+1. **Comprehensive Coverage**: Include all essential clinical information with detailed explanations
+2. **Evidence-Based**: Use current, peer-reviewed information and clinical guidelines
+3. **Practical Focus**: Emphasize clinically relevant information for daily practice
+4. **Detailed Descriptions**: Each section should be thoroughly explained, not just listed
+5. **Safety Emphasis**: Highlight critical safety considerations and monitoring requirements
+6. **Clinical Pearls**: Include practical tips and important considerations for healthcare providers
 
-const drugFormularyLookupFlow = ai.defineFlow(
-  {
-    name: 'drugFormularyLookupFlow',
-    inputSchema: DrugFormularyInputSchema,
-    outputSchema: DrugFormularyOutputSchema,
+**For each section, provide:**
+- **Mechanism of Action**: Detailed molecular and cellular explanation of how the drug works
+- **Pharmacokinetics**: Comprehensive ADME (Absorption, Distribution, Metabolism, Excretion) profile
+- **Dosing**: Specific ranges, frequencies, and special population considerations
+- **Indications**: Detailed descriptions of approved and off-label uses with clinical context
+- **Contraindications**: Comprehensive safety profile with specific patient populations
+- **Adverse Reactions**: Frequency, severity, and management strategies
+- **Drug Interactions**: Clinical significance and management recommendations
+- **Monitoring**: Specific laboratory tests and clinical parameters to monitor
+- **Clinical Notes**: Practical pearls and important considerations for prescribers
+
+**Format Requirements:**
+- Use clear, professional medical language
+- Include specific dosing ranges and frequencies
+- Provide detailed explanations, not just bullet points
+- Emphasize safety considerations and monitoring requirements
+- Include practical clinical guidance and pearls
+
+**Respond ONLY with this comprehensive JSON format:**
+{
+  "genericName": "Official generic name (INN)",
+  "brandNames": "Comma-separated list of major brand names",
+  "therapeuticClass": "Detailed therapeutic and pharmacological classification",
+  "dosageForms": "Available formulations with specific strengths",
+  "mechanismOfAction": "Detailed explanation of molecular and cellular mechanisms",
+  "pharmacokinetics": "Comprehensive ADME profile with specific parameters",
+  "dosing": {
+    "adult": "Detailed adult dosing with specific ranges and frequencies",
+    "pediatric": "Age-specific pediatric dosing guidelines",
+    "geriatric": "Special considerations for elderly patients",
+    "renalImpairment": "Detailed dosing adjustments for different CKD stages",
+    "hepaticImpairment": "Dosing considerations for liver dysfunction",
+    "pregnancy": "Pregnancy and lactation considerations"
   },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
-  }
-);
+  "indications": "Comprehensive list with detailed clinical descriptions",
+  "contraindicationsAndWarnings": "Detailed safety profile and contraindications",
+  "adverseDrugReactions": "Comprehensive ADR list with frequency and severity",
+  "drugInteractions": "Detailed interaction profile with clinical significance",
+  "monitoringParameters": "Specific laboratory and clinical monitoring requirements",
+  "formularyComparisonNotes": "Detailed formulary differences and considerations",
+  "therapeuticAlternatives": "Alternative medications with comparison notes",
+  "clinicalNotes": "Important clinical pearls and practical considerations"
+}`;
+
+  return generateStructuredResponse<DrugFormularyOutput>(prompt);
+}

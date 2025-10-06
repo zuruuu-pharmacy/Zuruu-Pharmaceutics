@@ -108,42 +108,66 @@ export function BsaDoseCalculatorClient() {
       <div className="md:col-span-2">
         {isPending && <div className="flex justify-center items-center h-full"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}
         {state && 'totalDose' in state && (
-            <Card className="bg-gradient-to-br from-background to-secondary/30">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold text-primary">BSA Dose Calculation Results</CardTitle>
-                <CardDescription>Results for {form.getValues("drugName")}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-2 gap-4 text-center">
-                    <div className="p-4 bg-primary/10 rounded-lg">
-                        <h3 className="text-lg font-semibold text-primary-foreground/80">Calculated BSA</h3>
-                        <p className="text-3xl font-bold text-primary">{state.bodySurfaceArea} m²</p>
+            <div className="space-y-6">
+              {/* Main Results Card */}
+              <Card className="bg-gradient-to-br from-teal-50 to-cyan-100 border-teal-200">
+                <CardHeader className="text-center pb-4">
+                  <CardTitle className="text-2xl font-bold text-teal-800">BSA Dose Calculation Results</CardTitle>
+                  <CardDescription className="text-teal-600">
+                    {form.getValues("drugName")} • Body Surface Area Based Dosing
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="p-6 bg-white rounded-xl shadow-sm border border-teal-200 text-center">
+                      <h3 className="text-lg font-semibold text-gray-700 mb-2">Body Surface Area</h3>
+                      <p className="text-4xl font-bold text-teal-600 mb-1">{state.bodySurfaceArea}</p>
+                      <p className="text-sm text-gray-500">Mosteller Formula</p>
                     </div>
-                     <div className="p-4 bg-primary/10 rounded-lg">
-                        <h3 className="text-lg font-semibold text-primary-foreground/80">Final Total Dose</h3>
-                        <p className="text-3xl font-bold text-primary">{state.totalDose}</p>
+                    <div className="p-6 bg-white rounded-xl shadow-sm border border-teal-200 text-center">
+                      <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Dose</h3>
+                      <p className="text-4xl font-bold text-teal-600 mb-1">{state.totalDose}</p>
+                      <p className="text-sm text-gray-500">BSA × Dose per m²</p>
                     </div>
-                </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-                
-                  <>
-                    <Separator />
-                    {state.calculationSteps && (
-                      <div className="space-y-4">
-                        <h3 className="text-xl font-semibold flex items-center gap-2"><Beaker className="h-5 w-5 text-primary"/>Calculation Steps</h3>
-                        <p className="p-4 bg-muted/50 rounded-md whitespace-pre-wrap font-code">{state.calculationSteps}</p>
+              {/* Details Section */}
+              <div className="grid md:grid-cols-2 gap-6">
+                {state.calculationSteps && (
+                  <Card className="bg-gradient-to-br from-orange-50 to-amber-100 border-orange-200">
+                    <CardHeader>
+                      <CardTitle className="text-lg font-semibold text-orange-800 flex items-center gap-2">
+                        <Beaker className="h-5 w-5" />
+                        Calculation Steps
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="p-4 bg-white rounded-lg border border-orange-200">
+                        <p className="whitespace-pre-wrap text-sm text-gray-700">{state.calculationSteps}</p>
                       </div>
-                    )}
-                    {state.explanation && (
-                      <div className="space-y-4">
-                        <h3 className="text-xl font-semibold flex items-center gap-2"><FileText className="h-5 w-5 text-primary"/>Explanation</h3>
-                        <p className="p-4 bg-muted/50 rounded-md whitespace-pre-wrap text-sm">{state.explanation}</p>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {state.explanation && (
+                  <Card className="bg-gradient-to-br from-pink-50 to-rose-100 border-pink-200">
+                    <CardHeader>
+                      <CardTitle className="text-lg font-semibold text-pink-800 flex items-center gap-2">
+                        <FileText className="h-5 w-5" />
+                        About BSA Dosing
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="p-4 bg-white rounded-lg border border-pink-200">
+                        <p className="whitespace-pre-wrap text-sm text-gray-700">{state.explanation}</p>
                       </div>
-                    )}
-                  </>
-                
-              </CardContent>
-            </Card>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            </div>
         )}
       </div>
     </div>

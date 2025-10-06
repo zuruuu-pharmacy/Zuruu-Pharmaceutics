@@ -17,6 +17,36 @@ export interface Drug {
     pharmacopoeial: string;
   };
   specialNotes: string;
+  // Enhanced fields for comprehensive information
+  pharmacokinetics?: {
+    absorption: string;
+    distribution: string;
+    metabolism: string;
+    elimination: string;
+    halfLife: string;
+  };
+  drugInteractions?: {
+    major: string;
+    moderate: string;
+    minor: string;
+  };
+  dosing?: {
+    adult: string;
+    pediatric: string;
+    geriatric: string;
+    renal: string;
+    hepatic: string;
+  };
+  monitoring?: {
+    laboratory: string;
+    clinical: string;
+    therapeutic: string;
+  };
+  pregnancyCategory?: string;
+  breastfeeding?: string;
+  blackBoxWarnings?: string;
+  mechanismDetails?: string;
+  clinicalPharmacology?: string;
 }
 
 export interface DrugClass {
@@ -27,6 +57,273 @@ export interface DrugClass {
 }
 
 export const drugTreeData: DrugClass[] = [
+  {
+    name: "Cardiovascular System Drugs",
+    pharmaFocus: "Critical for cardiovascular health, includes antihypertensives, antiarrhythmics, and heart failure medications.",
+    subclasses: [
+      {
+        name: "Antihypertensive Drugs",
+        pharmaFocus: "First-line treatment for hypertension, various mechanisms of action.",
+        subclasses: [
+          {
+            name: "ACE Inhibitors",
+            drugs: [
+              {
+                name: "Lisinopril",
+                classification: "ACE Inhibitor",
+                moa: "Inhibits angiotensin-converting enzyme, preventing conversion of angiotensin I to angiotensin II, resulting in vasodilation and reduced blood pressure.",
+                therapeuticUses: "Hypertension, heart failure, post-MI, diabetic nephropathy.",
+                adrs: "Dry cough, hyperkalemia, angioedema, dizziness, fatigue.",
+                contraindications: "Pregnancy, bilateral renal artery stenosis, history of angioedema.",
+                pharmaApplications: {
+                  dosageForms: "Tablets (2.5mg, 5mg, 10mg, 20mg, 40mg).",
+                  formulations: "Prinivil, Zestril.",
+                  storage: "Store at room temperature, protect from moisture.",
+                },
+                analyticalMethods: {
+                  qualitative: "HPLC, LC-MS/MS.",
+                  quantitative: "HPLC with UV detection.",
+                  pharmacopoeial: "USP, BP, EP.",
+                },
+                specialNotes: "Monitor serum potassium and creatinine. May cause first-dose hypotension. Dry cough is common side effect.",
+                pharmacokinetics: {
+                  absorption: "25-50% absorbed from GI tract, not affected by food",
+                  distribution: "Minimal protein binding, does not cross blood-brain barrier",
+                  metabolism: "Not metabolized, excreted unchanged",
+                  elimination: "100% renal elimination",
+                  halfLife: "12 hours"
+                },
+                drugInteractions: {
+                  major: "Potassium-sparing diuretics, potassium supplements, NSAIDs",
+                  moderate: "Lithium, antacids (may reduce absorption)",
+                  minor: "Digoxin (may increase levels)"
+                },
+                dosing: {
+                  adult: "10-40 mg PO once daily",
+                  pediatric: "0.07 mg/kg/day PO (max 5 mg/day)",
+                  geriatric: "Start with 2.5-5 mg PO once daily",
+                  renal: "Adjust based on CrCl: CrCl >30: 10 mg daily; CrCl 10-30: 5 mg daily; CrCl <10: 2.5 mg daily",
+                  hepatic: "No adjustment needed"
+                },
+                monitoring: {
+                  laboratory: "Serum potassium, creatinine, BUN",
+                  clinical: "Blood pressure, signs of angioedema",
+                  therapeutic: "Blood pressure monitoring"
+                },
+                pregnancyCategory: "D",
+                breastfeeding: "Excreted in breast milk, avoid",
+                blackBoxWarnings: "Fetal toxicity when used during pregnancy",
+                mechanismDetails: "Competitively inhibits ACE, preventing conversion of angiotensin I to angiotensin II, reducing aldosterone secretion and vasoconstriction",
+                clinicalPharmacology: "Onset: 1 hour, peak: 6 hours, duration: 24 hours. Maximum effect may take 2-4 weeks."
+              },
+              {
+                name: "Enalapril",
+                classification: "ACE Inhibitor",
+                moa: "Prodrug converted to enalaprilat, which inhibits ACE, preventing angiotensin II formation.",
+                therapeuticUses: "Hypertension, heart failure, asymptomatic left ventricular dysfunction.",
+                adrs: "Dry cough, hyperkalemia, angioedema, dizziness, fatigue.",
+                contraindications: "Pregnancy, bilateral renal artery stenosis, history of angioedema.",
+                pharmaApplications: {
+                  dosageForms: "Tablets (2.5mg, 5mg, 10mg, 20mg), injection.",
+                  formulations: "Vasotec, Enalaprilat (injection).",
+                  storage: "Store at room temperature.",
+                },
+                analyticalMethods: {
+                  qualitative: "HPLC, LC-MS/MS.",
+                  quantitative: "HPLC with UV detection.",
+                  pharmacopoeial: "USP, BP.",
+                },
+                specialNotes: "Prodrug requiring hepatic conversion. Monitor renal function and potassium levels.",
+                pharmacokinetics: {
+                  absorption: "60% absorbed from GI tract",
+                  distribution: "Minimal protein binding",
+                  metabolism: "Hepatic conversion to enalaprilat (active metabolite)",
+                  elimination: "60% renal, 40% fecal",
+                  halfLife: "11 hours (enalapril), 35 hours (enalaprilat)"
+                },
+                drugInteractions: {
+                  major: "Potassium-sparing diuretics, potassium supplements",
+                  moderate: "NSAIDs, lithium",
+                  minor: "Antacids"
+                },
+                dosing: {
+                  adult: "5-40 mg PO daily in 1-2 divided doses",
+                  pediatric: "0.08 mg/kg/day PO",
+                  geriatric: "Start with 2.5 mg PO daily",
+                  renal: "CrCl >30: 5 mg daily; CrCl 10-30: 2.5 mg daily; CrCl <10: 2.5 mg daily",
+                  hepatic: "No adjustment needed"
+                },
+                monitoring: {
+                  laboratory: "Serum potassium, creatinine, BUN",
+                  clinical: "Blood pressure, signs of angioedema",
+                  therapeutic: "Blood pressure monitoring"
+                },
+                pregnancyCategory: "D",
+                breastfeeding: "Excreted in breast milk, avoid",
+                blackBoxWarnings: "Fetal toxicity when used during pregnancy"
+              }
+            ]
+          },
+          {
+            name: "ARBs (Angiotensin Receptor Blockers)",
+            drugs: [
+              {
+                name: "Losartan",
+                classification: "ARB",
+                moa: "Selectively blocks AT1 receptors, preventing angiotensin II binding and its effects.",
+                therapeuticUses: "Hypertension, diabetic nephropathy, stroke prevention in LVH.",
+                adrs: "Dizziness, fatigue, hyperkalemia, upper respiratory infection.",
+                contraindications: "Pregnancy, bilateral renal artery stenosis.",
+                pharmaApplications: {
+                  dosageForms: "Tablets (25mg, 50mg, 100mg).",
+                  formulations: "Cozaar.",
+                  storage: "Store at room temperature.",
+                },
+                analyticalMethods: {
+                  qualitative: "HPLC, LC-MS/MS.",
+                  quantitative: "HPLC with UV detection.",
+                  pharmacopoeial: "USP, BP.",
+                },
+                specialNotes: "Does not cause dry cough like ACE inhibitors. Monitor potassium levels.",
+                pharmacokinetics: {
+                  absorption: "33% absorbed from GI tract",
+                  distribution: "99% protein bound",
+                  metabolism: "Hepatic via CYP2C9 and CYP3A4 to active metabolite",
+                  elimination: "35% renal, 60% fecal",
+                  halfLife: "2 hours (parent), 6-9 hours (metabolite)"
+                },
+                drugInteractions: {
+                  major: "Potassium-sparing diuretics, potassium supplements",
+                  moderate: "NSAIDs, lithium",
+                  minor: "Rifampin (may decrease levels)"
+                },
+                dosing: {
+                  adult: "25-100 mg PO daily",
+                  pediatric: "0.7 mg/kg/day PO (max 50 mg/day)",
+                  geriatric: "Start with 25 mg PO daily",
+                  renal: "No adjustment needed for mild-moderate impairment",
+                  hepatic: "Start with 25 mg PO daily"
+                },
+                monitoring: {
+                  laboratory: "Serum potassium, creatinine",
+                  clinical: "Blood pressure",
+                  therapeutic: "Blood pressure monitoring"
+                },
+                pregnancyCategory: "D",
+                breastfeeding: "Excreted in breast milk, avoid"
+              }
+            ]
+          },
+          {
+            name: "Calcium Channel Blockers",
+            drugs: [
+              {
+                name: "Amlodipine",
+                classification: "Dihydropyridine CCB",
+                moa: "Blocks L-type calcium channels in vascular smooth muscle, causing vasodilation.",
+                therapeuticUses: "Hypertension, chronic stable angina, vasospastic angina.",
+                adrs: "Peripheral edema, dizziness, flushing, headache, fatigue.",
+                contraindications: "Severe hypotension, cardiogenic shock.",
+                pharmaApplications: {
+                  dosageForms: "Tablets (2.5mg, 5mg, 10mg).",
+                  formulations: "Norvasc, Amlodipine Besylate.",
+                  storage: "Store at room temperature.",
+                },
+                analyticalMethods: {
+                  qualitative: "HPLC, LC-MS/MS.",
+                  quantitative: "HPLC with UV detection.",
+                  pharmacopoeial: "USP, BP.",
+                },
+                specialNotes: "Long-acting, once-daily dosing. Peripheral edema is common side effect.",
+                pharmacokinetics: {
+                  absorption: "64-90% absorbed from GI tract",
+                  distribution: "93% protein bound",
+                  metabolism: "Hepatic via CYP3A4",
+                  elimination: "10% renal, 60% fecal",
+                  halfLife: "30-50 hours"
+                },
+                drugInteractions: {
+                  major: "CYP3A4 inhibitors (ketoconazole, itraconazole), grapefruit juice",
+                  moderate: "CYP3A4 inducers (rifampin, carbamazepine)",
+                  minor: "Simvastatin (may increase levels)"
+                },
+                dosing: {
+                  adult: "5-10 mg PO daily",
+                  pediatric: "2.5-5 mg PO daily",
+                  geriatric: "Start with 2.5 mg PO daily",
+                  renal: "No adjustment needed",
+                  hepatic: "Start with 2.5 mg PO daily"
+                },
+                monitoring: {
+                  laboratory: "None routinely required",
+                  clinical: "Blood pressure, signs of heart failure",
+                  therapeutic: "Blood pressure monitoring"
+                },
+                pregnancyCategory: "C",
+                breastfeeding: "Excreted in breast milk, avoid"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "Antiarrhythmic Drugs",
+        pharmaFocus: "Vaughan Williams classification system for antiarrhythmic drugs.",
+        subclasses: [
+          {
+            name: "Class I Antiarrhythmics",
+            drugs: [
+              {
+                name: "Lidocaine",
+                classification: "Class IB Antiarrhythmic",
+                moa: "Blocks sodium channels in cardiac tissue, particularly in ischemic or damaged areas.",
+                therapeuticUses: "Ventricular arrhythmias, local anesthesia.",
+                adrs: "CNS toxicity (seizures, confusion), bradycardia, hypotension.",
+                contraindications: "Hypersensitivity to amide anesthetics, severe heart block.",
+                pharmaApplications: {
+                  dosageForms: "Injection (1%, 2%), topical preparations.",
+                  formulations: "Xylocaine, Lidocaine HCl.",
+                  storage: "Store at room temperature, protect from light.",
+                },
+                analyticalMethods: {
+                  qualitative: "HPLC, GC-MS.",
+                  quantitative: "HPLC with UV detection.",
+                  pharmacopoeial: "USP, BP.",
+                },
+                specialNotes: "First-line for ventricular arrhythmias. Monitor for CNS toxicity.",
+                pharmacokinetics: {
+                  absorption: "Not absorbed orally due to first-pass metabolism",
+                  distribution: "70% protein bound, crosses blood-brain barrier",
+                  metabolism: "Hepatic via CYP1A2 and CYP3A4",
+                  elimination: "<10% renal, primarily hepatic",
+                  halfLife: "1.5-2 hours"
+                },
+                drugInteractions: {
+                  major: "CYP1A2 inhibitors (cimetidine, fluvoxamine)",
+                  moderate: "Beta-blockers (may decrease clearance)",
+                  minor: "CYP3A4 inhibitors"
+                },
+                dosing: {
+                  adult: "1-1.5 mg/kg IV bolus, then 1-4 mg/min infusion",
+                  pediatric: "1 mg/kg IV bolus, then 20-50 mcg/kg/min infusion",
+                  geriatric: "Reduce dose by 50%",
+                  renal: "No adjustment needed",
+                  hepatic: "Reduce dose by 50%"
+                },
+                monitoring: {
+                  laboratory: "None routinely required",
+                  clinical: "ECG, blood pressure, CNS status",
+                  therapeutic: "ECG monitoring, therapeutic drug monitoring"
+                },
+                pregnancyCategory: "B",
+                breastfeeding: "Excreted in breast milk, use with caution"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
   {
     name: "Central Nervous System (CNS) Drugs",
     subclasses: [
@@ -55,6 +352,35 @@ export const drugTreeData: DrugClass[] = [
                   pharmacopoeial: "USP, BP.",
                 },
                 specialNotes: "High potential for dependence and abuse. Avoid abrupt withdrawal. Potentiated by alcohol and other CNS depressants.",
+                pharmacokinetics: {
+                  absorption: "Rapidly absorbed from GI tract, peak plasma levels in 1-2 hours",
+                  distribution: "Highly protein bound (98-99%), crosses blood-brain barrier and placenta",
+                  metabolism: "Extensively metabolized in liver via CYP2C19 and CYP3A4 to active metabolites (desmethyldiazepam, oxazepam)",
+                  elimination: "Renal elimination of metabolites, some biliary excretion",
+                  halfLife: "20-50 hours (parent drug), 50-100 hours (active metabolites)"
+                },
+                drugInteractions: {
+                  major: "CNS depressants (alcohol, opioids, barbiturates), CYP3A4 inhibitors (ketoconazole, itraconazole)",
+                  moderate: "CYP2C19 inhibitors (fluoxetine, fluvoxamine), oral contraceptives",
+                  minor: "Cimetidine, disulfiram, grapefruit juice"
+                },
+                dosing: {
+                  adult: "2-10 mg PO 2-4 times daily, 2-10 mg IV/IM",
+                  pediatric: "0.1-0.3 mg/kg/day PO divided 3-4 times daily",
+                  geriatric: "Start with lower doses, 1-2 mg PO 2-3 times daily",
+                  renal: "No adjustment needed for mild-moderate impairment",
+                  hepatic: "Reduce dose by 50% in severe hepatic impairment"
+                },
+                monitoring: {
+                  laboratory: "Liver function tests, CBC with prolonged use",
+                  clinical: "Respiratory rate, level of consciousness, signs of dependence",
+                  therapeutic: "Therapeutic drug monitoring not routinely required"
+                },
+                pregnancyCategory: "D",
+                breastfeeding: "Excreted in breast milk, avoid or use with caution",
+                blackBoxWarnings: "Concomitant use with opioids may result in profound sedation, respiratory depression, coma, and death",
+                mechanismDetails: "Binds to specific sites on GABAA receptor complex, increasing frequency of chloride channel opening, hyperpolarizing the neuron and reducing excitability",
+                clinicalPharmacology: "Onset of action: 15-30 minutes PO, 1-5 minutes IV. Duration: 3-8 hours. Tolerance develops with chronic use. Withdrawal syndrome can occur with abrupt discontinuation."
               },
                {
                 name: "Alprazolam",
@@ -2337,4 +2663,392 @@ export const drugTreeData: DrugClass[] = [
       }
     ]
   },
+  {
+    name: "Antimicrobial Drugs",
+    pharmaFocus: "Critical for treating infections, includes antibiotics, antifungals, antivirals, and antiparasitics.",
+    subclasses: [
+      {
+        name: "Antibiotics",
+        pharmaFocus: "Beta-lactams, macrolides, fluoroquinolones, and other antibiotic classes.",
+        subclasses: [
+          {
+            name: "Beta-Lactam Antibiotics",
+            drugs: [
+              {
+                name: "Penicillin G",
+                classification: "Natural Penicillin",
+                moa: "Inhibits bacterial cell wall synthesis by binding to penicillin-binding proteins, causing cell lysis.",
+                therapeuticUses: "Streptococcal infections, syphilis, endocarditis, meningitis.",
+                adrs: "Allergic reactions, diarrhea, nausea, superinfection.",
+                contraindications: "Known penicillin allergy, severe hypersensitivity reactions.",
+                pharmaApplications: {
+                  dosageForms: "Injection (powder for reconstitution), continuous infusion.",
+                  formulations: "Penicillin G Potassium, Penicillin G Sodium.",
+                  storage: "Refrigerate, protect from light, use within 24 hours of reconstitution.",
+                },
+                analyticalMethods: {
+                  qualitative: "Microbiological assay, HPLC.",
+                  quantitative: "HPLC with UV detection, microbiological assay.",
+                  pharmacopoeial: "USP, BP, EP.",
+                },
+                specialNotes: "First antibiotic discovered. High risk of allergic reactions. Short half-life requires frequent dosing.",
+                pharmacokinetics: {
+                  absorption: "Not absorbed orally, must be given IV/IM",
+                  distribution: "Widely distributed, crosses blood-brain barrier when meninges inflamed",
+                  metabolism: "Minimal hepatic metabolism",
+                  elimination: "60-90% renal elimination",
+                  halfLife: "0.5-1 hour"
+                },
+                drugInteractions: {
+                  major: "Probenecid (increases levels), warfarin (increases bleeding risk)",
+                  moderate: "Methotrexate (may increase levels)",
+                  minor: "Oral contraceptives (may decrease effectiveness)"
+                },
+                dosing: {
+                  adult: "2-24 million units/day IV in divided doses",
+                  pediatric: "100,000-400,000 units/kg/day IV in divided doses",
+                  geriatric: "Reduce dose in renal impairment",
+                  renal: "Adjust based on CrCl: CrCl >50: normal dose; CrCl 10-50: reduce by 25%; CrCl <10: reduce by 50%",
+                  hepatic: "No adjustment needed"
+                },
+                monitoring: {
+                  laboratory: "CBC, renal function, cultures",
+                  clinical: "Signs of allergic reaction, superinfection",
+                  therapeutic: "Clinical response, culture results"
+                },
+                pregnancyCategory: "B",
+                breastfeeding: "Excreted in breast milk, use with caution",
+                blackBoxWarnings: "Severe and occasionally fatal anaphylactic reactions",
+                mechanismDetails: "Binds to penicillin-binding proteins (PBPs), inhibiting transpeptidase activity, preventing cross-linking of peptidoglycan chains in bacterial cell wall",
+                clinicalPharmacology: "Bactericidal, time-dependent killing. Peak effect at 1-2 hours. Resistance develops through beta-lactamase production or PBP modification."
+              },
+              {
+                name: "Amoxicillin",
+                classification: "Aminopenicillin",
+                moa: "Inhibits bacterial cell wall synthesis by binding to penicillin-binding proteins.",
+                therapeuticUses: "Respiratory tract infections, urinary tract infections, skin infections, H. pylori eradication.",
+                adrs: "Diarrhea, nausea, rash, allergic reactions.",
+                contraindications: "Known penicillin allergy, infectious mononucleosis (high risk of rash).",
+                pharmaApplications: {
+                  dosageForms: "Capsules (250mg, 500mg), tablets, suspension, injection.",
+                  formulations: "Amoxil, Trimox, Moxatag (extended-release).",
+                  storage: "Store at room temperature, refrigerate suspension after reconstitution.",
+                },
+                analyticalMethods: {
+                  qualitative: "HPLC, LC-MS/MS.",
+                  quantitative: "HPLC with UV detection.",
+                  pharmacopoeial: "USP, BP, EP.",
+                },
+                specialNotes: "Broad-spectrum penicillin, acid-stable. Often combined with clavulanate for beta-lactamase protection.",
+                pharmacokinetics: {
+                  absorption: "75-90% absorbed from GI tract, not affected by food",
+                  distribution: "20% protein bound, good tissue penetration",
+                  metabolism: "Minimal hepatic metabolism",
+                  elimination: "60% renal elimination",
+                  halfLife: "1-1.5 hours"
+                },
+                drugInteractions: {
+                  major: "Probenecid (increases levels), methotrexate (may increase levels)",
+                  moderate: "Warfarin (may increase bleeding risk)",
+                  minor: "Oral contraceptives (may decrease effectiveness)"
+                },
+                dosing: {
+                  adult: "250-500 mg PO every 8 hours",
+                  pediatric: "20-40 mg/kg/day PO divided every 8 hours",
+                  geriatric: "Normal adult dose",
+                  renal: "CrCl 10-30: 250-500 mg every 12 hours; CrCl <10: 250-500 mg every 24 hours",
+                  hepatic: "No adjustment needed"
+                },
+                monitoring: {
+                  laboratory: "CBC, renal function",
+                  clinical: "Signs of allergic reaction, superinfection",
+                  therapeutic: "Clinical response"
+                },
+                pregnancyCategory: "B",
+                breastfeeding: "Excreted in breast milk, use with caution"
+              }
+            ]
+          },
+          {
+            name: "Macrolides",
+            drugs: [
+              {
+                name: "Azithromycin",
+                classification: "Macrolide Antibiotic",
+                moa: "Binds to 50S ribosomal subunit, inhibiting bacterial protein synthesis.",
+                therapeuticUses: "Respiratory tract infections, skin infections, sexually transmitted diseases, atypical pneumonia.",
+                adrs: "GI upset, diarrhea, QT prolongation, hepatotoxicity.",
+                contraindications: "Known hypersensitivity, concurrent use with pimozide.",
+                pharmaApplications: {
+                  dosageForms: "Tablets (250mg, 500mg), suspension, injection.",
+                  formulations: "Zithromax, Z-Pak.",
+                  storage: "Store at room temperature, protect from light.",
+                },
+                analyticalMethods: {
+                  qualitative: "HPLC, LC-MS/MS.",
+                  quantitative: "HPLC with UV detection.",
+                  pharmacopoeial: "USP, BP.",
+                },
+                specialNotes: "Long half-life allows once-daily dosing. Excellent tissue penetration. May cause QT prolongation.",
+                pharmacokinetics: {
+                  absorption: "37% absorbed from GI tract, food decreases absorption",
+                  distribution: "7-50% protein bound, excellent tissue penetration",
+                  metabolism: "Hepatic metabolism minimal",
+                  elimination: "Primarily biliary, 6% renal",
+                  halfLife: "68 hours (tissue), 11-14 hours (serum)"
+                },
+                drugInteractions: {
+                  major: "Pimozide (contraindicated), warfarin (increases bleeding risk)",
+                  moderate: "Digoxin (may increase levels), cyclosporine (may increase levels)",
+                  minor: "Antacids (decrease absorption)"
+                },
+                dosing: {
+                  adult: "500 mg PO day 1, then 250 mg daily for 4 days",
+                  pediatric: "10 mg/kg PO day 1, then 5 mg/kg daily for 4 days",
+                  geriatric: "Normal adult dose",
+                  renal: "No adjustment needed",
+                  hepatic: "Use with caution in severe impairment"
+                },
+                monitoring: {
+                  laboratory: "LFTs, ECG (QT interval)",
+                  clinical: "Signs of hepatotoxicity, cardiac arrhythmias",
+                  therapeutic: "Clinical response"
+                },
+                pregnancyCategory: "B",
+                breastfeeding: "Excreted in breast milk, use with caution",
+                blackBoxWarnings: "May cause QT prolongation and torsades de pointes"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: "Endocrine System Drugs",
+    pharmaFocus: "Hormones and drugs affecting endocrine function, including diabetes medications and thyroid drugs.",
+    subclasses: [
+      {
+        name: "Diabetes Medications",
+        pharmaFocus: "Insulin and oral antidiabetic drugs for diabetes management.",
+        subclasses: [
+          {
+            name: "Insulin",
+            drugs: [
+              {
+                name: "Insulin Glargine",
+                classification: "Long-Acting Insulin Analog",
+                moa: "Binds to insulin receptors, promoting glucose uptake and storage, while inhibiting glucose production.",
+                therapeuticUses: "Type 1 diabetes, Type 2 diabetes (basal insulin therapy).",
+                adrs: "Hypoglycemia, injection site reactions, weight gain, lipodystrophy.",
+                contraindications: "Hypoglycemia, hypersensitivity to insulin glargine.",
+                pharmaApplications: {
+                  dosageForms: "Injection (100 units/mL), prefilled pens.",
+                  formulations: "Lantus, Basaglar, Toujeo (concentrated).",
+                  storage: "Refrigerate unopened vials, room temperature for opened vials (28 days).",
+                },
+                analyticalMethods: {
+                  qualitative: "HPLC, LC-MS/MS.",
+                  quantitative: "HPLC with UV detection.",
+                  pharmacopoeial: "USP, BP, EP.",
+                },
+                specialNotes: "Once-daily dosing, peakless profile. Never mix with other insulins. Rotate injection sites.",
+                pharmacokinetics: {
+                  absorption: "Slow, sustained absorption from subcutaneous tissue",
+                  distribution: "Binds to insulin receptors throughout body",
+                  metabolism: "Hepatic and renal metabolism",
+                  elimination: "Renal elimination of metabolites",
+                  halfLife: "12-24 hours"
+                },
+                drugInteractions: {
+                  major: "Beta-blockers (may mask hypoglycemia symptoms)",
+                  moderate: "Corticosteroids (may increase glucose levels)",
+                  minor: "Thiazide diuretics (may increase glucose levels)"
+                },
+                dosing: {
+                  adult: "0.2-0.4 units/kg/day, adjust based on glucose levels",
+                  pediatric: "0.5-1 unit/kg/day",
+                  geriatric: "Start with lower doses",
+                  renal: "Monitor glucose closely, may need dose reduction",
+                  hepatic: "Monitor glucose closely, may need dose reduction"
+                },
+                monitoring: {
+                  laboratory: "Blood glucose, HbA1c, ketones",
+                  clinical: "Signs of hypoglycemia, injection sites",
+                  therapeutic: "Blood glucose monitoring, HbA1c every 3 months"
+                },
+                pregnancyCategory: "B",
+                breastfeeding: "Safe during breastfeeding",
+                blackBoxWarnings: "Never administer IV or IM, may cause severe hypoglycemia"
+              }
+            ]
+          },
+          {
+            name: "Biguanides",
+            drugs: [
+              {
+                name: "Metformin",
+                classification: "Biguanide",
+                moa: "Decreases hepatic glucose production, increases peripheral glucose uptake, improves insulin sensitivity.",
+                therapeuticUses: "Type 2 diabetes (first-line therapy), prediabetes, PCOS.",
+                adrs: "GI upset, metallic taste, lactic acidosis (rare), vitamin B12 deficiency.",
+                contraindications: "Severe renal impairment, severe hepatic impairment, heart failure, metabolic acidosis.",
+                pharmaApplications: {
+                  dosageForms: "Tablets (500mg, 850mg, 1000mg), extended-release tablets.",
+                  formulations: "Glucophage, Fortamet, Glumetza.",
+                  storage: "Store at room temperature, protect from moisture.",
+                },
+                analyticalMethods: {
+                  qualitative: "HPLC, LC-MS/MS.",
+                  quantitative: "HPLC with UV detection.",
+                  pharmacopoeial: "USP, BP, EP.",
+                },
+                specialNotes: "First-line therapy for Type 2 diabetes. May cause lactic acidosis in high-risk patients. Take with food to reduce GI upset.",
+                pharmacokinetics: {
+                  absorption: "50-60% absorbed from GI tract",
+                  distribution: "Minimal protein binding, does not bind to tissues",
+                  metabolism: "Not metabolized, excreted unchanged",
+                  elimination: "100% renal elimination",
+                  halfLife: "6.2 hours"
+                },
+                drugInteractions: {
+                  major: "Contrast media (increases risk of lactic acidosis)",
+                  moderate: "Cimetidine (increases levels), alcohol (increases risk of lactic acidosis)",
+                  minor: "Furosemide (may decrease levels)"
+                },
+                dosing: {
+                  adult: "500-1000 mg PO twice daily with meals",
+                  pediatric: "Not recommended <10 years",
+                  geriatric: "Start with lower doses, monitor renal function",
+                  renal: "CrCl 30-60: max 1000 mg daily; CrCl <30: contraindicated",
+                  hepatic: "Contraindicated in severe impairment"
+                },
+                monitoring: {
+                  laboratory: "Renal function, B12 levels, lactate levels",
+                  clinical: "Signs of lactic acidosis, GI symptoms",
+                  therapeutic: "Blood glucose, HbA1c"
+                },
+                pregnancyCategory: "B",
+                breastfeeding: "Excreted in breast milk, use with caution",
+                blackBoxWarnings: "Lactic acidosis is a rare but serious complication"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: "Pain Management Drugs",
+    pharmaFocus: "Analgesics and pain management medications, including opioids and NSAIDs.",
+    subclasses: [
+      {
+        name: "Opioids",
+        pharmaFocus: "Controlled substances for severe pain management.",
+        subclasses: [
+          {
+            name: "Morphine",
+            drugs: [
+              {
+                name: "Morphine Sulfate",
+                classification: "Opioid Agonist",
+                moa: "Binds to mu-opioid receptors in CNS, inhibiting pain transmission and producing analgesia.",
+                therapeuticUses: "Severe pain, acute pain, chronic pain, palliative care.",
+                adrs: "Respiratory depression, sedation, constipation, nausea, dependence.",
+                contraindications: "Respiratory depression, severe asthma, paralytic ileus.",
+                pharmaApplications: {
+                  dosageForms: "Tablets, capsules, injection, suppositories, extended-release tablets.",
+                  formulations: "MS Contin, Kadian, Roxanol, Duramorph.",
+                  storage: "Store at room temperature, protect from light, secure storage required.",
+                },
+                analyticalMethods: {
+                  qualitative: "HPLC, LC-MS/MS, GC-MS.",
+                  quantitative: "HPLC with UV detection.",
+                  pharmacopoeial: "USP, BP, EP.",
+                },
+                specialNotes: "Gold standard for pain management. High potential for abuse and dependence. Monitor respiratory function closely.",
+                pharmacokinetics: {
+                  absorption: "Variable oral absorption (15-64%), first-pass metabolism",
+                  distribution: "35% protein bound, crosses blood-brain barrier",
+                  metabolism: "Hepatic via glucuronidation to active metabolites",
+                  elimination: "90% renal elimination",
+                  halfLife: "2-3 hours"
+                },
+                drugInteractions: {
+                  major: "CNS depressants (alcohol, benzodiazepines), MAOIs",
+                  moderate: "CYP3A4 inhibitors (may increase levels)",
+                  minor: "Anticholinergics (may increase constipation)"
+                },
+                dosing: {
+                  adult: "10-30 mg PO every 4 hours, 2-10 mg IV every 4 hours",
+                  pediatric: "0.2-0.5 mg/kg PO every 4 hours",
+                  geriatric: "Start with 50% of adult dose",
+                  renal: "Reduce dose by 50-75%",
+                  hepatic: "Reduce dose by 50%"
+                },
+                monitoring: {
+                  laboratory: "None routinely required",
+                  clinical: "Respiratory rate, level of consciousness, pain scores",
+                  therapeutic: "Pain assessment, respiratory monitoring"
+                },
+                pregnancyCategory: "C",
+                breastfeeding: "Excreted in breast milk, avoid",
+                blackBoxWarnings: "High potential for abuse, respiratory depression, addiction, overdose, and death"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "NSAIDs",
+        drugs: [
+          {
+            name: "Ibuprofen",
+            classification: "NSAID",
+            moa: "Inhibits cyclooxygenase (COX) enzymes, reducing prostaglandin synthesis and inflammation.",
+            therapeuticUses: "Pain, inflammation, fever, arthritis, dysmenorrhea.",
+            adrs: "GI upset, peptic ulcers, cardiovascular events, renal impairment.",
+            contraindications: "Active peptic ulcer, severe heart failure, severe renal impairment.",
+            pharmaApplications: {
+              dosageForms: "Tablets (200mg, 400mg, 600mg, 800mg), suspension, injection.",
+              formulations: "Advil, Motrin, Brufen, Caldolor (injection).",
+              storage: "Store at room temperature, protect from light.",
+            },
+            analyticalMethods: {
+              qualitative: "HPLC, LC-MS/MS.",
+              quantitative: "HPLC with UV detection.",
+              pharmacopoeial: "USP, BP, EP.",
+            },
+            specialNotes: "Take with food to reduce GI upset. Increased cardiovascular risk with long-term use. Shortest half-life among NSAIDs.",
+            pharmacokinetics: {
+              absorption: "80% absorbed from GI tract, peak 1-2 hours",
+              distribution: "99% protein bound",
+              metabolism: "Hepatic via CYP2C9 and CYP2C19",
+              elimination: "90% renal elimination",
+              halfLife: "2-4 hours"
+            },
+            drugInteractions: {
+              major: "Warfarin (increases bleeding risk), lithium (increases levels)",
+              moderate: "ACE inhibitors (decreases effectiveness), diuretics (decreases effectiveness)",
+              minor: "Methotrexate (may increase levels)"
+            },
+            dosing: {
+              adult: "200-400 mg PO every 4-6 hours (max 3200 mg/day)",
+              pediatric: "5-10 mg/kg PO every 6-8 hours",
+              geriatric: "Start with lower doses",
+              renal: "CrCl <30: avoid or use with caution",
+              hepatic: "Use with caution in severe impairment"
+            },
+            monitoring: {
+              laboratory: "Renal function, CBC, LFTs with long-term use",
+              clinical: "Signs of GI bleeding, cardiovascular events",
+              therapeutic: "Pain relief, inflammation reduction"
+            },
+            pregnancyCategory: "D (third trimester)",
+            breastfeeding: "Excreted in breast milk, use with caution"
+          }
+        ]
+      }
+    ]
+  }
 ];

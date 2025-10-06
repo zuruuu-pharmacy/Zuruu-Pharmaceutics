@@ -9,8 +9,8 @@
  * - IvRateCalculatorOutput - The return type for the function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
+import { generateStructuredResponse } from '@/ai/working-ai';
 
 const IvRateCalculatorInputSchema = z.object({
   totalVolumeMl: z.coerce.number().positive('Total volume must be a positive number.'),
@@ -28,53 +28,27 @@ const IvRateCalculatorOutputSchema = z.object({
 export type IvRateCalculatorOutput = z.infer<typeof IvRateCalculatorOutputSchema>;
 
 export async function ivRateCalculator(input: IvRateCalculatorInput): Promise<IvRateCalculatorOutput> {
-  return ivRateCalculatorFlow(input);
+  const prompt = `You are an expert pharmacist calculating IV infusion rates.
+
+**Input:**
+- Total Volume: ${input.totalVolumeMl} mL
+- Total Time: ${input.totalTimeMinutes} minutes
+- Drop Factor: ${input.dropFactorGttMl} gtt/mL
+
+**Instructions:**
+1. Calculate infusion rate in mL/hour: (Volume ÷ Time) × 60
+2. Calculate drops per minute: (Volume ÷ Time) × Drop Factor
+3. Show all calculation steps clearly for both formulas
+4. Round mL/hour to 1 decimal place
+5. Round drops/minute to nearest whole number
+
+**Respond ONLY with this JSON format:**
+{
+  "infusionRateMlHr": "XX.X mL/hour",
+  "dropsPerMinute": "XX gtt/min",
+  "mlHrCalculationSteps": "Step-by-step calculation for mL/hour",
+  "gttMinCalculationSteps": "Step-by-step calculation for drops/minute"
+}`;
+
+  return generateStructuredResponse<IvRateCalculatorOutput>(prompt);
 }
-
-
-const prompt = ai.definePrompt({
-  name: 'ivRateCalculatorPrompt',
-  input: {schema: IvRateCalculatorInputSchema},
-  output: {schema: IvRateCalculatorOutputSchema},
-  model: 'googleai/gemini-1.5-flash',
-  prompt: `You are an expert pharmacist specializing in IV infusion calculations. Your task is to perform the calculations with extreme precision and show all your work.
-
-**Infusion Parameters:**
-- Total Volume: {{{totalVolumeMl}}} mL
-- Total Time: {{{totalTimeMinutes}}} minutes
-- Drop Factor: {{{dropFactorGttMl}}} gtt/mL
-
-**Part 1: Calculate Infusion Rate in mL/hour**
-
-1.  **Convert Time:** First, convert the total infusion time from minutes to hours.
-    -   Formula: Time (hr) = Time (min) / 60
-2.  **Calculate Rate:** Now, calculate the rate in mL/hr.
-    -   Formula: Rate (mL/hr) = Total Volume (mL) / Time (hr)
-3.  **Result:** Round the final answer to one decimal place.
-4.  **Show Work:** Combine these steps into a clear, readable 'mlHrCalculationSteps' string.
-
-**Part 2: Calculate Drop Rate in drops/minute**
-
-1.  **Calculate Rate:** First, calculate the infusion rate in mL/minute.
-    -   Formula: Rate (mL/min) = Total Volume (mL) / Total Time (min)
-2.  **Calculate Drop Rate:** Now, calculate the drops per minute.
-    -   Formula: Drops/min = Rate (mL/min) × Drop Factor (gtt/mL)
-3.  **Result:** Round the final answer to the nearest whole number, as you cannot have a fraction of a drop.
-4.  **Show Work:** Combine these steps into a clear, readable 'gttMinCalculationSteps' string.
-
-Respond ONLY in the structured JSON format defined by the output schema.
-`,
-});
-
-
-const ivRateCalculatorFlow = ai.defineFlow(
-  {
-    name: 'ivRateCalculatorFlow',
-    inputSchema: IvRateCalculatorInputSchema,
-    outputSchema: IvRateCalculatorOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
-  }
-);

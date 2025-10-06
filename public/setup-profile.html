@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Setup Profile - Mohsin Saleem</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #f5f5f5;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .step { 
+            background: #f8f9fa; 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .button { 
+            background: #007bff; 
+            color: white; 
+            padding: 12px 24px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin: 10px 5px;
+            font-size: 16px;
+        }
+        .button:hover { background: #0056b3; }
+        .button.success { background: #28a745; }
+        .button.warning { background: #ffc107; color: #000; }
+        #preview { 
+            max-width: 200px; 
+            border-radius: 50%; 
+            margin: 20px 0; 
+            border: 3px solid #007bff;
+        }
+        .instructions {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .file-info {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👨‍⚕️ Setup Profile - Mohsin Saleem</h1>
+        <p>Welcome! Let's set up your profile picture and CV download.</p>
+        
+        <div class="step">
+            <h3>📸 Step 1: Profile Picture Setup</h3>
+            <div class="instructions">
+                <strong>Current Status:</strong> You need to add your professional headshot (the same one from your resume)
+            </div>
+            
+            <input type="file" id="imageInput" accept="image/*">
+            <button class="button" onclick="previewImage()">Preview Image</button>
+            <button class="button success" onclick="downloadProfilePic()">Download as profile-picture.jpg</button>
+            
+            <div id="imagePreview"></div>
+        </div>
+        
+        <div class="step">
+            <h3>📄 Step 2: CV Setup</h3>
+            <div class="instructions">
+                <strong>Current Status:</strong> You need to add your resume PDF (the one with your professional headshot)
+            </div>
+            
+            <input type="file" id="cvInput" accept=".pdf">
+            <button class="button" onclick="downloadCV()">Download as mohsin-saleem-cv.pdf</button>
+            
+            <div class="file-info">
+                <strong>File should be named:</strong> mohsin-saleem-cv.pdf<br>
+                <strong>Location:</strong> public folder<br>
+                <strong>Contains:</strong> Your resume with professional headshot
+            </div>
+        </div>
+        
+        <div class="step">
+            <h3>✅ Step 3: Final Setup</h3>
+            <div class="instructions">
+                <strong>What to do:</strong>
+                <ol>
+                    <li>Download both files using the buttons above</li>
+                    <li>Save them in: <code>C:\Users\hp\Music\hi hi\studio\public\</code></li>
+                    <li>Make sure filenames are exactly: <code>profile-picture.jpg</code> and <code>mohsin-saleem-cv.pdf</code></li>
+                    <li>Go to <a href="/" target="_blank">http://localhost:9002</a> to see your profile!</li>
+                </ol>
+            </div>
+            
+            <button class="button success" onclick="testProfile()">Test Profile Menu</button>
+        </div>
+        
+        <div class="step">
+            <h3>🎯 What Will Happen</h3>
+            <ul>
+                <li>✅ Your professional headshot will appear in the circular avatar</li>
+                <li>✅ Clicking "My CV" will download your resume PDF</li>
+                <li>✅ The profile menu will work perfectly</li>
+                <li>✅ Everything will look professional and polished</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let selectedImage = null;
+        let selectedCV = null;
+        
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                selectedImage = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').innerHTML = 
+                        '<img id="preview" src="' + e.target.result + '" style="max-width: 200px; border-radius: 50%; margin: 20px 0; border: 3px solid #007bff;">';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        document.getElementById('cvInput').addEventListener('change', function(e) {
+            selectedCV = e.target.files[0];
+        });
+        
+        function previewImage() {
+            if (selectedImage) {
+                alert('Image preview is shown above!');
+            } else {
+                alert('Please select an image first!');
+            }
+        }
+        
+        function downloadProfilePic() {
+            if (!selectedImage) {
+                alert('Please select an image first!');
+                return;
+            }
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            img.onload = function() {
+                canvas.width = 400;
+                canvas.height = 400;
+                
+                // Create circular crop
+                ctx.beginPath();
+                ctx.arc(200, 200, 200, 0, 2 * Math.PI);
+                ctx.clip();
+                
+                ctx.drawImage(img, 0, 0, 400, 400);
+                
+                canvas.toBlob(function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'profile-picture.jpg';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    alert('✅ Profile picture downloaded! Save it in the public folder.');
+                }, 'image/jpeg', 0.9);
+            };
+            
+            img.src = URL.createObjectURL(selectedImage);
+        }
+        
+        function downloadCV() {
+            if (!selectedCV) {
+                alert('Please select your CV PDF first!');
+                return;
+            }
+            
+            const url = URL.createObjectURL(selectedCV);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'mohsin-saleem-cv.pdf';
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('✅ CV downloaded! Save it in the public folder.');
+        }
+        
+        function testProfile() {
+            window.open('/', '_blank');
+        }
+    </script>
+</body>
+</html>

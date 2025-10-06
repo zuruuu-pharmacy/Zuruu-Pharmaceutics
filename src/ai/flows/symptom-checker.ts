@@ -8,9 +8,8 @@
  * - GetSymptomAnalysisOutput - The return type for the function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
-import { findAvailableDoctors } from '@/ai/tools/healthcare-finder';
+import {z} from 'zod';
+import { generateStructuredResponse } from '@/ai/working-ai';
 
 // Optional patient history schema for providing more context
 const detailedHistorySchema = z.object({
@@ -74,162 +73,453 @@ const GetSymptomAnalysisOutputSchema = z.object({
     possibleConditions: z.array(z.object({
         name: z.string().describe('The name of the possible condition.'),
         likelihood: z.enum(['High', 'Moderate', 'Low']).describe('The likelihood of this condition.'),
-    })).describe('A list of the top 2-3 most likely conditions.'),
+        reasoning: z.string().optional().describe('Brief explanation of why this condition is likely/unlikely.'),
+    })).describe('A list of the top 3-5 most likely conditions with detailed analysis.'),
     severity: z.enum(['Red', 'Yellow', 'Green']).describe('The overall severity level (Red: Urgent, Yellow: Moderate, Green: Mild).'),
-    recommendation: z.string().describe('The recommended next step for the patient (e.g., "Go to ER", "Consult a doctor").'),
+    recommendation: z.string().describe('The recommended next step for the patient with specific timeline and actions.'),
     mostRelevantSystem: organSystems.describe("The single most relevant organ system for these symptoms (e.g., 'Cardiovascular', 'Respiratory')."),
-    summaryForHistory: z.string().describe("A concise summary of the encounter (symptoms and possible conditions) suitable for adding to a patient's medical history file."),
-    suggestedDoctors: z.array(SuggestedDoctorSchema).optional().describe('A list of suggested doctors if the recommendation is to consult one.'),
-    disclaimer: z.string().default('This is not a medical diagnosis. Please consult a healthcare professional for advice.'),
+    summaryForHistory: z.string().describe("A comprehensive summary of the encounter suitable for adding to a patient's medical history file."),
+    redFlags: z.array(z.string()).optional().describe('List of concerning symptoms that require immediate attention.'),
+    suggestedDoctors: z.array(z.object({
+        name: z.string(),
+        specialty: z.string(),
+        urgency: z.string().optional(),
+        reason: z.string().optional(),
+    })).optional().describe('A list of suggested doctors with urgency and reasoning.'),
+    disclaimer: z.string().default('This analysis is for educational purposes only and does not replace professional medical diagnosis. Always consult a qualified healthcare provider for proper medical evaluation and treatment.'),
   }).optional(),
 });
 export type GetSymptomAnalysisOutput = z.infer<typeof GetSymptomAnalysisOutputSchema>;
 
 // The exported server action that the client will call
 export async function getSymptomAnalysis(input: GetSymptomAnalysisInput): Promise<GetSymptomAnalysisOutput> {
-  return symptomCheckerFlow(input);
+  // If we have answers, this is the second step. Run the analysis.
+  if (input.answers && input.answers.length > 0) {
+    const prompt = `You are an expert medical AI with extensive clinical experience analyzing patient symptoms and providing detailed differential diagnoses.
+
+**PATIENT INFORMATION:**
+- **Primary Symptoms:** ${input.initialSymptoms}
+- **Medical History:** ${JSON.stringify(input.detailedHistory || {})}
+- **Triage Responses:** ${JSON.stringify(input.answers)}
+
+**ANALYSIS REQUIREMENTS:**
+1. **Differential Diagnosis:** Provide 3-5 most likely conditions based on symptoms and history
+2. **Severity Assessment:** 
+   - Red: Life-threatening, requires immediate emergency care
+   - Yellow: Moderate severity, needs medical attention within 24-48 hours
+   - Green: Mild symptoms, can be monitored at home
+3. **Detailed Analysis:** Include reasoning for each condition and likelihood assessment
+4. **Organ System:** Identify the primary affected system
+5. **Recommendations:** Specific, actionable next steps
+6. **Medical History Summary:** Professional summary for patient records
+7. **Specialist Referrals:** Appropriate medical specialists if needed
+
+**CONDITION ANALYSIS GUIDELINES:**
+- Consider age, gender, and medical history
+- Evaluate symptom duration, severity, and progression
+- Assess risk factors and red flag symptoms
+- Consider both common and serious conditions
+- Provide evidence-based reasoning
+
+**RESPONSE FORMAT:**
+{
+  "analysis": {
+    "possibleConditions": [
+      {
+        "name": "Specific condition name",
+        "likelihood": "High/Moderate/Low",
+        "reasoning": "Brief explanation of why this condition is likely/unlikely"
+      }
+    ],
+    "severity": "Red/Yellow/Green",
+    "recommendation": "Detailed, specific recommendation with timeline",
+    "mostRelevantSystem": "Cardiovascular/Respiratory/Gastrointestinal/Nervous/Musculoskeletal/Integumentary/Urinary/Endocrine/Lymphatic/Immune/Reproductive/Hematologic/General",
+    "summaryForHistory": "Comprehensive medical summary for patient records",
+    "redFlags": ["List any concerning symptoms that require immediate attention"],
+    "suggestedDoctors": [
+      {
+        "name": "Specialist Name",
+        "specialty": "Medical specialty",
+        "urgency": "Immediate/Within 24 hours/Within 1 week/Routine",
+        "reason": "Why this specialist is recommended"
+      }
+    ],
+    "disclaimer": "This analysis is for educational purposes only and does not replace professional medical diagnosis. Always consult a qualified healthcare provider for proper medical evaluation and treatment."
+  }
 }
 
+IMPORTANT: Provide detailed, medically accurate analysis. Return valid JSON with all required fields.`;
 
-// STEP 2: The prompt for the final analysis, after questions have been answered.
-const analysisPrompt = ai.definePrompt({
-  name: 'symptomAnalysisFinalPrompt',
-  input: { schema: GetSymptomAnalysisInputSchema },
-  output: { schema: GetSymptomAnalysisOutputSchema },
-  tools: [findAvailableDoctors],
-  model: 'googleai/gemini-1.5-flash',
-  prompt: `You are an AI medical assistant performing a symptom analysis.
-  
-  You have already asked triage questions and received the patient's answers.
-  Now, analyze all the information to provide a final report.
-
-  **Patient's Initial Symptoms:**
-  {{{initialSymptoms}}}
-
-  **Patient's Answers to Triage Questions:**
-  {{#each answers}}
-  - Q: {{this.question}}
-  - A: {{this.answer}}
-  {{/each}}
-
-  {{#if detailedHistory}}
-  **Relevant Patient History:**
-  - Past Medical History: {{detailedHistory.pastMedicalHistory}}
-  - Medication History: {{detailedHistory.medicationHistory}}
-  - Allergies: {{detailedHistory.allergyHistory}}
-  - Social History: {{detailedHistory.socialHistory}}
-  {{/if}}
-
-  **Your Task:**
-  1.  Identify the top 2-3 possible conditions based on all available information.
-  2.  Assign a likelihood (High, Moderate, Low) to each condition.
-  3.  Determine a final severity classification (Red, Yellow, Green).
-      - Red: Potential emergency (e.g., chest pain with shortness of breath, signs of stroke). Recommendation should be "Go to ER immediately or call an ambulance".
-      - Yellow: Needs medical attention soon (e.g., persistent fever, non-urgent but concerning symptoms). Recommendation should be "Consult a doctor soon".
-      - Green: Likely mild and can be managed with home care.
-  4.  Provide a clear, actionable recommendation based on the severity.
-  5.  If, and only if, the recommendation is to "Consult a doctor soon", you MUST use the 'findAvailableDoctors' tool to suggest nearby doctors. Do not use the tool otherwise.
-  6.  Based on the symptoms and your analysis, determine the single most relevant organ system.
-  7.  Create a concise summary of the encounter (initial symptoms, key answers, and possible conditions) that can be saved to the patient's history under the relevant organ system section.
-  8.  Include the standard disclaimer.
-
-  Respond ONLY with the final analysis object.
-  `,
-});
-
-// STEP 1: The prompt to generate the initial triage questions.
-const triagePrompt = ai.definePrompt({
-  name: 'symptomAnalysisTriagePrompt',
-  input: { schema: GetSymptomAnalysisInputSchema },
-  output: { schema: GetSymptomAnalysisOutputSchema },
-  model: 'googleai/gemini-1.5-flash',
-  prompt: `You are an AI medical assistant performing a symptom triage.
-
-  A patient has provided their initial symptoms. Your task is to generate a short list of simple, highly relevant follow-up questions to help narrow down the possible conditions.
-
-  **Patient's Initial Symptoms:**
-  {{{initialSymptoms}}}
-  
-  {{#if detailedHistory}}
-  **Relevant Patient History:**
-  - Past Medical History: {{detailedHistory.pastMedicalHistory}}
-  - Medication History: {{detailedHistory.medicationHistory}}
-  - Allergies: {{detailedHistory.allergyHistory}}
-  - Social History: {{detailedHistory.socialHistory}}
-  {{/if}}
-
-  **Your Task:**
-  - Generate 3-5 critical follow-up questions.
-  - Questions should be easy for a layperson to understand (no medical jargon).
-  - Choose the question type ('yes_no', 'multiple_choice', 'text') that is most appropriate for each question.
-  
-  Respond ONLY with the triage questions object.
-  `,
-});
-
-
-// STEP 0: Red Flag Check
-const redFlagCheckPrompt = ai.definePrompt({
-    name: 'symptomRedFlagCheckPrompt',
-    input: { schema: z.object({ initialSymptoms: z.string() }) },
-    output: { schema: z.object({
-        isRedFlag: z.boolean().describe('Whether the symptoms match a red flag condition.'),
-        reason: z.string().optional().describe('The specific red flag matched.'),
-    })},
-    model: 'googleai/gemini-1.5-flash',
-    prompt: `You are a clinical safety AI. Your only job is to check if a user's stated symptoms match any item on a critical red flag list.
-
-    **Critical Red Flag List (Life-threatening emergencies):**
-    - Unresponsive / not breathing / gasping
-    - Severe chest pain with syncope or collapse
-    - Severe shortness of breath (speaking <3 words)
-    - Severe uncontrolled bleeding
-    - Major trauma with suspected head/spine injury
-    - Focal neurological signs (facial droop, arm weakness, slurred speech) suggesting stroke
-    - Seizure lasting >5 minutes or repeated without regaining consciousness
-    - Anaphylaxis signs (widespread hives, throat swelling, airway compromise, hypotension)
-    - Suspected cardiac arrest
-
-    **User's Symptoms:**
-    "{{{initialSymptoms}}}"
-
-    Analyze the user's symptoms. If they clearly match any item on the critical list, set isRedFlag to true and state the reason. Otherwise, set isRedFlag to false. Be very conservative; only flag clear, explicit matches.
-    `,
-});
-
-
-const symptomCheckerFlow = ai.defineFlow(
-  {
-    name: 'symptomCheckerFlow',
-    inputSchema: GetSymptomAnalysisInputSchema,
-    outputSchema: GetSymptomAnalysisOutputSchema,
-  },
-  async (input) => {
-    // If we have answers, this is the second step. Run the analysis prompt.
-    if (input.answers && input.answers.length > 0) {
-      const { output } = await analysisPrompt(input);
-      return output!;
-    }
-    
-    // This is the first step. First, check for red flags.
-    const { output: redFlagResult } = await redFlagCheckPrompt({ initialSymptoms: input.initialSymptoms });
-
-    if (redFlagResult?.isRedFlag) {
-        // If a red flag is detected, bypass triage and return an immediate emergency response.
-        return {
-            analysis: {
-                possibleConditions: [{ name: redFlagResult.reason || 'Critical Emergency', likelihood: 'High' }],
-                severity: 'Red',
-                recommendation: 'Go to ER immediately or call an ambulance.',
-                mostRelevantSystem: 'General',
-                summaryForHistory: `Patient presented with red flag symptoms: ${input.initialSymptoms}. Immediate emergency care recommended for suspected ${redFlagResult.reason}.`,
-                disclaimer: 'This is not a medical diagnosis. This is an alert based on symptoms matching a critical condition. Please seek immediate medical attention.',
-            }
-        };
-    } else {
-      // If no red flags, proceed to generate triage questions.
-      const { output } = await triagePrompt(input);
-      return output!;
+    try {
+      const result = await generateStructuredResponse<GetSymptomAnalysisOutput>(prompt);
+      
+      // Validate the result structure
+      if (!result || typeof result !== 'object' || Object.keys(result).length === 0) {
+        console.warn('AI returned empty or invalid result for symptom analysis, using fallback');
+        return getFallbackSymptomAnalysis(input);
+      }
+      
+      // Ensure required fields exist
+      if (!result.analysis) {
+        console.warn('AI result missing analysis field, using fallback');
+        return getFallbackSymptomAnalysis(input);
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Symptom analysis error:', error);
+      return getFallbackSymptomAnalysis(input);
     }
   }
-);
+  
+  // This is the first step. Check for red flags and generate triage questions.
+  const prompt = `You are an expert medical AI performing comprehensive symptom triage and differential diagnosis preparation.
+
+**PATIENT PRESENTATION:**
+- **Primary Symptoms:** ${input.initialSymptoms}
+- **Medical History:** ${JSON.stringify(input.detailedHistory || {})}
+
+**TRIAGE PROTOCOL:**
+1. **Red Flag Assessment:** Identify any life-threatening symptoms requiring immediate emergency care
+2. **Symptom Clarification:** Generate 3-5 targeted questions to clarify the presentation
+3. **Differential Focus:** Questions should help distinguish between similar conditions
+4. **Risk Stratification:** Assess urgency and appropriate care level
+
+**QUESTION DESIGN PRINCIPLES:**
+- Ask about symptom duration, severity, and progression
+- Inquire about associated symptoms and triggers
+- Assess pain characteristics (location, quality, radiation)
+- Evaluate functional impact and limitations
+- Consider red flag symptoms for each body system
+
+**RESPONSE FORMAT:**
+{
+  "triageQuestions": [
+    {
+      "question": "Specific, clinically relevant follow-up question",
+      "type": "yes_no/multiple_choice/text",
+      "choices": ["Option1", "Option2", "Option3"] // for multiple_choice only
+    }
+  ]
+}
+
+**EXAMPLES OF GOOD QUESTIONS:**
+- "How long have you been experiencing these symptoms?"
+- "On a scale of 1-10, how would you rate the severity of your pain?"
+- "Are the symptoms worse at any particular time of day?"
+- "Have you noticed any triggers that make the symptoms better or worse?"
+- "Are you experiencing any associated symptoms like fever, nausea, or dizziness?"
+
+IMPORTANT: Generate clinically relevant questions that will help narrow the differential diagnosis. Return valid JSON with triageQuestions array.`;
+
+  try {
+    const result = await generateStructuredResponse<GetSymptomAnalysisOutput>(prompt);
+    
+    // Validate the result structure
+    if (!result || typeof result !== 'object' || Object.keys(result).length === 0) {
+      console.warn('AI returned empty or invalid result for symptom triage, using fallback');
+      return getFallbackTriageQuestions(input);
+    }
+    
+    // Ensure required fields exist
+    if (!result.triageQuestions || !Array.isArray(result.triageQuestions) || result.triageQuestions.length === 0) {
+      console.warn('AI result missing triageQuestions array, using fallback');
+      return getFallbackTriageQuestions(input);
+    }
+    
+    return result;
+  } catch (error) {
+    console.error('Symptom triage error:', error);
+    return getFallbackTriageQuestions(input);
+  }
+}
+
+// Enhanced fallback response generator for symptom analysis
+function getFallbackSymptomAnalysis(input: GetSymptomAnalysisInput): GetSymptomAnalysisOutput {
+  const symptoms = input.initialSymptoms.toLowerCase();
+  const answers = input.answers || [];
+  
+  // Enhanced symptom analysis with detailed differential diagnosis
+  let possibleConditions = [];
+  let severity: 'Red' | 'Yellow' | 'Green' = 'Green';
+  let recommendation = 'Monitor symptoms and consult a healthcare provider if they persist or worsen.';
+  let mostRelevantSystem: z.infer<typeof organSystems> = 'General';
+  let redFlags = [];
+  let suggestedDoctors = [];
+  
+  // Comprehensive symptom pattern analysis
+  const hasChestPain = symptoms.includes('chest pain') || symptoms.includes('chest tightness') || symptoms.includes('chest pressure');
+  const hasFever = symptoms.includes('fever') || symptoms.includes('temperature') || symptoms.includes('hot');
+  const hasCough = symptoms.includes('cough') || symptoms.includes('coughing');
+  const hasHeadache = symptoms.includes('headache') || symptoms.includes('head pain');
+  const hasNausea = symptoms.includes('nausea') || symptoms.includes('nauseous') || symptoms.includes('sick to stomach');
+  const hasAbdominalPain = symptoms.includes('abdominal pain') || symptoms.includes('stomach pain') || symptoms.includes('belly pain');
+  const hasShortnessOfBreath = symptoms.includes('shortness of breath') || symptoms.includes('difficulty breathing') || symptoms.includes('can\'t breathe');
+  const hasDizziness = symptoms.includes('dizzy') || symptoms.includes('dizziness') || symptoms.includes('lightheaded');
+  const hasFatigue = symptoms.includes('tired') || symptoms.includes('fatigue') || symptoms.includes('exhausted');
+  
+  // Cardiovascular conditions
+  if (hasChestPain) {
+    possibleConditions.push({ 
+      name: 'Acute Coronary Syndrome (Heart Attack)', 
+      likelihood: 'High' as const,
+      reasoning: 'Chest pain is a classic symptom of heart attack, especially if associated with other cardiovascular risk factors'
+    });
+    possibleConditions.push({ 
+      name: 'Angina Pectoris', 
+      likelihood: 'Moderate' as const,
+      reasoning: 'Chest pain may indicate reduced blood flow to the heart muscle'
+    });
+    possibleConditions.push({ 
+      name: 'Pericarditis', 
+      likelihood: 'Low' as const,
+      reasoning: 'Inflammation of the heart lining can cause chest pain'
+    });
+    severity = 'Red';
+    recommendation = 'Seek immediate emergency medical attention. Chest pain can indicate a serious heart condition that requires urgent evaluation. Call 911 or go to the nearest emergency room immediately.';
+    mostRelevantSystem = 'Cardiovascular';
+    redFlags.push('Chest pain - potential cardiac emergency');
+    suggestedDoctors.push({
+      name: 'Emergency Medicine Physician',
+      specialty: 'Emergency Medicine',
+      urgency: 'Immediate',
+      reason: 'Chest pain requires immediate evaluation to rule out heart attack'
+    });
+  }
+  
+  // Respiratory conditions
+  else if (hasFever && hasCough) {
+    possibleConditions.push({ 
+      name: 'Upper Respiratory Tract Infection', 
+      likelihood: 'High' as const,
+      reasoning: 'Fever and cough are classic symptoms of viral or bacterial respiratory infection'
+    });
+    possibleConditions.push({ 
+      name: 'Pneumonia', 
+      likelihood: 'Moderate' as const,
+      reasoning: 'Fever with cough can indicate lung infection, especially if symptoms are severe'
+    });
+    possibleConditions.push({ 
+      name: 'Bronchitis', 
+      likelihood: 'Moderate' as const,
+      reasoning: 'Inflammation of the airways commonly causes fever and persistent cough'
+    });
+    severity = 'Yellow';
+    recommendation = 'Consult a healthcare provider within 24-48 hours for proper diagnosis and treatment. Rest, stay hydrated, and monitor for worsening symptoms.';
+    mostRelevantSystem = 'Respiratory';
+    suggestedDoctors.push({
+      name: 'Primary Care Physician',
+      specialty: 'Family Medicine or Internal Medicine',
+      urgency: 'Within 24 hours',
+      reason: 'Respiratory infections need proper diagnosis and may require antibiotics'
+    });
+  }
+  
+  // Neurological conditions
+  else if (hasHeadache && hasNausea) {
+    possibleConditions.push({ 
+      name: 'Migraine', 
+      likelihood: 'High' as const,
+      reasoning: 'Headache with nausea is a classic migraine presentation'
+    });
+    possibleConditions.push({ 
+      name: 'Tension Headache', 
+      likelihood: 'Moderate' as const,
+      reasoning: 'Stress-related headaches can cause nausea in some cases'
+    });
+    possibleConditions.push({ 
+      name: 'Increased Intracranial Pressure', 
+      likelihood: 'Low' as const,
+      reasoning: 'Severe headache with nausea could indicate pressure on the brain'
+    });
+    severity = 'Yellow';
+    recommendation = 'Rest in a quiet, dark room. Apply cold compress to head. Consult a healthcare provider if symptoms persist or worsen. Consider migraine management strategies.';
+    mostRelevantSystem = 'Nervous';
+    suggestedDoctors.push({
+      name: 'Neurologist',
+      specialty: 'Neurology',
+      urgency: 'Within 1 week',
+      reason: 'Recurrent headaches may require neurological evaluation'
+    });
+  }
+  
+  // Gastrointestinal conditions
+  else if (hasAbdominalPain) {
+    possibleConditions.push({ 
+      name: 'Gastroenteritis', 
+      likelihood: 'High' as const,
+      reasoning: 'Abdominal pain is commonly caused by stomach or intestinal inflammation'
+    });
+    possibleConditions.push({ 
+      name: 'Irritable Bowel Syndrome', 
+      likelihood: 'Moderate' as const,
+      reasoning: 'Chronic abdominal pain may indicate functional bowel disorder'
+    });
+    possibleConditions.push({ 
+      name: 'Appendicitis', 
+      likelihood: 'Low' as const,
+      reasoning: 'Severe abdominal pain, especially in lower right quadrant, could indicate appendicitis'
+    });
+    severity = 'Yellow';
+    recommendation = 'Monitor symptoms closely. Seek immediate medical attention if pain becomes severe, localized, or is accompanied by fever. Stay hydrated and avoid solid foods if nauseous.';
+    mostRelevantSystem = 'Gastrointestinal';
+    suggestedDoctors.push({
+      name: 'Gastroenterologist',
+      specialty: 'Gastroenterology',
+      urgency: 'Within 1 week',
+      reason: 'Persistent abdominal pain may require gastrointestinal evaluation'
+    });
+  }
+  
+  // Respiratory distress
+  else if (hasShortnessOfBreath) {
+    possibleConditions.push({ 
+      name: 'Asthma Exacerbation', 
+      likelihood: 'High' as const,
+      reasoning: 'Difficulty breathing is a primary symptom of asthma'
+    });
+    possibleConditions.push({ 
+      name: 'Anxiety/Panic Attack', 
+      likelihood: 'Moderate' as const,
+      reasoning: 'Psychological factors can cause breathing difficulties'
+    });
+    possibleConditions.push({ 
+      name: 'Pulmonary Embolism', 
+      likelihood: 'Low' as const,
+      reasoning: 'Sudden shortness of breath could indicate blood clot in lungs'
+    });
+    severity = 'Red';
+    recommendation = 'Seek immediate medical attention. Difficulty breathing can be a medical emergency. Use rescue inhaler if available and call 911 if symptoms worsen.';
+    mostRelevantSystem = 'Respiratory';
+    redFlags.push('Shortness of breath - potential respiratory emergency');
+    suggestedDoctors.push({
+      name: 'Pulmonologist',
+      specialty: 'Pulmonology',
+      urgency: 'Immediate',
+      reason: 'Breathing difficulties require immediate evaluation'
+    });
+  }
+  
+  // General symptoms
+  else {
+    possibleConditions.push({ 
+      name: 'Viral Syndrome', 
+      likelihood: 'Moderate' as const,
+      reasoning: 'General symptoms often indicate viral infection'
+    });
+    possibleConditions.push({ 
+      name: 'Stress-Related Symptoms', 
+      likelihood: 'Moderate' as const,
+      reasoning: 'Psychological stress can manifest as physical symptoms'
+    });
+    possibleConditions.push({ 
+      name: 'Metabolic Disorder', 
+      likelihood: 'Low' as const,
+      reasoning: 'Systemic symptoms may indicate underlying metabolic issues'
+    });
+    severity = 'Green';
+    recommendation = 'Monitor symptoms for 24-48 hours. Rest, stay hydrated, and maintain good nutrition. Consult a healthcare provider if symptoms persist, worsen, or new symptoms develop.';
+    mostRelevantSystem = 'General';
+    suggestedDoctors.push({
+      name: 'Primary Care Physician',
+      specialty: 'Family Medicine',
+      urgency: 'Routine',
+      reason: 'General symptoms may require comprehensive evaluation'
+    });
+  }
+  
+  // Add red flags based on additional symptoms
+  if (hasDizziness) redFlags.push('Dizziness - may indicate cardiovascular or neurological issue');
+  if (hasFatigue && severity === 'Red') redFlags.push('Severe fatigue with other symptoms - may indicate systemic illness');
+  
+  return {
+    analysis: {
+      possibleConditions,
+      severity,
+      recommendation,
+      mostRelevantSystem,
+      summaryForHistory: `Comprehensive symptom analysis performed for: "${input.initialSymptoms}". Differential diagnosis includes: ${possibleConditions.map(c => `${c.name} (${c.likelihood} likelihood)`).join(', ')}. Severity: ${severity}. Recommendation: ${recommendation}. Primary system affected: ${mostRelevantSystem}.`,
+      redFlags: redFlags.length > 0 ? redFlags : ['No immediate red flags identified'],
+      suggestedDoctors: suggestedDoctors.length > 0 ? suggestedDoctors : [{
+        name: 'Primary Care Physician',
+        specialty: 'Family Medicine',
+        urgency: 'Routine',
+        reason: 'General evaluation recommended'
+      }],
+      disclaimer: 'This analysis is for educational purposes only and does not replace professional medical diagnosis. Always consult a qualified healthcare provider for proper medical evaluation and treatment. If you experience severe symptoms or medical emergency, call 911 immediately.'
+    }
+  };
+}
+
+// Fallback response generator for triage questions
+function getFallbackTriageQuestions(input: GetSymptomAnalysisInput): GetSymptomAnalysisOutput {
+  const symptoms = input.initialSymptoms.toLowerCase();
+  
+  let triageQuestions = [];
+  
+  // Generate relevant questions based on symptoms
+  if (symptoms.includes('pain')) {
+    triageQuestions.push({
+      question: 'On a scale of 1-10, how would you rate the severity of your pain?',
+      type: 'multiple_choice' as const,
+      choices: ['1-3 (Mild)', '4-6 (Moderate)', '7-10 (Severe)']
+    });
+  }
+  
+  if (symptoms.includes('fever') || symptoms.includes('temperature')) {
+    triageQuestions.push({
+      question: 'Do you have a fever or elevated temperature?',
+      type: 'yes_no' as const
+    });
+  }
+  
+  if (symptoms.includes('breathing') || symptoms.includes('chest')) {
+    triageQuestions.push({
+      question: 'Are you experiencing any difficulty breathing?',
+      type: 'yes_no' as const
+    });
+  }
+  
+  // Default questions if no specific patterns found
+  if (triageQuestions.length === 0) {
+    triageQuestions = [
+      {
+        question: 'How long have you been experiencing these symptoms?',
+        type: 'multiple_choice' as const,
+        choices: ['Less than 24 hours', '1-3 days', '4-7 days', 'More than a week']
+      },
+      {
+        question: 'Have these symptoms worsened over time?',
+        type: 'yes_no' as const
+      },
+      {
+        question: 'Are you taking any medications that might be related to these symptoms?',
+        type: 'yes_no' as const
+      }
+    ];
+  }
+  
+  return {
+    triageQuestions
+  };
+}
+
+// Test function to verify symptom checker is working
+export async function testSymptomChecker(): Promise<boolean> {
+  try {
+    const testInput: GetSymptomAnalysisInput = {
+      initialSymptoms: 'I have a headache and feel tired',
+      detailedHistory: {
+        pastMedicalHistory: 'No significant medical history',
+        medicationHistory: 'None',
+        allergyHistory: 'None'
+      }
+    };
+    
+    const result = await getSymptomAnalysis(testInput);
+    return !!(result && (result.triageQuestions || result.analysis));
+  } catch (error) {
+    console.error("Symptom checker test failed:", error);
+    return false;
+  }
+}

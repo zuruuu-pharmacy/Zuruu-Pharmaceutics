@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Profile Picture</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+        canvas { border: 2px solid #007bff; border-radius: 50%; margin: 20px; }
+        button { background: #007bff; color: white; padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 18px; margin: 10px; }
+        button:hover { background: #0056b3; }
+        .instructions { background: #f0f8ff; padding: 20px; margin: 20px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🖼️ Create Your Profile Picture</h1>
+    
+    <div class="instructions">
+        <h3>This will create a professional profile picture for you!</h3>
+        <p>Click the button below to create and download your profile picture.</p>
+    </div>
+    
+    <canvas id="canvas" width="400" height="400"></canvas>
+    <br>
+    <button onclick="createAndDownload()">Create & Download Profile Picture</button>
+    
+    <div class="instructions">
+        <h3>After downloading:</h3>
+        <ol style="text-align: left; max-width: 500px; margin: 0 auto;">
+            <li>Save the downloaded file as <strong>profile-picture.jpg</strong></li>
+            <li>Put it in: <code>C:\Users\hp\Music\hi hi\studio\public\</code></li>
+            <li>Go to <a href="/" target="_blank">http://localhost:9002</a> to see it!</li>
+        </ol>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Create a professional gradient background
+        const gradient = ctx.createLinearGradient(0, 0, 400, 400);
+        gradient.addColorStop(0, '#667eea');
+        gradient.addColorStop(1, '#764ba2');
+        
+        // Fill the circle
+        ctx.beginPath();
+        ctx.arc(200, 200, 200, 0, 2 * Math.PI);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        
+        // Add professional styling
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 8;
+        ctx.stroke();
+        
+        // Add initials "MS" for Mohsin Saleem
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 120px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('MS', 200, 200);
+        
+        // Add a subtle shadow effect
+        ctx.shadowColor = 'rgba(0,0,0,0.3)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 5;
+        ctx.shadowOffsetY = 5;
+        
+        function createAndDownload() {
+            // Create a new canvas for download
+            const downloadCanvas = document.createElement('canvas');
+            const downloadCtx = downloadCanvas.getContext('2d');
+            downloadCanvas.width = 400;
+            downloadCanvas.height = 400;
+            
+            // Copy the current canvas
+            downloadCtx.drawImage(canvas, 0, 0);
+            
+            // Download as JPG
+            downloadCanvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'profile-picture.jpg';
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                alert('✅ Profile picture downloaded! Now save it in the public folder.');
+            }, 'image/jpeg', 0.9);
+        }
+    </script>
+</body>
+</html>

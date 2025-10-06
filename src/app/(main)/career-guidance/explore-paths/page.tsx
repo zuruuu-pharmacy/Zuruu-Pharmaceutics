@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Briefcase, Building, Hospital, FlaskConical, Book, UserTie, BrainCircuit, Rocket, Activity, CheckCircle, GraduationCap, Star, BarChart, HardHat, Link as LinkIcon, DollarSign } from "lucide-react";
+import { Briefcase, Building, Hospital, FlaskConical, Book, User, BrainCircuit, Rocket, Activity, CheckCircle, GraduationCap, Star, BarChart, HardHat, Link as LinkIcon, DollarSign } from "lucide-react";
 import { BackButton } from "@/components/back-button";
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
