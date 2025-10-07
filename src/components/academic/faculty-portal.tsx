@@ -6,10 +6,10 @@ import {
   Users, GraduationCap, BookOpen, Microscope, FileText, Calendar, MessageSquare,
   Plus, Search, Filter, Edit, Trash2, Eye, Download, Upload, CheckCircle, XCircle,
   AlertTriangle, Star, Target, TrendingUp, BarChart3, Clock, Settings, Save,
-  RefreshCw, Share2, Lock, Unlock, Copy, ExternalLink, Play, Pause, Stop, Zap,
+  RefreshCw, Share2, Lock, Unlock, Copy, ExternalLink, Play, Pause, Square, Zap,
   Bell, Heart, Globe, Building, Award, TestTube, FlaskConical, Atom, Brain,
   Database, DollarSign, Clipboard, Video, Camera, Headphones, Monitor, Smartphone,
-  Tablet, UserCheck, UserPlus, Mail, Phone, MapPin, Briefcase, Trophy
+  Tablet, UserCheck, UserPlus, Mail, Phone, MapPin, Briefcase, Trophy, Linkedin
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -210,7 +210,7 @@ const generateMockFaculty = (id: number): Faculty => {
     degree: faker.helpers.arrayElement(['PhD', 'Master', 'Bachelor']),
     field: faker.helpers.arrayElement(['Computer Science', 'Biology', 'Chemistry', 'Physics', 'Mathematics']),
     year: faker.number.int({ min: 1990, max: 2020 }),
-    gpa: faker.number.float({ min: 3.0, max: 4.0, precision: 0.1 })
+    gpa: faker.number.float({ min: 3.0, max: 4.0, fractionDigits: 0.1 })
   }));
   
   const experience: Experience[] = Array.from({ length: faker.number.int({ min: 3, max: 8 }) }).map(() => ({
@@ -250,7 +250,7 @@ const generateMockFaculty = (id: number): Faculty => {
     year: faker.number.int({ min: 2010, max: 2024 }),
     doi: faker.internet.url(),
     citations: faker.number.int({ min: 0, max: 500 }),
-    impactFactor: faker.number.float({ min: 1.0, max: 10.0, precision: 0.1 }),
+    impactFactor: faker.number.float({ min: 1.0, max: 10.0, fractionDigits: 0.1 }),
     type: faker.helpers.arrayElement(['Journal Article', 'Conference Paper', 'Book Chapter', 'Patent', 'Other'])
   }));
   
@@ -330,7 +330,7 @@ const generateMockFaculty = (id: number): Faculty => {
       teaching: {
         coursesTaught: faker.number.int({ min: 5, max: 50 }),
         studentsTaught: faker.number.int({ min: 100, max: 2000 }),
-        averageRating: faker.number.float({ min: 3.0, max: 5.0, precision: 0.1 }),
+        averageRating: faker.number.float({ min: 3.0, max: 5.0, fractionDigits: 0.1 }),
         evaluations: faker.number.int({ min: 10, max: 100 }),
         innovations: faker.number.int({ min: 0, max: 20 })
       },
@@ -350,10 +350,10 @@ const generateMockFaculty = (id: number): Faculty => {
         communityService: faker.number.int({ min: 0, max: 50 })
       },
       overall: {
-        performanceScore: faker.number.float({ min: 70, max: 100, precision: 0.1 }),
-        productivityIndex: faker.number.float({ min: 60, max: 100, precision: 0.1 }),
-        impactScore: faker.number.float({ min: 50, max: 100, precision: 0.1 }),
-        collaborationScore: faker.number.float({ min: 60, max: 100, precision: 0.1 })
+        performanceScore: faker.number.float({ min: 70, max: 100, fractionDigits: 0.1 }),
+        productivityIndex: faker.number.float({ min: 60, max: 100, fractionDigits: 0.1 }),
+        impactScore: faker.number.float({ min: 50, max: 100, fractionDigits: 0.1 }),
+        collaborationScore: faker.number.float({ min: 60, max: 100, fractionDigits: 0.1 })
       }
     },
     createdAt: faker.date.past({ years: 10 }),

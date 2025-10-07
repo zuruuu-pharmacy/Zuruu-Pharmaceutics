@@ -7,7 +7,7 @@ import {
   Award, TrendingUp, BarChart3, PieChart, LineChart, Activity, Target, Clock, CheckCircle,
   AlertTriangle, Edit, Trash2, Eye, Star, Heart, MessageSquare, Bell, Settings, Zap,
   Microscope, FlaskConical, TestTube, Atom, Brain, Database, Globe, Lock, Unlock,
-  RefreshCw, Save, Send, Archive, Tag, Link, Copy, ExternalLink, Play, Pause, Stop,
+  RefreshCw, Save, Send, Archive, Tag, Link, Copy, ExternalLink, Play, Pause, Square,
   DollarSign
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -156,7 +156,7 @@ const generateMockResearchProject = (id: number): ResearchProject => {
     year: faker.number.int({ min: 2020, max: 2024 }),
     doi: faker.internet.url(),
     status: faker.helpers.arrayElement(['Draft', 'Submitted', 'Under Review', 'Accepted', 'Published']),
-    impactFactor: faker.number.float({ min: 1, max: 50, precision: 0.1 }),
+    impactFactor: faker.number.float({ min: 1, max: 50, fractionDigits: 0.1 }),
     citations: faker.number.int({ min: 0, max: 500 })
   }));
 

@@ -11,7 +11,7 @@ import {
   Gavel, Lock, Key, CheckSquare, Square as SquareIcon, Play as PlayIcon, Pause as PauseIcon,
   Square as SquareIcon2, Send, Share2, Image, Video, FileText, Printer, BarChart3,
   PieChart, LineChart, Activity as ActivityIcon, Search, Filter, Plus, Edit, Trash2,
-  Eye, Download, Upload, Bell, DollarSign, Star, Heart, Award
+  Eye, Download, Upload, Save, Bell, DollarSign, Star, Heart, Award
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

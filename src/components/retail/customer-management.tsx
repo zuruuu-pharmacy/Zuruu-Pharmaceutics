@@ -530,7 +530,7 @@ export default function CustomerManagement() {
                   <Avatar className="w-20 h-20">
                     <AvatarImage src={selectedCustomer.avatar} />
                     <AvatarFallback className="text-lg">
-                      {selectedCustomer.name.split(' ').map(n => n[0]).join('')}
+                      {selectedCustomer.name.split(' ').map((n: string) => n[0]).join('')}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
@@ -595,7 +595,7 @@ export default function CustomerManagement() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
-                        {selectedCustomer.preferences.map((pref, index) => (
+                        {selectedCustomer.preferences.map((pref: string, index: number) => (
                           <Badge key={index} variant="outline" className="mr-2">
                             {pref}
                             </Badge>

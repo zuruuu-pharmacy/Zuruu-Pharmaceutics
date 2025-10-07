@@ -3,14 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Microscope, TestTube, Beaker, Flask, Droplet, Thermometer, Bandage, X, Plus as PlusIcon,
+  Microscope, TestTube, Beaker, FlaskConical, Droplet, Thermometer, Bandage, X, Plus as PlusIcon,
   TrendingUp, TrendingDown, ArrowUp, ArrowDown, Minus, Percent, Tag,
   MapPin, ShoppingCart, Package, Globe, Wifi, Layers, Archive, Truck,
   Box, Megaphone, Building, Clipboard, BookOpen, Scale, Gavel, Lock,
   Key, CheckSquare, Square, Play, Pause, Send, Share2, Image, Video,
   FileText, Printer, BarChart3, PieChart, LineChart, Activity as ActivityIcon,
   Search, Filter, Plus, Edit, Trash2, Eye, Download, Upload, Settings, Bell,
-  Target, Zap, RefreshCw, RotateCcw, QrCode, ScanLine, Barcode, Database,
+  Zap, RefreshCw, RotateCcw, QrCode, ScanLine, Barcode, Database,
   Network, Cpu, Brain, Activity as ActivityIcon2, TrendingUp as TrendingUpIcon,
   TrendingDown as TrendingDownIcon, ArrowUp as ArrowUpIcon, ArrowDown as ArrowDownIcon,
   Minus as MinusIcon, Percent as PercentIcon, Tag as TagIcon, MapPin as MapPinIcon,
@@ -26,9 +26,9 @@ import {
   AlertTriangle as AlertTriangleIcon, Clock as ClockIcon, Calendar, User, Users as UsersIcon,
   DollarSign, Star, Award, Phone, Mail, MessageSquare, Camera, Mic, Headphones,
   Volume2, VolumeX, Wifi as WifiIcon2, Battery, Signal, Bluetooth, Hospital,
-  UserCheck, UserPlus, UserMinus, UserX, UserEdit, UserSearch, UserSettings,
+  UserCheck, UserPlus, UserMinus, UserX, UserSearch,
   Map, Navigation, Compass, Home, Building2, Building as BuildingIcon2,
-  Ambulance, Siren, Zap as ZapIcon, Flame, Skull, Cross, FirstAid, Heart,
+  Ambulance, Siren, Zap as ZapIcon, Flame, Skull, Cross, Heart,
   Shield, Stethoscope, AlertTriangle, Activity, Clock, Users, Target, Pill, Syringe
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

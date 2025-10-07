@@ -6,7 +6,7 @@ import {
   Lightbulb, Rocket, Target, TrendingUp, BarChart3, Plus, Search, Filter,
   Edit, Trash2, Eye, Download, Upload, CheckCircle, XCircle, AlertTriangle,
   Star, Clock, Settings, Save, RefreshCw, Share2, Lock, Unlock, Copy,
-  ExternalLink, Play, Pause, Stop, Zap, Bell, MessageSquare, Heart, Globe,
+  ExternalLink, Play, Pause, Square, Zap, Bell, MessageSquare, Heart, Globe,
   Building, Award, Microscope, FlaskConical, TestTube, Atom, Brain, Database,
   DollarSign, GraduationCap, BookOpen, Users, Calendar, FileText, Shield,
   Gavel, Scale, DollarSign as DollarSignIcon, Briefcase, PieChart, LineChart
@@ -169,8 +169,8 @@ const generateMockInnovation = (id: number): Innovation => {
     marketSize: faker.number.int({ min: 1000000, max: 10000000000 }),
     targetMarket: faker.lorem.words(3),
     competitors: Array.from({ length: faker.number.int({ min: 2, max: 6 }) }).map(() => faker.company.name()),
-    marketShare: faker.number.float({ min: 0.1, max: 25, precision: 0.1 }),
-    growthRate: faker.number.float({ min: 5, max: 50, precision: 0.1 }),
+    marketShare: faker.number.float({ min: 0.1, max: 25, fractionDigits: 0.1 }),
+    growthRate: faker.number.float({ min: 5, max: 50, fractionDigits: 0.1 }),
     barriers: Array.from({ length: faker.number.int({ min: 2, max: 5 }) }).map(() => faker.lorem.sentence()),
     opportunities: Array.from({ length: faker.number.int({ min: 2, max: 5 }) }).map(() => faker.lorem.sentence())
   };

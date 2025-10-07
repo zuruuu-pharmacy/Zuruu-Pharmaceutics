@@ -147,7 +147,7 @@ export function OsceVivaPrepClient() {
       
       try {
         if (mode === 'qgen') {
-            const result = await generateQuestions({ topic: topic });
+            const result = await generateQuestions({ topic: topic, count: 5 });
             return result;
         }
 

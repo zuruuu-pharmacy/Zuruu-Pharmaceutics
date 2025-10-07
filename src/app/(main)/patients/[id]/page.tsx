@@ -113,12 +113,12 @@ export default function PatientViewPage() {
                     {section.fields ? (
                         <div className="grid md:grid-cols-2 gap-x-8 gap-y-4">
                             {section.fields.map(field => {
-                                if (field.sensitive && mode === 'student') return null;
+                                if ('sensitive' in field && field.sensitive && mode === 'student') return null;
                                 const value = history[field.name as keyof PatientHistory];
                                 return value ? (
                                 <div key={field.name}>
                                         <p className="font-semibold">{field.label}</p>
-                                        <p className="text-muted-foreground whitespace-pre-wrap">{value}</p>
+                                        <p className="text-muted-foreground whitespace-pre-wrap">{typeof value === 'string' ? value : JSON.stringify(value, null, 2)}</p>
                                 </div>
                                 ) : null
                             })}
@@ -141,7 +141,10 @@ export default function PatientViewPage() {
                         </div>
                     ) : section.field ? (
                         <p className="text-muted-foreground whitespace-pre-wrap">
-                            {history[section.field as keyof PatientHistory] || 'No information provided.'}
+                            {(() => {
+                                const value = history[section.field as keyof PatientHistory];
+                                return value ? (typeof value === 'string' ? value : JSON.stringify(value, null, 2)) : 'No information provided.';
+                            })()}
                         </p>
                     ) : null}
                     </AccordionContent>

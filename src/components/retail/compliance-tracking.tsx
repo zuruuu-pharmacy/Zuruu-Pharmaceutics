@@ -762,7 +762,7 @@ export default function ComplianceTracking() {
                         <div key={index} className="flex items-center space-x-2">
                           <Checkbox
                             checked={index < selectedRequirement.completed}
-                            readOnly
+                            disabled
                           />
                           <span className="text-sm">{req}</span>
                         </div>

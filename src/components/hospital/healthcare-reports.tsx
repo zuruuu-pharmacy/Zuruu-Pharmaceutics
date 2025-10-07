@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileText, BarChart3, PieChart, LineChart, Download, Printer, Share2, Calendar,
   TrendingUp, TrendingDown, ArrowUp, ArrowDown, Minus, Percent, Tag, MapPin,
-  ShoppingCart, Package, Globe, Wifi, Layers, Archive, Truck, Box, Megaphone,
+  ShoppingCart, Package, Globe, Wifi, Layers, Archive, Box, Megaphone,
   Building, Clipboard, BookOpen, Scale, Gavel, Lock, Key, CheckSquare, Square,
   Play, Pause, Send, Share2 as Share2Icon, Image, Video, Printer as PrinterIcon,
   BarChart3 as BarChart3Icon, PieChart as PieChartIcon, LineChart as LineChartIcon,
@@ -14,11 +14,11 @@ import {
   Cpu, Brain, CheckCircle, XCircle, AlertTriangle, Clock, Calendar as CalendarIcon,
   User, Users, Star, Award, Phone, Mail, MessageSquare, Camera, Mic, Headphones,
   Volume2, VolumeX, Wifi as WifiIcon, Battery, Signal, Bluetooth, Hospital,
-  UserCheck, UserPlus, UserMinus, UserX, UserEdit, UserSearch, UserSettings, Map,
+  UserCheck, UserPlus, UserMinus, UserX, UserSearch, Map,
   Navigation, Compass, Home, Building2, Ambulance, Siren, Zap, Flame, Skull, Cross,
-  FirstAid, Heart, Shield, Stethoscope, Monitor, HardDrive, Wrench, Tool, Cog,
+  Heart, Shield, Stethoscope, Monitor, HardDrive, Wrench, Cog,
   Power, PowerOff, AlertCircle, DollarSign, Target, Pill, Syringe, Microscope,
-  TestTube, Beaker, Flask, Droplet, Thermometer, Bandage, X, Plus as PlusIcon,
+  TestTube, Beaker, FlaskConical, Droplet, Thermometer, Bandage, X, Plus as PlusIcon,
   Truck, Warehouse, ShoppingCart as ShoppingCartIcon
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

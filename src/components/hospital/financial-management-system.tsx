@@ -23,11 +23,11 @@ import {
   Activity as ActivityIcon3, AlertTriangle as AlertTriangleIcon, Clock as ClockIcon,
   Calendar, User, Users as UsersIcon, Star, Award, Phone, Mail, MessageSquare, Camera,
   Mic, Headphones, Volume2, VolumeX, Wifi as WifiIcon2, Battery, Signal, Bluetooth,
-  Hospital, UserCheck, UserPlus, UserMinus, UserX, UserEdit, UserSearch, UserSettings,
+  Hospital, UserCheck, UserPlus, UserMinus, UserX, UserSearch,
   Map, Navigation, Compass, Home, Building2, Building as BuildingIcon2, Ambulance,
-  Siren, Zap, Flame, Skull, Cross, FirstAid, Heart, Shield, AlertTriangle, Activity as ActivityIcon4,
+  Siren, Zap, Flame, Skull, Cross, Heart, Shield, AlertTriangle, Activity as ActivityIcon4,
   Clock as ClockIcon2, Users as UsersIcon2, Target, Pill, Syringe, Microscope, TestTube,
-  Beaker, Flask, Droplet, Thermometer, Bandage, X, Plus as PlusIcon, Wrench, Tool, Cog,
+  Beaker, FlaskConical, Droplet, Thermometer, Bandage, X, Plus as PlusIcon, Wrench, Cog,
   Settings as SettingsIcon, Power, PowerOff, AlertCircle, Stethoscope, Monitor, Cpu as CpuIcon,
   HardDrive, Wifi as WifiIcon3, Battery as BatteryIcon, Signal as SignalIcon,
   Bluetooth as BluetoothIcon, Star as StarIcon, Heart as HeartIcon, Zap as ZapIcon,
@@ -306,7 +306,7 @@ export default function FinancialManagementSystem() {
               value: formatCurrency(financialMetrics.cashFlow),
               change: '+12.5%',
               trend: 'up',
-              icon: Activity,
+              icon: ActivityIcon,
               color: 'from-purple-500 to-violet-500'
             }
           ].map((metric, index) => (
@@ -465,7 +465,7 @@ export default function FinancialManagementSystem() {
               <Card className="shadow-lg border-0">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
-                    <Activity className="w-5 h-5 text-purple-600" />
+                    <ActivityIcon className="w-5 h-5 text-purple-600" />
                     <span>Cash Flow</span>
                   </CardTitle>
                 </CardHeader>
@@ -682,7 +682,7 @@ export default function FinancialManagementSystem() {
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <RechartsBarChart data={expenseCategories}>
+                    <BarChart data={expenseCategories}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="category" />
                       <YAxis />
@@ -690,7 +690,7 @@ export default function FinancialManagementSystem() {
                       <Legend />
                       <Bar dataKey="amount" fill="#10b981" />
                       <Bar dataKey="budget" fill="#3b82f6" />
-                    </RechartsBarChart>
+                    </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>

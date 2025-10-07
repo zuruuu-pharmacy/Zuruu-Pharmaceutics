@@ -7,7 +7,7 @@ import {
   Phone, Mail, Linkedin, Globe, Award, TrendingUp, BarChart3, Plus,
   Search, Filter, Edit, Trash2, Eye, Download, Upload, CheckCircle, XCircle,
   AlertTriangle, Target, Clock, Settings, Save, RefreshCw, Share2, Lock,
-  Unlock, Copy, ExternalLink, Play, Pause, Stop, Zap, Bell, Heart,
+  Unlock, Copy, ExternalLink, Play, Pause, Square, Zap, Bell, Heart,
   Building, Microscope, TestTube, FlaskConical, Atom, Brain, Database,
   DollarSign, BookOpen, FileText, Shield, Gavel, Scale, Clipboard, Video,
   Camera, Headphones, Monitor, Smartphone, Tablet, UserCheck, UserPlus
@@ -172,7 +172,7 @@ const generateMockAlumni = (id: number): Alumni => {
     field: faker.helpers.arrayElement(['Computer Science', 'Biology', 'Chemistry', 'Physics', 'Business']),
     startDate: faker.date.past({ years: 15 }),
     endDate: faker.date.past({ years: 5 }),
-    gpa: faker.number.float({ min: 2.5, max: 4.0, precision: 0.1 })
+    gpa: faker.number.float({ min: 2.5, max: 4.0, fractionDigits: 1 })
   }));
   
   const skills = Array.from({ length: faker.number.int({ min: 5, max: 15 }) }).map(() => faker.lorem.word());

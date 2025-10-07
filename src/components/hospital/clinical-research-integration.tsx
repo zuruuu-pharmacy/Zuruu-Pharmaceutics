@@ -3,20 +3,20 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Microscope, Flask, TestTube, Beaker, FileText, BookOpen, Target, TrendingUp,
+  Microscope, FlaskConical, TestTube, Beaker, FileText, BookOpen, Target, TrendingUp,
   TrendingDown, ArrowUp, ArrowDown, Minus, Percent, Tag, MapPin, ShoppingCart,
-  Package, Globe, Wifi, Layers, Archive, Truck, Box, Megaphone, Building, Clipboard,
+  Package, Globe, Wifi, Layers, Archive, Box, Megaphone, Building, Clipboard,
   Scale, Gavel, Lock, Key, CheckSquare, Square, Play, Pause, Send, Share2, Image,
   Video, Printer, BarChart3, PieChart, LineChart, Activity, Search, Filter, Plus,
   Edit, Trash2, Eye, Download, Upload, Settings, Bell, RefreshCw, RotateCcw, QrCode,
   ScanLine, Barcode, Database, Network, Cpu, Brain, CheckCircle, XCircle, AlertTriangle,
   Clock, Calendar, User, Users, Star, Award, Phone, Mail, MessageSquare, Camera, Mic,
   Headphones, Volume2, VolumeX, Wifi as WifiIcon, Battery, Signal, Bluetooth, Hospital,
-  UserCheck, UserPlus, UserMinus, UserX, UserEdit, UserSearch, UserSettings, Map,
+  UserCheck, UserPlus, UserMinus, UserX, UserSearch, Map,
   Navigation, Compass, Home, Building2, Ambulance, Siren, Zap, Flame, Skull, Cross,
-  FirstAid, Heart, Shield, Stethoscope, Monitor, HardDrive, Wrench, Tool, Cog, Power,
+  Heart, Shield, Stethoscope, Monitor, HardDrive, Wrench, Cog, Power,
   PowerOff, AlertCircle, DollarSign, Target as TargetIcon, Pill, Syringe, Microscope as MicroscopeIcon,
-  TestTube as TestTubeIcon, Beaker as BeakerIcon, Flask as FlaskIcon, Droplet, Thermometer,
+  TestTube as TestTubeIcon, Beaker as BeakerIcon, FlaskConical as FlaskIcon, Droplet, Thermometer,
   Bandage, X, Plus as PlusIcon, Truck, Warehouse, ShoppingCart as ShoppingCartIcon
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

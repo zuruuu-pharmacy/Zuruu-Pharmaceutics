@@ -26,7 +26,7 @@ export function FlashPuzzleClient() {
       const parsed = topicFormSchema.safeParse(Object.fromEntries(formData));
       if (!parsed.success) return { error: "Invalid topic." };
       try {
-        const result = await generateMatchingGame({ topic: parsed.data.topic });
+        const result = await generateMatchingGame({ topic: parsed.data.topic, count: 8 });
         return result;
       } catch (e) {
         return { error: "Failed to generate matching game." };
@@ -47,9 +47,9 @@ export function FlashPuzzleClient() {
   const topicForm = useForm<TopicFormValues>({ resolver: zodResolver(topicFormSchema), defaultValues: { topic: "" } });
 
   useEffect(() => {
-    if (state?.error) {
+    if (state && 'error' in state) {
       toast({ variant: "destructive", title: "Error", description: state.error });
-    } else if (state?.pairs) {
+    } else if (state && 'pairs' in state) {
       // Reset game when new matching game is loaded
       setGameState({ score: 0, matchedPairs: [], selectedItems: [], isComplete: false });
     }
@@ -62,7 +62,7 @@ export function FlashPuzzleClient() {
   });
   
   const handleItemClick = (item: {id: string, text: string, type: 'left' | 'right'}) => {
-    if (!state?.pairs) return;
+    if (!state || !('pairs' in state)) return;
     
     setGameState(prev => {
       const newSelectedItems = [...prev.selectedItems, item];
@@ -110,7 +110,7 @@ export function FlashPuzzleClient() {
     startTransition(() => formAction(new FormData()));
   }
 
-  if (!state?.pairs || state.pairs.length === 0) {
+  if (!state || !('pairs' in state) || state.pairs.length === 0) {
     return (
       <Card className="max-w-xl mx-auto">
         <CardHeader>

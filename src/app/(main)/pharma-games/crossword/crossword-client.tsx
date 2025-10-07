@@ -26,7 +26,7 @@ export function CrosswordClient() {
       const parsed = topicFormSchema.safeParse(Object.fromEntries(formData));
       if (!parsed.success) return { error: "Invalid topic." };
       try {
-        const result = await generateCrossword({ topic: parsed.data.topic });
+        const result = await generateCrossword({ topic: parsed.data.topic, size: 8, wordCount: 10 });
         return result;
       } catch (e) {
         return { error: "Failed to generate crossword." };
@@ -50,9 +50,9 @@ export function CrosswordClient() {
   const topicForm = useForm<TopicFormValues>({ resolver: zodResolver(topicFormSchema), defaultValues: { topic: "" } });
 
   useEffect(() => {
-    if (state?.error) {
+    if (state && 'error' in state) {
       toast({ variant: "destructive", title: "Error", description: state.error });
-    } else if (state?.grid) {
+    } else if (state && 'grid' in state) {
       // Reset game when new crossword is loaded
       setGameState({ 
         score: 0, 
@@ -73,7 +73,7 @@ export function CrosswordClient() {
   });
   
   const handleCellClick = (row: number, col: number) => {
-    if (!state?.grid) return;
+    if (!state || !('grid' in state)) return;
     
     const cell = state.grid[row][col];
     if (!cell.letter) return; // Can't select black cells
@@ -90,7 +90,7 @@ export function CrosswordClient() {
   };
 
   const handleInputSubmit = () => {
-    if (!gameState.selectedCell || !state?.grid) return;
+    if (!gameState.selectedCell || !state || !('grid' in state)) return;
     
     const { row, col } = gameState.selectedCell;
     const cell = state.grid[row][col];
@@ -145,7 +145,7 @@ export function CrosswordClient() {
     startTransition(() => formAction(new FormData()));
   }
 
-  if (!state?.grid || state.grid.length === 0) {
+  if (!state || !('grid' in state) || state.grid.length === 0) {
     return (
       <Card className="max-w-xl mx-auto">
         <CardHeader>

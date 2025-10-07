@@ -10,7 +10,7 @@ import {
   Key, CheckSquare, Square, Play, Pause, Send, Share2, Image, Video,
   FileText, Printer, BarChart3, PieChart, LineChart, Activity as ActivityIcon,
   Search, Filter, Plus, Edit, Trash2, Eye, Download, Upload, Settings, Bell,
-  Target, RefreshCw, RotateCcw, QrCode, ScanLine, Barcode, Database,
+  RefreshCw, RotateCcw, QrCode, ScanLine, Barcode, Database,
   Network, Cpu as CpuIcon, Brain, Activity as ActivityIcon2, TrendingUp as TrendingUpIcon,
   TrendingDown as TrendingDownIcon, ArrowUp as ArrowUpIcon, ArrowDown as ArrowDownIcon,
   Minus as MinusIcon, Percent as PercentIcon, Tag as TagIcon, MapPin as MapPinIcon,
@@ -26,12 +26,12 @@ import {
   AlertTriangle as AlertTriangleIcon, Clock as ClockIcon, Calendar, User, Users as UsersIcon,
   DollarSign, Star, Award, Phone, Mail, MessageSquare, Camera, Mic, Headphones,
   Volume2, VolumeX, Wifi as WifiIcon2, Battery as BatteryIcon, Signal as SignalIcon, Bluetooth as BluetoothIcon, Hospital,
-  UserCheck, UserPlus, UserMinus, UserX, UserEdit, UserSearch, UserSettings,
+  UserCheck, UserPlus, UserMinus, UserX, UserSearch,
   Map, Navigation, Compass, Home, Building2, Building as BuildingIcon2,
-  Ambulance, Siren, Zap as ZapIcon, Flame, Skull, Cross, FirstAid, Heart,
+  Ambulance, Siren, Zap as ZapIcon, Flame, Skull, Cross, Heart,
   Shield, AlertTriangle, Activity as ActivityIcon4, Clock as ClockIcon2, Users as UsersIcon2, Target, Pill, Syringe,
-  Microscope, TestTube, Beaker, Flask, Droplet, Thermometer, Bandage, X, Plus as PlusIcon,
-  Wrench, Tool, Cog, Settings as SettingsIcon, Power, PowerOff, AlertCircle
+  Microscope, TestTube, Beaker, FlaskConical, Droplet, Thermometer, Bandage, X, Plus as PlusIcon,
+  Wrench, Cog, Settings as SettingsIcon, Power, PowerOff, AlertCircle
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -646,7 +646,7 @@ export default function EquipmentMonitoringSystem() {
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <RechartsBarChart data={departmentEquipment}>
+                    <BarChart data={departmentEquipment}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="department" />
                       <YAxis />
@@ -654,7 +654,7 @@ export default function EquipmentMonitoringSystem() {
                       <Legend />
                       <Bar dataKey="operational" fill="#14b8a6" />
                       <Bar dataKey="maintenance" fill="#f59e0b" />
-                    </RechartsBarChart>
+                    </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>

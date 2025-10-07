@@ -5,19 +5,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Smartphone, Heart, Activity, Calendar, Camera, Mic, Phone, Video, MessageSquare,
   TrendingUp, TrendingDown, ArrowUp, ArrowDown, Minus, Percent, Tag, MapPin,
-  ShoppingCart, Package, Globe, Wifi, Layers, Archive, Truck, Box, Megaphone,
+  ShoppingCart, Package, Globe, Wifi, Layers, Archive, Box, Megaphone,
   Building, Clipboard, BookOpen, Scale, Gavel, Lock, Key, CheckSquare, Square,
-  Play, Pause, Send, Share2, Image, Video as VideoIcon, Printer, BarChart3, PieChart,
+  Play, Pause, Send, Share2, Image, Video as VideoIcon, Printer, BarChart3, PieChart, FileText,
   LineChart, Search, Filter, Plus, Edit, Trash2, Eye, Download, Upload, Settings,
   Bell, RefreshCw, RotateCcw, QrCode, ScanLine, Barcode, Database, Network, Cpu,
   Brain, CheckCircle, XCircle, AlertTriangle, Clock, Calendar as CalendarIcon, User,
   Users, Star, Award, Phone as PhoneIcon, Mail, MessageSquare as MessageSquareIcon,
   Camera as CameraIcon, Mic as MicIcon, Headphones, Volume2, VolumeX, Wifi as WifiIcon,
   Battery, Signal, Bluetooth, Hospital, UserCheck, UserPlus, UserMinus, UserX,
-  UserEdit, UserSearch, UserSettings, Map, Navigation, Compass, Home, Building2,
-  Ambulance, Siren, Zap, Flame, Skull, Cross, FirstAid, Heart as HeartIcon, Shield,
-  Stethoscope, Monitor, HardDrive, Wrench, Tool, Cog, Power, PowerOff, AlertCircle,
-  DollarSign, Target, Pill, Syringe, Microscope, TestTube, Beaker, Flask, Droplet,
+  UserSearch, Map, Navigation, Compass, Home, Building2,
+  Ambulance, Siren, Zap, Flame, Skull, Cross, Heart as HeartIcon, Shield,
+  Stethoscope, Monitor, HardDrive, Wrench, Cog, Power, PowerOff, AlertCircle,
+  DollarSign, Target, Pill, Syringe, Microscope, TestTube, Beaker, FlaskConical, Droplet,
   Thermometer, Bandage, X, Plus as PlusIcon, Truck, Warehouse, ShoppingCart as ShoppingCartIcon
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -608,7 +608,7 @@ export default function MobileHealthcareApp() {
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <RechartsBarChart data={mobileFeatures}>
+                    <BarChart data={mobileFeatures}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="name" />
                       <YAxis />
@@ -616,7 +616,7 @@ export default function MobileHealthcareApp() {
                       <Legend />
                       <Bar dataKey="users" fill="#ec4899" />
                       <Bar dataKey="usage" fill="#3b82f6" />
-                    </RechartsBarChart>
+                    </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>

@@ -6,7 +6,7 @@ import {
   FileText, BookOpen, Users, Calendar, Star, TrendingUp, BarChart3, Plus,
   Search, Filter, Edit, Trash2, Eye, Download, Upload, CheckCircle, XCircle,
   AlertTriangle, Target, Clock, Settings, Save, RefreshCw, Share2, Lock,
-  Unlock, Copy, ExternalLink, Play, Pause, Stop, Zap, Bell, MessageSquare,
+  Unlock, Copy, ExternalLink, Play, Pause, Square, Zap, Bell, MessageSquare,
   Heart, Globe, Building, Award, Microscope, FlaskConical, TestTube, Atom,
   Brain, Database, DollarSign, GraduationCap
 } from 'lucide-react';
@@ -130,7 +130,7 @@ const generateMockPublication = (id: number): Publication => {
     abstract: faker.lorem.paragraphs(3),
     authors,
     journal,
-    journalImpact: faker.number.float({ min: 1, max: 50, precision: 0.1 }),
+    journalImpact: faker.number.float({ min: 1, max: 50, fractionDigits: 0.1 }),
     publicationType: type,
     status,
     keywords: Array.from({ length: faker.number.int({ min: 3, max: 8 }) }).map(() => faker.lorem.word()),
@@ -150,7 +150,7 @@ const generateMockPublication = (id: number): Publication => {
     language: 'English',
     openAccess: faker.datatype.boolean(0.6),
     peerReviewed: faker.datatype.boolean(0.9),
-    impactFactor: faker.number.float({ min: 1, max: 50, precision: 0.1 }),
+    impactFactor: faker.number.float({ min: 1, max: 50, fractionDigits: 0.1 }),
     quartile: faker.helpers.arrayElement(['Q1', 'Q2', 'Q3', 'Q4']),
     hIndex: faker.number.int({ min: 1, max: 50 }),
     createdAt: faker.date.past({ years: 3 }),

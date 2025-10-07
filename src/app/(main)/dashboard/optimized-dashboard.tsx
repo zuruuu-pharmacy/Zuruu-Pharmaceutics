@@ -75,7 +75,8 @@ function QuickActionsSkeleton() {
 
 export function OptimizedDashboard() {
   const { mode } = useMode();
-  const { activePatient } = usePatient();
+  const { getActivePatientRecord } = usePatient();
+  const activePatient = getActivePatientRecord()?.history;
 
   return (
     <div className="space-y-8">

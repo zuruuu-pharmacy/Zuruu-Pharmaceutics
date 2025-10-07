@@ -6,7 +6,7 @@ import {
   BarChart3, TrendingUp, TrendingDown, DollarSign, ShoppingCart, Users, Calendar,
   Clock, Target, Star, Award, PieChart, LineChart, BarChart, Activity, Zap,
   Plus, Search, Filter, Edit, Trash2, Eye, Download, Upload, Settings, Save,
-  RefreshCw, Share2, Lock, Unlock, Copy, ExternalLink, Play, Pause, Stop,
+  RefreshCw, Share2, Lock, Unlock, Copy, ExternalLink, Play, Pause, Square,
   Bell, MessageSquare, Heart, Globe, Building, Microscope, TestTube,
   FlaskConical, Atom, Brain, Database, GraduationCap, BookOpen,
   FileText, Shield, Gavel, Scale, Clipboard, Video, Camera, Headphones, Monitor,
@@ -103,22 +103,22 @@ const generateMockSalesData = (id: number): SalesData => {
   const category = faker.helpers.arrayElement(categories);
   const region = faker.helpers.arrayElement(regions);
   
-  const revenue = faker.number.float({ min: 1000, max: 100000, precision: 0.01 });
+  const revenue = faker.number.float({ min: 1000, max: 100000, fractionDigits: 0.01 });
   const orders = faker.number.int({ min: 10, max: 1000 });
   const customers = faker.number.int({ min: 5, max: 800 });
   const averageOrderValue = revenue / orders;
-  const conversionRate = faker.number.float({ min: 1, max: 15, precision: 0.1 });
-  const refunds = faker.number.float({ min: 0, max: revenue * 0.1, precision: 0.01 });
-  const returns = faker.number.float({ min: 0, max: revenue * 0.05, precision: 0.01 });
-  const discounts = faker.number.float({ min: 0, max: revenue * 0.2, precision: 0.01 });
-  const taxes = faker.number.float({ min: 0, max: revenue * 0.1, precision: 0.01 });
-  const shipping = faker.number.float({ min: 0, max: revenue * 0.05, precision: 0.01 });
+  const conversionRate = faker.number.float({ min: 1, max: 15, fractionDigits: 0.1 });
+  const refunds = faker.number.float({ min: 0, max: revenue * 0.1, fractionDigits: 0.01 });
+  const returns = faker.number.float({ min: 0, max: revenue * 0.05, fractionDigits: 0.01 });
+  const discounts = faker.number.float({ min: 0, max: revenue * 0.2, fractionDigits: 0.01 });
+  const taxes = faker.number.float({ min: 0, max: revenue * 0.1, fractionDigits: 0.01 });
+  const shipping = faker.number.float({ min: 0, max: revenue * 0.05, fractionDigits: 0.01 });
   const netRevenue = revenue - refunds - returns;
-  const grossMargin = faker.number.float({ min: 20, max: 80, precision: 0.1 });
+  const grossMargin = faker.number.float({ min: 20, max: 80, fractionDigits: 0.1 });
   
   const trends: TrendData[] = Array.from({ length: 30 }).map((_, i) => ({
     date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000),
-    value: faker.number.float({ min: 1000, max: 10000, precision: 0.01 }),
+    value: faker.number.float({ min: 1000, max: 10000, fractionDigits: 0.01 }),
     type: faker.helpers.arrayElement(['Revenue', 'Orders', 'Customers', 'AOV', 'Conversion'])
   }));
   
@@ -126,10 +126,10 @@ const generateMockSalesData = (id: number): SalesData => {
     id: faker.string.uuid(),
     name: faker.commerce.productName(),
     category: faker.helpers.arrayElement(categories),
-    revenue: faker.number.float({ min: 1000, max: 10000, precision: 0.01 }),
+    revenue: faker.number.float({ min: 1000, max: 10000, fractionDigits: 0.01 }),
     units: faker.number.int({ min: 10, max: 500 }),
-    margin: faker.number.float({ min: 10, max: 60, precision: 0.1 }),
-    growth: faker.number.float({ min: -20, max: 50, precision: 0.1 }),
+    margin: faker.number.float({ min: 10, max: 60, fractionDigits: 0.1 }),
+    growth: faker.number.float({ min: -20, max: 50, fractionDigits: 0.1 }),
     rank: i + 1
   }));
   
@@ -137,10 +137,10 @@ const generateMockSalesData = (id: number): SalesData => {
     id: faker.string.uuid(),
     name: faker.person.fullName(),
     type: faker.helpers.arrayElement(['Individual', 'Business', 'VIP', 'Premium']),
-    revenue: faker.number.float({ min: 500, max: 5000, precision: 0.01 }),
+    revenue: faker.number.float({ min: 500, max: 5000, fractionDigits: 0.01 }),
     orders: faker.number.int({ min: 1, max: 50 }),
-    aov: faker.number.float({ min: 50, max: 500, precision: 0.01 }),
-    growth: faker.number.float({ min: -30, max: 100, precision: 0.1 }),
+    aov: faker.number.float({ min: 50, max: 500, fractionDigits: 0.01 }),
+    growth: faker.number.float({ min: -30, max: 100, fractionDigits: 0.1 }),
     rank: i + 1
   }));
   
@@ -164,15 +164,15 @@ const generateMockSalesData = (id: number): SalesData => {
     category,
     region,
     metrics: {
-      revenueGrowth: faker.number.float({ min: -20, max: 50, precision: 0.1 }),
-      orderGrowth: faker.number.float({ min: -15, max: 40, precision: 0.1 }),
-      customerGrowth: faker.number.float({ min: -10, max: 30, precision: 0.1 }),
-      aovGrowth: faker.number.float({ min: -5, max: 25, precision: 0.1 }),
-      conversionGrowth: faker.number.float({ min: -10, max: 20, precision: 0.1 }),
-      marginGrowth: faker.number.float({ min: -5, max: 15, precision: 0.1 }),
-      seasonality: faker.number.float({ min: 0, max: 1, precision: 0.01 }),
-      volatility: faker.number.float({ min: 0, max: 1, precision: 0.01 }),
-      predictability: faker.number.float({ min: 0, max: 1, precision: 0.01 })
+      revenueGrowth: faker.number.float({ min: -20, max: 50, fractionDigits: 0.1 }),
+      orderGrowth: faker.number.float({ min: -15, max: 40, fractionDigits: 0.1 }),
+      customerGrowth: faker.number.float({ min: -10, max: 30, fractionDigits: 0.1 }),
+      aovGrowth: faker.number.float({ min: -5, max: 25, fractionDigits: 0.1 }),
+      conversionGrowth: faker.number.float({ min: -10, max: 20, fractionDigits: 0.1 }),
+      marginGrowth: faker.number.float({ min: -5, max: 15, fractionDigits: 0.1 }),
+      seasonality: faker.number.float({ min: 0, max: 1, fractionDigits: 0.01 }),
+      volatility: faker.number.float({ min: 0, max: 1, fractionDigits: 0.01 }),
+      predictability: faker.number.float({ min: 0, max: 1, fractionDigits: 0.01 })
     },
     trends,
     topProducts,

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import {
   Package, ShoppingCart, TrendingUp, AlertTriangle, CheckCircle, XCircle,
   Plus, Search, Filter, Edit, Trash2, Eye, Download, Upload, Settings, Save,
-  RefreshCw, Share2, Lock, Unlock, Copy, ExternalLink, Play, Pause, Stop, Zap,
+  RefreshCw, Share2, Lock, Unlock, Copy, ExternalLink, Play, Pause, Square, Zap,
   Bell, MessageSquare, Heart, Globe, Building, Award, Microscope, TestTube,
   FlaskConical, Atom, Brain, Database, DollarSign, GraduationCap, BookOpen,
   FileText, Shield, Gavel, Scale, Clipboard, Video, Camera, Headphones, Monitor,
@@ -83,8 +83,8 @@ const generateMockProduct = (id: number): Product => {
   const brand = faker.helpers.arrayElement(brands);
   const status = faker.helpers.arrayElement(statuses);
   
-  const cost = faker.number.float({ min: 10, max: 500, precision: 0.01 });
-  const price = cost * faker.number.float({ min: 1.2, max: 3.0, precision: 0.01 });
+  const cost = faker.number.float({ min: 10, max: 500, fractionDigits: 0.01 });
+  const price = cost * faker.number.float({ min: 1.2, max: 3.0, fractionDigits: 0.01 });
   const margin = ((price - cost) / price) * 100;
   
   const images = Array.from({ length: faker.number.int({ min: 1, max: 5 }) }).map(() => faker.image.url());
@@ -94,8 +94,8 @@ const generateMockProduct = (id: number): Product => {
     id: faker.string.uuid(),
     name: faker.commerce.productName(),
     sku: faker.string.alphanumeric(8).toUpperCase(),
-    price: faker.number.float({ min: cost, max: price * 1.5, precision: 0.01 }),
-    cost: faker.number.float({ min: cost * 0.8, max: cost * 1.2, precision: 0.01 }),
+    price: faker.number.float({ min: cost, max: price * 1.5, fractionDigits: 0.01 }),
+    cost: faker.number.float({ min: cost * 0.8, max: cost * 1.2, fractionDigits: 0.01 }),
     inventory: faker.number.int({ min: 0, max: 1000 }),
     attributes: {
       'Color': faker.helpers.arrayElement(['Red', 'Blue', 'Green', 'Black', 'White']),
@@ -123,8 +123,8 @@ const generateMockProduct = (id: number): Product => {
     images,
     tags,
     specifications: {
-      'Weight': `${faker.number.float({ min: 0.1, max: 50, precision: 0.1 })} kg`,
-      'Dimensions': `${faker.number.float({ min: 1, max: 100, precision: 0.1 })} x ${faker.number.float({ min: 1, max: 100, precision: 0.1 })} x ${faker.number.float({ min: 1, max: 100, precision: 0.1 })} cm`,
+      'Weight': `${faker.number.float({ min: 0.1, max: 50, fractionDigits: 0.1 })} kg`,
+      'Dimensions': `${faker.number.float({ min: 1, max: 100, fractionDigits: 0.1 })} x ${faker.number.float({ min: 1, max: 100, fractionDigits: 0.1 })} x ${faker.number.float({ min: 1, max: 100, fractionDigits: 0.1 })} cm`,
       'Color': faker.helpers.arrayElement(['Red', 'Blue', 'Green', 'Black', 'White']),
       'Material': faker.helpers.arrayElement(['Cotton', 'Polyester', 'Leather', 'Metal', 'Plastic'])
     },
@@ -132,14 +132,14 @@ const generateMockProduct = (id: number): Product => {
     analytics: {
       views: faker.number.int({ min: 0, max: 10000 }),
       sales: faker.number.int({ min: 0, max: 1000 }),
-      revenue: faker.number.float({ min: 0, max: 50000, precision: 0.01 }),
-      conversionRate: faker.number.float({ min: 0, max: 10, precision: 0.1 }),
-      averageRating: faker.number.float({ min: 1, max: 5, precision: 0.1 }),
+      revenue: faker.number.float({ min: 0, max: 50000, fractionDigits: 0.01 }),
+      conversionRate: faker.number.float({ min: 0, max: 10, fractionDigits: 0.1 }),
+      averageRating: faker.number.float({ min: 1, max: 5, fractionDigits: 0.1 }),
       reviewCount: faker.number.int({ min: 0, max: 500 }),
-      returnRate: faker.number.float({ min: 0, max: 0.2, precision: 0.01 }),
-      popularity: faker.number.float({ min: 0, max: 100, precision: 0.1 }),
+      returnRate: faker.number.float({ min: 0, max: 0.2, fractionDigits: 0.01 }),
+      popularity: faker.number.float({ min: 0, max: 100, fractionDigits: 0.1 }),
       trend: faker.helpers.arrayElement(['Increasing', 'Decreasing', 'Stable']),
-      seasonality: faker.number.float({ min: 0, max: 1, precision: 0.01 })
+      seasonality: faker.number.float({ min: 0, max: 1, fractionDigits: 0.01 })
     },
     createdAt: faker.date.past({ years: 2 }),
     updatedAt: faker.date.recent({ days: 30 })

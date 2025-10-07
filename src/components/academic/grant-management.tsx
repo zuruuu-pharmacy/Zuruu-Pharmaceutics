@@ -7,7 +7,7 @@ import {
   Edit, Trash2, Eye, Download, Upload, CheckCircle, XCircle, AlertTriangle,
   Star, Target, TrendingUp, BarChart3, PieChart, LineChart, Activity, Zap,
   Bell, MessageSquare, Heart, Globe, Building, Settings, Save, RefreshCw,
-  Share2, Lock, Unlock, Copy, ExternalLink, Play, Pause, Stop, BookOpen,
+  Share2, Lock, Unlock, Copy, ExternalLink, Play, Pause, Square, BookOpen,
   GraduationCap, Microscope, FlaskConical, TestTube, Atom, Brain, Database
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';

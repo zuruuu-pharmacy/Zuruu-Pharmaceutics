@@ -6,7 +6,7 @@ import {
   Clipboard, CheckCircle, XCircle, AlertTriangle, Star, Target, TrendingUp,
   BarChart3, Clock, Users, Calendar, Plus, Search, Filter, Edit, Trash2,
   Eye, Download, Upload, Settings, Save, RefreshCw, Share2, Lock, Unlock,
-  Copy, ExternalLink, Play, Pause, Stop, Zap, Bell, MessageSquare, Heart,
+  Copy, ExternalLink, Play, Pause, Square, Zap, Bell, MessageSquare, Heart,
   Globe, Building, Award, Microscope, TestTube, FlaskConical, Atom, Brain,
   Database, DollarSign, GraduationCap, BookOpen, FileText, Shield, Gavel,
   Scale, Video, Camera, Headphones, Monitor, Smartphone, Tablet, UserCheck,
@@ -193,10 +193,10 @@ const generateMockAssessment = (id: number): Assessment => {
   
   const questionAnalysis: QuestionAnalysis[] = questions.map(q => ({
     questionId: q.id,
-    correctRate: faker.number.float({ min: 0.2, max: 1.0, precision: 0.01 }),
+    correctRate: faker.number.float({ min: 0.2, max: 1.0, fractionDigits: 2 }),
     averageTime: faker.number.int({ min: 30, max: 300 }),
-    difficulty: faker.number.float({ min: 0.1, max: 1.0, precision: 0.01 }),
-    discrimination: faker.number.float({ min: 0.1, max: 1.0, precision: 0.01 }),
+    difficulty: faker.number.float({ min: 0.1, max: 1.0, fractionDigits: 2 }),
+    discrimination: faker.number.float({ min: 0.1, max: 1.0, fractionDigits: 2 }),
     commonErrors: Array.from({ length: faker.number.int({ min: 1, max: 3 }) }).map(() => faker.lorem.word())
   }));
   
@@ -241,8 +241,8 @@ const generateMockAssessment = (id: number): Assessment => {
     rubric,
     analytics: {
       totalAttempts: faker.number.int({ min: 50, max: 500 }),
-      averageScore: faker.number.float({ min: 60, max: 95, precision: 0.1 }),
-      completionRate: faker.number.float({ min: 70, max: 100, precision: 0.1 }),
+      averageScore: faker.number.float({ min: 60, max: 95, fractionDigits: 1 }),
+      completionRate: faker.number.float({ min: 70, max: 100, fractionDigits: 1 }),
       timeSpent: faker.number.int({ min: 1000, max: 10000 }),
       questionAnalysis,
       studentPerformance,

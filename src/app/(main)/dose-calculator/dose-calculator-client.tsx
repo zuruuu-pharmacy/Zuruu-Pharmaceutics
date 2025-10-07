@@ -265,8 +265,8 @@ export function DoseCalculatorClient() {
                     onClick={() => {
                       form.setValue('drugName', 'Amoxicillin');
                       form.setValue('indication', 'Community-acquired pneumonia');
-                      form.setValue('patientWeight', '70');
-                      form.setValue('patientAgeYears', '45');
+                      form.setValue('patientWeight', 70);
+                      form.setValue('patientAgeYears', 45);
                     }}
                   >
                     <TestTube className="mr-2 h-3 w-3" />

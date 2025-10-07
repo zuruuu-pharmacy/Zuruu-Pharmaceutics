@@ -31,7 +31,7 @@ export function LifestyleSuggestions({ patientHistory }: { patientHistory?: Pati
         async (previousState, payload) => {
             try {
                 // Safe access to patientHistory with fallback
-                const patientName = patientHistory?.name || patientHistory?.demographics?.name || 'Anonymous User';
+                const patientName = patientHistory?.name || 'Anonymous User';
                 console.log('Fetching lifestyle suggestions for:', patientName);
                 
                 // If no patient history, provide general suggestions

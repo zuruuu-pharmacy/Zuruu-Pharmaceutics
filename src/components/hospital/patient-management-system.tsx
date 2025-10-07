@@ -27,7 +27,7 @@ import {
   DollarSign, Star, Award, Phone, Mail, MessageSquare, Camera, Mic, Headphones,
   Volume2, VolumeX, Wifi as WifiIcon2, Battery, Signal, Bluetooth, Hospital,
   Bed, Pill, Syringe, Microscope, Thermometer, Bandage, X, Plus as PlusIcon,
-  UserCheck, UserPlus, UserMinus, UserX, UserEdit, UserSearch, UserSettings
+  UserCheck, UserPlus, UserMinus, UserX, UserSearch
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

@@ -380,6 +380,8 @@ function StudentManagement() {
       id: Date.now().toString(),
       studentId: `STU${String(students.length + 1).padStart(3, '0')}`,
       ...formData,
+      gender: formData.gender as 'Male' | 'Female' | 'Other',
+      year: formData.year as '1st' | '2nd' | '3rd' | '4th' | '5th',
       enrollmentDate: new Date().toISOString().split('T')[0],
       status: 'Active',
       gpa: 0,
@@ -399,7 +401,7 @@ function StudentManagement() {
     if (selectedStudent) {
       const updatedStudents = students.map(student =>
         student.id === selectedStudent.id
-          ? { ...selectedStudent, ...formData }
+          ? { ...selectedStudent, ...formData, gender: formData.gender as 'Male' | 'Female' | 'Other', year: formData.year as '1st' | '2nd' | '3rd' | '4th' | '5th' }
           : student
       );
       setStudents(updatedStudents);

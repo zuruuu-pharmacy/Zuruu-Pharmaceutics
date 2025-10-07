@@ -27,9 +27,9 @@ import {
   DollarSign, Star, Award, Phone, Mail, MessageSquare, Camera, Mic, Headphones,
   Volume2, VolumeX, Wifi as WifiIcon2, Battery, Signal, Bluetooth, Hospital,
   Pill, Syringe, Microscope, Thermometer, Bandage, X, Plus as PlusIcon,
-  UserCheck, UserPlus, UserMinus, UserX, UserEdit, UserSearch, UserSettings,
+  UserCheck, UserPlus, UserMinus, UserX, UserSearch,
   Map, Navigation, Compass, Home, Building2, Building as BuildingIcon2,
-  Ambulance, Siren, Zap as ZapIcon, Flame, Skull, Cross, FirstAid
+  Ambulance, Siren, Zap as ZapIcon, Flame, Skull, Cross
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -485,7 +485,7 @@ export default function EmergencyResponseSystem() {
             <Card className="shadow-lg border-0">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <FirstAid className="w-5 h-5 text-red-600" />
+                  <Heart className="w-5 h-5 text-red-600" />
                   <span>Triage Levels</span>
                 </CardTitle>
               </CardHeader>

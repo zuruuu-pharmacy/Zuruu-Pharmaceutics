@@ -7,7 +7,7 @@ import {
   Search, Filter, Edit, Trash2, Eye, Download, Upload, CheckCircle, XCircle,
   AlertTriangle, Star, Target, TrendingUp, BarChart3, Clock, Users, Calendar,
   Settings, Save, RefreshCw, Share2, Lock, Unlock, Copy, ExternalLink, Play,
-  Pause, Stop, Zap, Bell, MessageSquare, Heart, Globe, Building, Award
+  Pause, Square, Zap, Bell, MessageSquare, Heart, Globe, Building, Award, BookOpen, Shield
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

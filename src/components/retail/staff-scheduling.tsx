@@ -799,7 +799,7 @@ export default function StaffScheduling() {
                       <div>
                         <Label>Skills</Label>
                         <div className="flex flex-wrap gap-2 mt-2">
-                          {selectedStaff.skills.map((skill, index) => (
+                          {selectedStaff.skills.map((skill: string, index: number) => (
                             <Badge key={index} variant="outline">{skill}</Badge>
                           ))}
                         </div>
@@ -807,7 +807,7 @@ export default function StaffScheduling() {
                       <div>
                         <Label>Certifications</Label>
                         <div className="flex flex-wrap gap-2 mt-2">
-                          {selectedStaff.certifications.map((cert, index) => (
+                          {selectedStaff.certifications.map((cert: string, index: number) => (
                             <Badge key={index} variant="outline" className="bg-blue-50 text-blue-700">
                               {cert}
                             </Badge>
@@ -827,7 +827,7 @@ export default function StaffScheduling() {
                           <div key={day} className="flex justify-between items-center">
                             <span className="font-medium capitalize">{day}</span>
                             <span className="text-sm text-gray-600">
-                              {schedule.start} - {schedule.end}
+                              {(schedule as any).start} - {(schedule as any).end}
                             </span>
                           </div>
                         ))}

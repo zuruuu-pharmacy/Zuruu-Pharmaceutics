@@ -255,6 +255,33 @@ export function HospitalDataAdmin() {
         admissions: 0.7,
         discharges: 0.6,
         emergency: 1.1
+      },
+      staffData: {
+        totalStaff: 1200,
+        doctors: 200,
+        nurses: 600,
+        technicians: 300,
+        supportStaff: 100
+      },
+      equipmentData: {
+        totalEquipment: 500,
+        mriMachines: 2,
+        ctScanners: 4,
+        xrayMachines: 8,
+        ventilators: 50,
+        defibrillators: 12
+      },
+      qualityMetrics: {
+        patientSatisfaction: 4.2,
+        readmissionRate: 8.5,
+        mortalityRate: 2.1,
+        infectionRate: 3.2
+      },
+      financialData: {
+        dailyRevenue: 150000,
+        monthlyRevenue: 4500000,
+        operatingCosts: 40000000,
+        profitMargin: 20
       }
     });
     

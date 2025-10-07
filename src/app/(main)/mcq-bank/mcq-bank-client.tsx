@@ -39,7 +39,12 @@ export function McqBankClient() {
         // Reset quiz state when generating new questions
         setQuizState({ submitted: false, score: 0 });
         quizForm.reset({ answers: [] });
-        const result = await generateComprehensiveQuiz(parsed.data);
+        const result = await generateComprehensiveQuiz({
+          topic: parsed.data.topic,
+          count: 10,
+          level: 'Undergraduate',
+          focus: 'comprehensive'
+        });
         return result;
       } catch (e) {
         console.error(e);

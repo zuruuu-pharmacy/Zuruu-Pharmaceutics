@@ -382,8 +382,6 @@ export function EnhancedLoginModal({ isOpen, onClose, role, onSuccess }: Enhance
                           ? 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600' 
                           : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600'
                       }`}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
                     >
                       {isVerifying ? (
                         <motion.div

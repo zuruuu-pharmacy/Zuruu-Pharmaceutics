@@ -6,7 +6,7 @@ import {
   Shield, CheckCircle, XCircle, AlertTriangle, FileText, Users, Calendar,
   Clock, Star, Target, TrendingUp, BarChart3, Plus, Search, Filter, Edit,
   Trash2, Eye, Download, Upload, Settings, Save, RefreshCw, Share2, Lock,
-  Unlock, Copy, ExternalLink, Play, Pause, Stop, Zap, Bell, MessageSquare,
+  Unlock, Copy, ExternalLink, Play, Pause, Square, Zap, Bell, MessageSquare,
   Heart, Globe, Building, Award, Microscope, FlaskConical, TestTube, Atom,
   Brain, Database, DollarSign, GraduationCap, BookOpen, Gavel, Scale
 } from 'lucide-react';

@@ -173,7 +173,6 @@ export function PatientHistoryClient() {
     toast({
       title: "Patient History Saved",
       description: `The history for ${data.name} has been saved.`,
-      duration: 3000,
     });
     // For pharmacists, go to the patient list to see the new entry
     if (mode === 'pharmacist') {
@@ -253,7 +252,7 @@ export function PatientHistoryClient() {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {f.options?.map(option => <SelectItem key={option} value={option}>{option}</SelectItem>)}
+                                                {'options' in f && f.options?.map(option => <SelectItem key={option} value={option}>{option}</SelectItem>)}
                                             </SelectContent>
                                         </Select>
                                     ) : f.type === 'textarea' ? (

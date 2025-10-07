@@ -26,7 +26,7 @@ export function WordSearchClient() {
       const parsed = topicFormSchema.safeParse(Object.fromEntries(formData));
       if (!parsed.success) return { error: "Invalid topic." };
       try {
-        const result = await generateWordSearch({ topic: parsed.data.topic });
+        const result = await generateWordSearch({ topic: parsed.data.topic, size: 10, wordCount: 8 });
         return result;
       } catch (e) {
         return { error: "Failed to generate word search." };
@@ -47,9 +47,9 @@ export function WordSearchClient() {
   const topicForm = useForm<TopicFormValues>({ resolver: zodResolver(topicFormSchema), defaultValues: { topic: "" } });
 
   useEffect(() => {
-    if (state?.error) {
+    if (state && 'error' in state) {
       toast({ variant: "destructive", title: "Error", description: state.error });
-    } else if (state?.grid) {
+    } else if (state && 'grid' in state) {
       // Reset game when new word search is loaded
       setGameState({ score: 0, foundWords: [], selectedCells: [], isSelecting: false });
     }
@@ -62,7 +62,7 @@ export function WordSearchClient() {
   });
   
   const handleCellClick = (row: number, col: number) => {
-    if (!state?.grid) return;
+    if (!state || !('grid' in state)) return;
     
     setGameState(prev => {
       // If clicking the same cell, deselect it
@@ -178,7 +178,7 @@ export function WordSearchClient() {
     startTransition(() => formAction(new FormData()));
   }
 
-  if (!state?.grid || state.grid.length === 0) {
+  if (!state || !('grid' in state) || state.grid.length === 0) {
     return (
       <Card className="max-w-xl mx-auto">
         <CardHeader>

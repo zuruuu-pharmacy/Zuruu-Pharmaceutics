@@ -9,7 +9,7 @@ import {
   Globe, Wifi, Layers, Archive, Truck, Box, Megaphone, Building, Clipboard, BookOpen,
   Scale, Gavel, Lock, Key, CheckSquare, Square, Play, Pause, Send, Share2, Image,
   Video, FileText, Printer, BarChart3, PieChart, LineChart, Activity as ActivityIcon,
-  Search, Filter, Plus, Edit, Trash2, Eye, Download, Upload, Settings, Bell,
+  Search, Filter, Plus, Edit, Trash2, Eye, Download, Upload, Settings, Save, Bell,
   DollarSign, Star, Heart, Award, RefreshCw, RotateCcw, QrCode, ScanLine, Barcode,
   Database as DatabaseIcon, Network as NetworkIcon, Cpu as CpuIcon, Brain as BrainIcon,
   Activity as ActivityIcon2, TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon,

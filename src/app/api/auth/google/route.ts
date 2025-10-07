@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     const sessionToken = `google_${payload.sub}_${Date.now()}`;
     
     // Set HTTP-only cookie for session
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     cookieStore.set('session', sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

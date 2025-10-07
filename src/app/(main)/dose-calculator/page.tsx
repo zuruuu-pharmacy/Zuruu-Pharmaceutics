@@ -52,13 +52,9 @@ export default function DoseCalculatorHubPage() {
                 <CardDescription>{tool.description}</CardDescription>
               </CardHeader>
               <CardContent className="flex-grow flex items-end">
-                {tool.status === "Coming Soon" ? (
-                  <Button disabled variant="secondary" className="w-full">{tool.status}</Button>
-                ) : (
-                  <Link href={tool.href} className="w-full">
-                    <Button className="w-full">Use Tool</Button>
-                  </Link>
-                )}
+                <Link href={tool.href} className="w-full">
+                  <Button className="w-full">Use Tool</Button>
+                </Link>
               </CardContent>
             </Card>
           ))}

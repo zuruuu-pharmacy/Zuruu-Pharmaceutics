@@ -11,7 +11,7 @@ import {
   FileText, Printer, BarChart3, PieChart, LineChart, Activity as ActivityIcon,
   Search, Filter, Plus, Edit, Trash2, Eye, Download, Upload, Settings, Bell,
   RefreshCw, RotateCcw, QrCode, ScanLine, Barcode, Database,
-  Network, Cpu, Brain, Activity as ActivityIcon2, TrendingUp as TrendingUpIcon,
+  Network, Brain, Activity as ActivityIcon2, TrendingUp as TrendingUpIcon,
   TrendingDown as TrendingDownIcon, ArrowUp as ArrowUpIcon, ArrowDown as ArrowDownIcon,
   Minus as MinusIcon, Percent as PercentIcon, Tag as TagIcon, MapPin as MapPinIcon,
   ShoppingCart as ShoppingCartIcon, Package as PackageIcon, Globe as GlobeIcon,
@@ -25,12 +25,12 @@ import {
   LineChart as LineChartIcon, Activity as ActivityIcon3, AlertTriangle as AlertTriangleIcon, Clock as ClockIcon, Calendar, User, Users as UsersIcon,
   DollarSign, Star, Award, Phone, Mail, MessageSquare, Camera, Mic, Headphones,
   Volume2, VolumeX, Wifi as WifiIcon2, Battery, Signal, Bluetooth, Hospital,
-  UserCheck, UserPlus, UserMinus, UserX, UserEdit, UserSearch, UserSettings,
+  UserCheck, UserPlus, UserMinus, UserX, UserSearch,
   Map, Navigation, Compass, Home, Building2, Building as BuildingIcon2,
-  Ambulance, Siren, Zap as ZapIcon, Flame, Skull, Cross, FirstAid, Heart as HeartIcon,
+  Ambulance, Siren, Zap as ZapIcon, Flame, Skull, Cross, Heart as HeartIcon,
   Shield as ShieldIcon, AlertTriangle as AlertTriangleIcon2, Activity as ActivityIcon4, Clock as ClockIcon2, Users as UsersIcon2, Target as TargetIcon, Pill, Syringe,
-  Microscope, TestTube, Beaker, Flask, Droplet, Thermometer, Bandage, X, Plus as PlusIcon,
-  Wrench, Tool, Cog, Settings as SettingsIcon, Power, PowerOff, AlertCircle,
+  Microscope, TestTube, Beaker, FlaskConical, Droplet, Thermometer, Bandage, X, Plus as PlusIcon,
+  Wrench, Cog, Settings as SettingsIcon, Power, PowerOff, AlertCircle,
   Stethoscope, Monitor, Cpu, HardDrive, Wifi as WifiIcon3, Battery as BatteryIcon, Signal as SignalIcon, Bluetooth as BluetoothIcon
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

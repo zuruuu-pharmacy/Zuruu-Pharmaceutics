@@ -33,7 +33,7 @@ export function AnagramSolverClient() {
       const parsed = topicFormSchema.safeParse(Object.fromEntries(formData));
       if (!parsed.success) return { error: "Invalid topic." };
       try {
-        const result = await generateAnagrams({ topic: parsed.data.topic });
+        const result = await generateAnagrams({ topic: parsed.data.topic, count: 5 });
         return result;
       } catch (e) {
         return { error: "Failed to generate anagrams." };
@@ -55,9 +55,9 @@ export function AnagramSolverClient() {
   const answerForm = useForm<AnswerFormValues>({ resolver: zodResolver(answerFormSchema), defaultValues: { answer: "" } });
 
   useEffect(() => {
-    if (state?.error) {
+    if (state && 'error' in state) {
       toast({ variant: "destructive", title: "Error", description: state.error });
-    } else if (state?.anagrams) {
+    } else if (state && 'anagrams' in state) {
       // Reset game when new anagrams are loaded
       setGameState({ score: 0, currentIndex: 0, showResult: false, isCorrect: false });
     }
@@ -70,7 +70,7 @@ export function AnagramSolverClient() {
   });
   
   const handleAnswerSubmit = answerForm.handleSubmit((data) => {
-    if (!state?.anagrams) return;
+    if (!state || !('anagrams' in state)) return;
     const currentAnagram = state.anagrams[gameState.currentIndex];
     const isCorrect = data.answer.trim().toLowerCase() === currentAnagram.answer.toLowerCase();
 
@@ -98,8 +98,8 @@ export function AnagramSolverClient() {
     startTransition(() => formAction(new FormData()));
   }
 
-  const currentAnagram = state?.anagrams?.[gameState.currentIndex];
-  const isGameOver = state?.anagrams && gameState.currentIndex >= state.anagrams.length;
+  const currentAnagram = state && 'anagrams' in state ? state.anagrams[gameState.currentIndex] : undefined;
+  const isGameOver = state && 'anagrams' in state && gameState.currentIndex >= state.anagrams.length;
 
   if (isGameOver) {
       return (
@@ -120,7 +120,7 @@ export function AnagramSolverClient() {
       )
   }
 
-  if (!state?.anagrams || state.anagrams.length === 0) {
+  if (!state || !('anagrams' in state) || state.anagrams.length === 0) {
     return (
       <Card className="max-w-xl mx-auto">
         <CardHeader>

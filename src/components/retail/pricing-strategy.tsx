@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import {
   Tag, DollarSign, TrendingUp, TrendingDown, Target, Calculator, BarChart3, PieChart,
   Plus, Search, Filter, Edit, Trash2, Eye, Download, Upload, Settings, Save,
-  RefreshCw, Share2, Lock, Unlock, Copy, ExternalLink, Play, Pause, Stop, Zap,
+  RefreshCw, Share2, Lock, Unlock, Copy, ExternalLink, Play, Pause, Square, Zap,
   Bell, MessageSquare, Heart, Globe, Building, Award, Microscope, TestTube,
   FlaskConical, Atom, Brain, Database, GraduationCap, BookOpen,
   FileText, Shield, Gavel, Scale, Clipboard, Video, Camera, Headphones, Monitor,
@@ -115,10 +115,10 @@ const generateMockPricingRule = (id: number): PricingRule => {
   const actions: PricingAction[] = Array.from({ length: faker.number.int({ min: 1, max: 2 }) }).map(() => ({
     id: faker.string.uuid(),
     type: faker.helpers.arrayElement(['Set Price', 'Adjust Percentage', 'Set Markup', 'Apply Discount', 'Match Competitor']),
-    value: faker.number.float({ min: 1, max: 50, precision: 0.1 }),
+    value: faker.number.float({ min: 1, max: 50, fractionDigits: 0.1 }),
     valueType: faker.helpers.arrayElement(['Fixed', 'Percentage']),
-    minPrice: faker.datatype.boolean(0.5) ? faker.number.float({ min: 10, max: 100, precision: 0.01 }) : undefined,
-    maxPrice: faker.datatype.boolean(0.5) ? faker.number.float({ min: 100, max: 1000, precision: 0.01 }) : undefined
+    minPrice: faker.datatype.boolean(0.5) ? faker.number.float({ min: 10, max: 100, fractionDigits: 0.01 }) : undefined,
+    maxPrice: faker.datatype.boolean(0.5) ? faker.number.float({ min: 100, max: 1000, fractionDigits: 0.01 }) : undefined
   }));
   
   return {
@@ -130,19 +130,19 @@ const generateMockPricingRule = (id: number): PricingRule => {
     priority: faker.number.int({ min: 1, max: 10 }),
     conditions,
     actions,
-    effectiveDate: faker.date.past({ days: 30 }),
-    expiryDate: faker.datatype.boolean(0.7) ? faker.date.future({ days: 30 }) : undefined,
+    effectiveDate: faker.date.past({ years: 1 }),
+    expiryDate: faker.datatype.boolean(0.7) ? faker.date.future({ years: 1 }) : undefined,
     performance: {
-      revenueImpact: faker.number.float({ min: -20, max: 50, precision: 0.1 }),
-      marginImpact: faker.number.float({ min: -10, max: 30, precision: 0.1 }),
-      volumeImpact: faker.number.float({ min: -15, max: 40, precision: 0.1 }),
-      conversionRate: faker.number.float({ min: 0, max: 100, precision: 0.1 }),
-      totalRevenue: faker.number.float({ min: 1000, max: 50000, precision: 0.01 }),
-      totalMargin: faker.number.float({ min: 100, max: 10000, precision: 0.01 }),
+      revenueImpact: faker.number.float({ min: -20, max: 50, fractionDigits: 0.1 }),
+      marginImpact: faker.number.float({ min: -10, max: 30, fractionDigits: 0.1 }),
+      volumeImpact: faker.number.float({ min: -15, max: 40, fractionDigits: 0.1 }),
+      conversionRate: faker.number.float({ min: 0, max: 100, fractionDigits: 0.1 }),
+      totalRevenue: faker.number.float({ min: 1000, max: 50000, fractionDigits: 0.01 }),
+      totalMargin: faker.number.float({ min: 100, max: 10000, fractionDigits: 0.01 }),
       totalVolume: faker.number.int({ min: 10, max: 1000 }),
       lastUpdated: faker.date.recent({ days: 7 })
     },
-    createdAt: faker.date.past({ days: 60 }),
+    createdAt: faker.date.past({ years: 1 }),
     updatedAt: faker.date.recent({ days: 7 })
   };
 };
@@ -156,16 +156,16 @@ const generateMockProductPricing = (id: number): ProductPricing => {
   const brand = faker.helpers.arrayElement(brands);
   const status = faker.helpers.arrayElement(statuses);
   
-  const cost = faker.number.float({ min: 10, max: 500, precision: 0.01 });
-  const basePrice = cost * faker.number.float({ min: 1.2, max: 2.0, precision: 0.01 });
-  const currentPrice = basePrice * faker.number.float({ min: 0.8, max: 1.2, precision: 0.01 });
-  const competitorPrice = currentPrice * faker.number.float({ min: 0.9, max: 1.1, precision: 0.01 });
+  const cost = faker.number.float({ min: 10, max: 500, fractionDigits: 0.01 });
+  const basePrice = cost * faker.number.float({ min: 1.2, max: 2.0, fractionDigits: 0.01 });
+  const currentPrice = basePrice * faker.number.float({ min: 0.8, max: 1.2, fractionDigits: 0.01 });
+  const competitorPrice = currentPrice * faker.number.float({ min: 0.9, max: 1.1, fractionDigits: 0.01 });
   const margin = ((currentPrice - cost) / currentPrice) * 100;
   const markup = ((currentPrice - cost) / cost) * 100;
   
   const priceHistory: PriceHistory[] = Array.from({ length: faker.number.int({ min: 3, max: 10 }) }).map(() => ({
-    date: faker.date.past({ days: 90 }),
-    price: faker.number.float({ min: cost * 1.1, max: cost * 2.5, precision: 0.01 }),
+    date: faker.date.past({ years: 1 }),
+    price: faker.number.float({ min: cost * 1.1, max: cost * 2.5, fractionDigits: 0.01 }),
     reason: faker.helpers.arrayElement(['Cost Change', 'Competitor Analysis', 'Promotion', 'Seasonal Adjustment', 'Inventory Management']),
     changedBy: faker.person.fullName()
   }));

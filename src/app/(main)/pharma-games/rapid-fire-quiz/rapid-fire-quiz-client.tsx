@@ -26,7 +26,7 @@ export function RapidFireQuizClient() {
       const parsed = topicFormSchema.safeParse(Object.fromEntries(formData));
       if (!parsed.success) return { error: "Invalid topic." };
       try {
-        const result = await generateRapidFireQuiz({ topic: parsed.data.topic });
+        const result = await generateRapidFireQuiz({ topic: parsed.data.topic, count: 10 });
         return result;
       } catch (e) {
         return { error: "Failed to generate quiz." };
@@ -51,9 +51,9 @@ export function RapidFireQuizClient() {
   const topicForm = useForm<TopicFormValues>({ resolver: zodResolver(topicFormSchema), defaultValues: { topic: "" } });
 
   useEffect(() => {
-    if (state?.error) {
+    if (state && 'error' in state) {
       toast({ variant: "destructive", title: "Error", description: state.error });
-    } else if (state?.questions) {
+    } else if (state && 'questions' in state) {
       // Reset game when new quiz is loaded
       setGameState({ score: 0, currentQuestion: 0, timeLeft: 30, isPlaying: false, selectedAnswer: '', showResult: false, isCorrect: false, gameOver: false });
     }
@@ -89,7 +89,7 @@ export function RapidFireQuizClient() {
   };
 
   const handleSubmitAnswer = () => {
-    if (!state?.questions || !gameState.isPlaying) return;
+    if (!state || !('questions' in state) || !gameState.isPlaying) return;
     
     const currentQuestion = state.questions[gameState.currentQuestion];
     const isCorrect = gameState.selectedAnswer === currentQuestion.answer;
@@ -104,7 +104,7 @@ export function RapidFireQuizClient() {
   };
 
   const handleNextQuestion = () => {
-    if (!state?.questions) return;
+    if (!state || !('questions' in state)) return;
     
     const nextQuestion = gameState.currentQuestion + 1;
     if (nextQuestion >= state.questions.length) {
@@ -131,7 +131,7 @@ export function RapidFireQuizClient() {
     startTransition(() => formAction(new FormData()));
   }
 
-  if (!state?.questions || state.questions.length === 0) {
+  if (!state || !('questions' in state) || state.questions.length === 0) {
     return (
       <Card className="max-w-xl mx-auto">
         <CardHeader>

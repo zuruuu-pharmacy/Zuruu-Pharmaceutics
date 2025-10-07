@@ -112,7 +112,7 @@ export function ClinicalCaseSimulatorClient() {
   const handleAnswerSubmit = answerForm.handleSubmit((data) => {
     const formData = new FormData();
     formData.append("topic", topicForm.getValues("topic")); // Carry over topic
-    formData.append("caseDetails", JSON.stringify(state?.caseDetails));
+    formData.append("caseDetails", JSON.stringify(state && 'caseDetails' in state ? state.caseDetails : null));
     data.answers.forEach((ans, i) => {
       formData.append(`answers[${i}].question`, ans.question);
       formData.append(`answers[${i}].answer`, ans.answer);
@@ -136,7 +136,7 @@ export function ClinicalCaseSimulatorClient() {
   }
 
   // Step 3: Feedback View
-  if (step === 'feedback' && state?.feedback) {
+  if (step === 'feedback' && state && 'feedback' in state && state.feedback) {
     return (
         <Card>
             <CardHeader>
@@ -163,7 +163,7 @@ export function ClinicalCaseSimulatorClient() {
   }
 
   // Step 2: Case View
-  if (step === 'case' && state?.caseDetails && state?.questions) {
+  if (step === 'case' && state && 'caseDetails' in state && 'questions' in state && state.caseDetails && state.questions) {
     const { caseDetails, questions } = state;
     return (
         <Card>

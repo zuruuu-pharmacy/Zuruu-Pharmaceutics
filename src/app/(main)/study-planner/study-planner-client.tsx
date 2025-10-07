@@ -99,9 +99,9 @@ export function StudyPlannerClient() {
   const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    if (state?.error) {
+    if (state && 'error' in state) {
       toast({ variant: "destructive", title: "Error", description: state.error });
-    } else if (state?.weeklyPlan) {
+    } else if (state && 'weeklyPlan' in state) {
       setCompletedTasks(new Set()); // Reset progress when a new plan is generated
     }
   }, [state, toast]);
@@ -146,7 +146,7 @@ export function StudyPlannerClient() {
     );
   }
 
-  if (state?.weeklyPlan) {
+  if (state && 'weeklyPlan' in state) {
     const totalTasks = state.weeklyPlan.reduce((acc, day) => acc + day.slots.filter(s => !s.isBreak).length, 0);
     const completedCount = completedTasks.size;
     const progressPercentage = totalTasks > 0 ? (completedCount / totalTasks) * 100 : 0;

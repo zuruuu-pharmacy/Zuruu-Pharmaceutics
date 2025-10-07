@@ -43,7 +43,7 @@ const cvFormSchema = z.object({
 type CvFormValues = z.infer<typeof cvFormSchema>;
 
 export function CvBuilderClient() {
-  const { patientState } = usePatient();
+  const { patientState, getActivePatientRecord } = usePatient();
   const student = patientState.activeUser;
 
   const form = useForm<CvFormValues>({
@@ -52,8 +52,8 @@ export function CvBuilderClient() {
       name: student?.demographics?.name || "",
       email: student?.studentId || "",
       phone: student?.demographics?.phoneNumber || "",
-      linkedin: student?.demographics?.linkedinProfile || "",
-      summary: student?.demographics?.personalStatement || "",
+      linkedin: student?.patientHistoryId ? getActivePatientRecord()?.history?.linkedinProfile || "" : "",
+      summary: student?.patientHistoryId ? getActivePatientRecord()?.history?.personalStatement || "" : "",
       education: [{ institution: 'University of Management and Technology', degree: 'Pharm.D', year: '2020-2025' }],
       experience: [],
       skills: [{ skill: 'Clinical Research' }, { skill: 'Patient Counseling' }],

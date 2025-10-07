@@ -7,7 +7,7 @@ import {
   Search, Filter, Edit, Trash2, Eye, Download, Upload, CheckCircle, XCircle,
   AlertTriangle, Star, Target, TrendingUp, BarChart3, Clock, Users, Calendar,
   Settings, Save, RefreshCw, Share2, Lock, Unlock, Copy, ExternalLink, Play,
-  Pause, Stop, Zap, Bell, MessageSquare, Heart, Globe, Building, Award,
+  Pause, Square, Zap, Bell, MessageSquare, Heart, Globe, Building, Award,
   DollarSign, GraduationCap, BookOpen, FileText, Shield, Gavel, Scale,
   Clipboard, Video, Camera, Headphones, Monitor, Smartphone, Tablet
 } from 'lucide-react';
@@ -239,16 +239,16 @@ const generateMockVirtualLab = (id: number): VirtualLab => {
     analytics: {
       totalSessions: faker.number.int({ min: 50, max: 500 }),
       activeUsers: faker.number.int({ min: 10, max: 100 }),
-      completionRate: faker.number.float({ min: 60, max: 95, precision: 0.1 }),
-      averageScore: faker.number.float({ min: 70, max: 95, precision: 0.1 }),
+      completionRate: faker.number.float({ min: 60, max: 95, fractionDigits: 0.1 }),
+      averageScore: faker.number.float({ min: 70, max: 95, fractionDigits: 0.1 }),
       timeSpent: faker.number.int({ min: 1000, max: 10000 }),
       popularExperiments: experiments.slice(0, 3).map(e => e.title),
       userFeedback,
       performance: {
-        loadTime: faker.number.float({ min: 0.5, max: 3.0, precision: 0.1 }),
-        uptime: faker.number.float({ min: 95, max: 99.9, precision: 0.1 }),
-        errorRate: faker.number.float({ min: 0.1, max: 5.0, precision: 0.1 }),
-        userSatisfaction: faker.number.float({ min: 3.5, max: 5.0, precision: 0.1 }),
+        loadTime: faker.number.float({ min: 0.5, max: 3.0, fractionDigits: 0.1 }),
+        uptime: faker.number.float({ min: 95, max: 99.9, fractionDigits: 0.1 }),
+        errorRate: faker.number.float({ min: 0.1, max: 5.0, fractionDigits: 0.1 }),
+        userSatisfaction: faker.number.float({ min: 3.5, max: 5.0, fractionDigits: 0.1 }),
         technicalIssues: faker.number.int({ min: 0, max: 10 })
       }
     },

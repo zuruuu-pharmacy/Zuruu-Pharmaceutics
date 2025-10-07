@@ -166,7 +166,7 @@ export function ToolCards({ tools, title, description }: ToolCardsProps) {
                         <span className="inline-flex items-center space-x-1">
                           <span className="w-1 h-1 bg-primary rounded-full animate-pulse" />
                           <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                            {tool.label || tool.title}
+                            {tool.title}
                           </span>
                           <span className="w-1 h-1 bg-blue-600 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
                         </span>

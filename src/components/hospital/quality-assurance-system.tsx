@@ -23,12 +23,12 @@ import {
   Activity as ActivityIcon3, AlertTriangle as AlertTriangleIcon, Clock as ClockIcon,
   Calendar, User, Users as UsersIcon, DollarSign, Star, Award as AwardIcon, Phone, Mail,
   MessageSquare, Camera, Mic, Headphones, Volume2, VolumeX, Wifi as WifiIcon2, Battery,
-  Signal, Bluetooth, Hospital, UserCheck, UserPlus, UserMinus, UserX, UserEdit, UserSearch,
-  UserSettings, Map, Navigation, Compass, Home, Building2, Building as BuildingIcon2,
-  Ambulance, Siren, Zap, Flame, Skull, Cross, FirstAid, Heart, Shield as ShieldIcon,
+  Signal, Bluetooth, Hospital, UserCheck, UserPlus, UserMinus, UserX, UserSearch,
+  Map, Navigation, Compass, Home, Building2, Building as BuildingIcon2,
+  Ambulance, Siren, Zap, Flame, Skull, Cross, Heart, Shield as ShieldIcon,
   AlertTriangle as AlertTriangleIcon2, Activity as ActivityIcon4, Clock as ClockIcon2,
   Users as UsersIcon2, Target as TargetIcon, Pill, Syringe, Microscope, TestTube, Beaker,
-  Flask, Droplet, Thermometer, Bandage, X, Plus as PlusIcon, Wrench, Tool, Cog,
+  FlaskConical, Droplet, Thermometer, Bandage, X, Plus as PlusIcon, Wrench, Cog,
   Settings as SettingsIcon, Power, PowerOff, AlertCircle, Stethoscope, Monitor, Cpu as CpuIcon,
   HardDrive, Wifi as WifiIcon3, Battery as BatteryIcon, Signal as SignalIcon,
   Bluetooth as BluetoothIcon, Star as StarIcon, Heart as HeartIcon, Zap as ZapIcon
@@ -709,14 +709,14 @@ export default function QualityAssuranceSystem() {
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <RechartsBarChart data={departmentScores}>
+                    <BarChart data={departmentScores}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="department" />
                       <YAxis />
                       <Tooltip />
                       <Legend />
                       <Bar dataKey="score" fill="#8b5cf6" />
-                    </RechartsBarChart>
+                    </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>

@@ -542,15 +542,15 @@ export default function CurriculumDataAdmin() {
                   <div className="space-y-2">
                     <Label>Course Code</Label>
                     <Input
-                      value={editingItem.code || ''}
-                      onChange={(e) => setEditingItem(prev => prev ? { ...prev, code: e.target.value } : null)}
+                      value={'code' in editingItem ? editingItem.code || '' : ''}
+                      onChange={(e) => setEditingItem(prev => prev && 'code' in prev ? { ...prev, code: e.target.value } : prev)}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Course Title</Label>
                     <Input
-                      value={editingItem.title || ''}
-                      onChange={(e) => setEditingItem(prev => prev ? { ...prev, title: e.target.value } : null)}
+                      value={'title' in editingItem ? editingItem.title || '' : ''}
+                      onChange={(e) => setEditingItem(prev => prev && 'title' in prev ? { ...prev, title: e.target.value } : prev)}
                     />
                   </div>
                   <div className="space-y-2">
@@ -564,15 +564,15 @@ export default function CurriculumDataAdmin() {
                   <div className="space-y-2">
                     <Label>Department</Label>
                     <Input
-                      value={editingItem.department || ''}
-                      onChange={(e) => setEditingItem(prev => prev ? { ...prev, department: e.target.value } : null)}
+                      value={'department' in editingItem ? editingItem.department || '' : ''}
+                      onChange={(e) => setEditingItem(prev => prev && 'department' in prev ? { ...prev, department: e.target.value } : prev)}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Instructor</Label>
                     <Input
-                      value={editingItem.instructor || ''}
-                      onChange={(e) => setEditingItem(prev => prev ? { ...prev, instructor: e.target.value } : null)}
+                      value={'instructor' in editingItem ? editingItem.instructor || '' : ''}
+                      onChange={(e) => setEditingItem(prev => prev && 'instructor' in prev ? { ...prev, instructor: e.target.value } : prev)}
                     />
                   </div>
                   <div className="space-y-2">
@@ -606,23 +606,23 @@ export default function CurriculumDataAdmin() {
                   <div className="space-y-2">
                     <Label>Program Name</Label>
                     <Input
-                      value={editingItem.name || ''}
-                      onChange={(e) => setEditingItem(prev => prev ? { ...prev, name: e.target.value } : null)}
+                      value={'name' in editingItem ? editingItem.name || '' : ''}
+                      onChange={(e) => setEditingItem(prev => prev && 'name' in prev ? { ...prev, name: e.target.value } : prev)}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Degree</Label>
                     <Input
-                      value={editingItem.degree || ''}
-                      onChange={(e) => setEditingItem(prev => prev ? { ...prev, degree: e.target.value } : null)}
+                      value={'degree' in editingItem ? editingItem.degree || '' : ''}
+                      onChange={(e) => setEditingItem(prev => prev && 'degree' in prev ? { ...prev, degree: e.target.value } : prev)}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Duration (years)</Label>
                     <Input
                       type="number"
-                      value={editingItem.duration || ''}
-                      onChange={(e) => setEditingItem(prev => prev ? { ...prev, duration: parseInt(e.target.value) } : null)}
+                      value={'duration' in editingItem ? editingItem.duration || '' : ''}
+                      onChange={(e) => setEditingItem(prev => prev && 'duration' in prev ? { ...prev, duration: parseInt(e.target.value) } : prev)}
                     />
                   </div>
                   <div className="space-y-2">

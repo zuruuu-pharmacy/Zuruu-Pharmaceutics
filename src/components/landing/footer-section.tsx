@@ -81,7 +81,7 @@ const paymentMethods = [
   { name: "PayPal", icon: CreditCard }
 ];
 
-const navigationLinks = [];
+const navigationLinks: any[] = [];
 
 export function FooterSection() {
   const ref = useRef<HTMLDivElement>(null);

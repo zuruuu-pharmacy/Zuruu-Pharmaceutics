@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import {
   Database, FileText, Cloud, Lock, Upload, Download, Search, Filter,
   Edit, Trash2, Eye, Plus, Settings, Save, RefreshCw, Share2, Unlock,
-  Copy, ExternalLink, Play, Pause, Stop, Zap, Bell, MessageSquare,
+  Copy, ExternalLink, Play, Pause, Square, Zap, Bell, MessageSquare,
   Heart, Globe, Building, Award, Microscope, FlaskConical, TestTube, Atom,
   Brain, GraduationCap, BookOpen, Users, Calendar, Shield, Gavel, Scale,
   Clipboard, CheckCircle, XCircle, AlertTriangle, Star, Target, TrendingUp,
@@ -199,8 +199,8 @@ const generateMockDataset = (id: number): Dataset => {
       nextReview: faker.date.future({ years: 1 })
     },
     backupStatus: {
-      lastBackup: faker.date.recent({ days: 7 }),
-      nextBackup: faker.date.future({ days: 7 }),
+      lastBackup: faker.date.recent(),
+      nextBackup: faker.date.future(),
       frequency: faker.helpers.arrayElement(['Daily', 'Weekly', 'Monthly', 'Quarterly']),
       location: faker.helpers.arrayElement(['AWS S3', 'Google Cloud', 'Azure Blob', 'Local Server']),
       status: faker.helpers.arrayElement(['Success', 'Failed', 'In Progress', 'Scheduled']),
@@ -215,11 +215,11 @@ const generateMockDataset = (id: number): Dataset => {
       standards: Array.from({ length: faker.number.int({ min: 1, max: 3 }) }).map(() => faker.helpers.arrayElement(['ISO 27001', 'NIST', 'Dublin Core', 'DataCite']))
     },
     quality: {
-      completeness: faker.number.float({ min: 70, max: 100, precision: 0.1 }),
-      accuracy: faker.number.float({ min: 80, max: 100, precision: 0.1 }),
-      consistency: faker.number.float({ min: 75, max: 100, precision: 0.1 }),
-      validity: faker.number.float({ min: 85, max: 100, precision: 0.1 }),
-      timeliness: faker.number.float({ min: 60, max: 100, precision: 0.1 }),
+      completeness: faker.number.float({ min: 70, max: 100, fractionDigits: 0.1 }),
+      accuracy: faker.number.float({ min: 80, max: 100, fractionDigits: 0.1 }),
+      consistency: faker.number.float({ min: 75, max: 100, fractionDigits: 0.1 }),
+      validity: faker.number.float({ min: 85, max: 100, fractionDigits: 0.1 }),
+      timeliness: faker.number.float({ min: 60, max: 100, fractionDigits: 0.1 }),
       overall: 0,
       lastChecked: faker.date.recent({ days: 7 }),
       issues: qualityIssues

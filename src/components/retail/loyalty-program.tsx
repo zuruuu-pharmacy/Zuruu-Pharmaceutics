@@ -644,7 +644,7 @@ export default function LoyaltyProgram() {
                   </div>
                             {reward.availability !== 'Unlimited' && (
                               <Progress 
-                                value={(reward.availability / 100) * 100} 
+                                value={typeof reward.availability === 'number' ? (reward.availability / 100) * 100 : 0} 
                                 className="h-2" 
                               />
                             )}
@@ -884,7 +884,7 @@ export default function LoyaltyProgram() {
                       <div>
                         <Label>Favorite Categories</Label>
                         <div className="flex flex-wrap gap-2 mt-2">
-                          {selectedMember.favoriteCategories.map((category, index) => (
+                          {selectedMember.favoriteCategories.map((category: string, index: number) => (
                             <Badge key={index} variant="outline" className="bg-blue-50 text-blue-700">
                               {category}
                             </Badge>

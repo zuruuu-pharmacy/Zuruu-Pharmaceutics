@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Video, Smartphone, Tablet, Play, Pause, Stop, Download, Upload, Plus,
+  Video, Smartphone, Tablet, Play, Pause, Square, Download, Upload, Plus,
   Search, Filter, Edit, Trash2, Eye, CheckCircle, XCircle, AlertTriangle,
   Star, Target, TrendingUp, BarChart3, Clock, Users, Calendar, Settings,
   Save, RefreshCw, Share2, Lock, Unlock, Copy, ExternalLink, Zap, Bell,
@@ -234,7 +234,7 @@ const generateMockMobileCourse = (id: number): MobileCourse => {
     analytics: {
       views: faker.number.int({ min: 0, max: 1000 }),
       completions: faker.number.int({ min: 0, max: 100 }),
-      averageScore: faker.number.float({ min: 60, max: 100, precision: 0.1 }),
+      averageScore: faker.number.float({ min: 60, max: 100, fractionDigits: 0.1 }),
       timeSpent: faker.number.int({ min: 0, max: 10000 }),
       deviceBreakdown: {
         mobile: faker.number.int({ min: 30, max: 80 }),
@@ -243,9 +243,9 @@ const generateMockMobileCourse = (id: number): MobileCourse => {
       },
       engagement: {
         averageSessionTime: faker.number.int({ min: 5, max: 60 }),
-        bounceRate: faker.number.float({ min: 10, max: 50, precision: 0.1 }),
-        returnRate: faker.number.float({ min: 20, max: 80, precision: 0.1 }),
-        interactionRate: faker.number.float({ min: 30, max: 90, precision: 0.1 })
+        bounceRate: faker.number.float({ min: 10, max: 50, fractionDigits: 0.1 }),
+        returnRate: faker.number.float({ min: 20, max: 80, fractionDigits: 0.1 }),
+        interactionRate: faker.number.float({ min: 30, max: 90, fractionDigits: 0.1 })
       },
       feedback
     },

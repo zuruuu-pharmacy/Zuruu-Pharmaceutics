@@ -11,11 +11,11 @@ import {
   RotateCcw, QrCode, ScanLine, Barcode, Database, Network, Cpu, Brain, CheckCircle, XCircle,
   AlertTriangle, Clock, Calendar, User, Users, Star, Award, Phone, Mail, MessageSquare,
   Camera, Mic, Headphones, Volume2, VolumeX, Wifi as WifiIcon, Battery, Signal, Bluetooth,
-  Hospital, UserCheck, UserPlus, UserMinus, UserX, UserEdit, UserSearch, UserSettings,
+  Hospital, UserCheck, UserPlus, UserMinus, UserX, UserSearch,
   Map, Navigation, Compass, Home, Building2, Ambulance, Siren, Zap, Flame, Skull, Cross,
-  FirstAid, Heart, Shield, Stethoscope, Monitor, HardDrive, Wrench, Tool, Cog, Power,
+  Heart, Shield, Stethoscope, Monitor, HardDrive, Wrench, Cog, Power,
   PowerOff, AlertCircle, DollarSign, Target, Pill, Syringe, Microscope, TestTube, Beaker,
-  Flask, Droplet, Thermometer, Bandage, X, Plus as PlusIcon
+  FlaskConical, Droplet, Thermometer, Bandage, X, Plus as PlusIcon
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

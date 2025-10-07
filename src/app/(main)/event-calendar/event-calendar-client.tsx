@@ -193,8 +193,6 @@ export function EventCalendarClient() {
             content: `This is a discussion thread for the event "${data.title}" held on ${format(data.date, 'PPP')}.\n\nDescription: ${data.description || 'N/A'}`,
             author: 'Event Bot',
             category: 'Community',
-            replies: [],
-            date: new Date().toISOString(),
         });
         addEvent({
           title: data.title,

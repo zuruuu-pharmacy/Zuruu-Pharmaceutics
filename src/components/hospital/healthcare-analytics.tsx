@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   BarChart3, TrendingUp, Brain, Cpu, Database, Activity, Target, Zap, Shield,
   TrendingDown, ArrowUp, ArrowDown, Minus, Percent, Tag, MapPin, ShoppingCart,
-  Package, Globe, Wifi, Layers, Archive, Truck, Box, Megaphone, Building,
+  Package, Globe, Wifi, Layers, Archive, Box, Megaphone, Building,
   Clipboard, BookOpen, Scale, Gavel, Lock, Key, CheckSquare, Square, Play,
   Pause, Send, Share2, Image, Video, FileText, Printer, PieChart, LineChart,
   Search, Filter, Plus, Edit, Trash2, Eye, Download, Upload, Settings, Bell,
@@ -13,11 +13,11 @@ import {
   AlertTriangle, Clock, Calendar, User, Users, Star, Award, Phone, Mail,
   MessageSquare, Camera, Mic, Headphones, Volume2, VolumeX, Wifi as WifiIcon,
   Battery, Signal, Bluetooth, Hospital, UserCheck, UserPlus, UserMinus, UserX,
-  UserEdit, UserSearch, UserSettings, Map, Navigation, Compass, Home, Building2,
-  Ambulance, Siren, Zap as ZapIcon, Flame, Skull, Cross, FirstAid, Heart,
-  Shield as ShieldIcon, Stethoscope, Monitor, HardDrive, Wrench, Tool, Cog,
+  UserSearch, Map, Navigation, Compass, Home, Building2,
+  Ambulance, Siren, Zap as ZapIcon, Flame, Skull, Cross, Heart,
+  Shield as ShieldIcon, Stethoscope, Monitor, HardDrive, Wrench, Cog,
   Power, PowerOff, AlertCircle, DollarSign, Target as TargetIcon, Pill, Syringe,
-  Microscope, TestTube, Beaker, Flask, Droplet, Thermometer, Bandage, X,
+  Microscope, TestTube, Beaker, FlaskConical, Droplet, Thermometer, Bandage, X,
   Plus as PlusIcon, Truck, Warehouse, ShoppingCart as ShoppingCartIcon
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -365,7 +365,7 @@ export default function HealthcareAnalytics() {
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <RechartsBarChart data={departmentPerformance}>
+                    <BarChart data={departmentPerformance}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="department" />
                       <YAxis />
@@ -373,7 +373,7 @@ export default function HealthcareAnalytics() {
                       <Legend />
                       <Bar dataKey="efficiency" fill="#8b5cf6" />
                       <Bar dataKey="satisfaction" fill="#10b981" />
-                    </RechartsBarChart>
+                    </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>

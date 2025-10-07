@@ -44,7 +44,7 @@ export function TextToSpeechClient() {
   });
 
   useEffect(() => {
-    if (state?.error) {
+    if (state && 'error' in state) {
       toast({ variant: "destructive", title: "Error", description: state.error });
     }
   }, [state, toast]);

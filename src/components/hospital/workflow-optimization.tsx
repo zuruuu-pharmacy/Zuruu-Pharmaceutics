@@ -5,18 +5,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Workflow, Zap, Brain, Cpu, Target, TrendingUp, TrendingDown, ArrowUp, ArrowDown,
   Minus, Percent, Tag, MapPin, ShoppingCart, Package, Globe, Wifi, Layers, Archive,
-  Truck, Box, Megaphone, Building, Clipboard, BookOpen, Scale, Gavel, Lock, Key,
+  Box, Megaphone, Building, Clipboard, BookOpen, Scale, Gavel, Lock, Key,
   CheckSquare, Square, Play, Pause, Send, Share2, Image, Video, FileText, Printer,
   BarChart3, PieChart, LineChart, Activity, Search, Filter, Plus, Edit, Trash2, Eye,
   Download, Upload, Settings, Bell, RefreshCw, RotateCcw, QrCode, ScanLine, Barcode,
   Database, Network, CheckCircle, XCircle, AlertTriangle, Clock, Calendar, User, Users,
   Star, Award, Phone, Mail, MessageSquare, Camera, Mic, Headphones, Volume2, VolumeX,
   Wifi as WifiIcon, Battery, Signal, Bluetooth, Hospital, UserCheck, UserPlus,
-  UserMinus, UserX, UserEdit, UserSearch, UserSettings, Map, Navigation, Compass,
-  Home, Building2, Ambulance, Siren, Zap as ZapIcon, Flame, Skull, Cross, FirstAid,
-  Heart, Shield, Stethoscope, Monitor, HardDrive, Wrench, Tool, Cog, Power, PowerOff,
+  UserMinus, UserX, UserSearch, Map, Navigation, Compass,
+  Home, Building2, Ambulance, Siren, Zap as ZapIcon, Flame, Skull, Cross,
+  Heart, Shield, Stethoscope, Monitor, HardDrive, Wrench, Cog, Power, PowerOff,
   AlertCircle, DollarSign, Target as TargetIcon, Pill, Syringe, Microscope, TestTube,
-  Beaker, Flask, Droplet, Thermometer, Bandage, X, Plus as PlusIcon, Truck, Warehouse,
+  Beaker, FlaskConical, Droplet, Thermometer, Bandage, X, Plus as PlusIcon, Truck, Warehouse,
   ShoppingCart as ShoppingCartIcon, GitBranch, GitCommit, GitMerge, GitPullRequest
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -672,7 +672,7 @@ export default function WorkflowOptimization() {
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <RechartsBarChart data={departmentEfficiency}>
+                    <BarChart data={departmentEfficiency}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="department" />
                       <YAxis />
@@ -680,7 +680,7 @@ export default function WorkflowOptimization() {
                       <Legend />
                       <Bar dataKey="efficiency" fill="#6366f1" />
                       <Bar dataKey="automation" fill="#3b82f6" />
-                    </RechartsBarChart>
+                    </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>

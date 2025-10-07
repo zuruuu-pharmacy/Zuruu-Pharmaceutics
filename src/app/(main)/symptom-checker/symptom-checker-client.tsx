@@ -160,10 +160,11 @@ export function SymptomCheckerClient() {
 
   const handleSaveToHistory = () => {
     if (mode === 'patient') {
-      if (!activePatientRecord || !state?.analysis) return;
+      if (!activePatientRecord || !state || !('analysis' in state)) return;
       
-      const newNote = `[${new Date().toISOString().split('T')[0]}] Symptom Check: ${state.analysis.summaryForHistory}`;
-      const system = state.analysis.mostRelevantSystem;
+      const analysis = state.analysis!;
+      const newNote = `[${new Date().toISOString().split('T')[0]}] Symptom Check: ${analysis.summaryForHistory}`;
+      const system = analysis.mostRelevantSystem;
       
       const updatedHistory: PatientHistory = {
         ...activePatientRecord.history,
@@ -181,7 +182,7 @@ export function SymptomCheckerClient() {
   };
 
   const handlePharmacistSave = newPatientForm.handleSubmit(async (data: NewPatientValues) => {
-    if (!state?.analysis) return;
+    if (!state || !('analysis' in state)) return;
     setIsSaving(true);
     
     // Find existing patient record by name and phone number.
@@ -191,8 +192,9 @@ export function SymptomCheckerClient() {
         r.history.phoneNumber === data.phoneNumber
     );
 
-    const newNote = `[${new Date().toISOString().split('T')[0]}] Symptom Check (Pharmacist Assisted): ${state.analysis.summaryForHistory}`;
-    const system = state.analysis.mostRelevantSystem;
+    const analysis = state.analysis!;
+    const newNote = `[${new Date().toISOString().split('T')[0]}] Symptom Check (Pharmacist Assisted): ${analysis.summaryForHistory}`;
+    const system = analysis.mostRelevantSystem;
 
     if (existingRecord) {
       // Update existing record
@@ -231,9 +233,9 @@ export function SymptomCheckerClient() {
     return <div className="flex justify-center items-center h-full"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
   }
 
-  if (currentStep === 'analysis' && state?.analysis) {
+  if (currentStep === 'analysis' && state && 'analysis' in state) {
     const { analysis } = state;
-    const severityConfig = severityMap[analysis.severity] || severityMap['Yellow'];
+    const severityConfig = severityMap[analysis!.severity] || severityMap['Yellow'];
     return (
         <Card className={`border-2 ${severityConfig.color.replace('text-', 'border-')}`}>
             <CardHeader>
@@ -245,14 +247,14 @@ export function SymptomCheckerClient() {
             <CardContent className="space-y-6">
                 <Alert variant={severityConfig.badge === 'destructive' ? 'destructive' : 'default'} className="bg-background">
                     <severityConfig.icon className={`h-4 w-4 ${severityConfig.color}`} />
-                    <AlertTitle className="text-lg">Recommendation: {analysis.recommendation}</AlertTitle>
-                    <AlertDescription>{analysis.disclaimer}</AlertDescription>
+                    <AlertTitle className="text-lg">Recommendation: {analysis!.recommendation}</AlertTitle>
+                    <AlertDescription>{analysis!.disclaimer}</AlertDescription>
                 </Alert>
 
                 <div className="space-y-4">
                     <h3 className="font-semibold text-xl">Differential Diagnosis</h3>
-                    <p className="text-sm text-muted-foreground">Most Relevant System: <Badge variant="outline">{analysis.mostRelevantSystem}</Badge></p>
-                    {analysis.possibleConditions.map((cond, i) => (
+                    <p className="text-sm text-muted-foreground">Most Relevant System: <Badge variant="outline">{analysis!.mostRelevantSystem}</Badge></p>
+                    {analysis!.possibleConditions.map((cond, i) => (
                         <div key={i} className="p-4 bg-muted/50 rounded-lg border">
                            <div className="flex justify-between items-start mb-2">
                              <p className="font-semibold text-primary text-lg">{cond.name}</p>
@@ -267,13 +269,13 @@ export function SymptomCheckerClient() {
                     ))}
                 </div>
                 
-                {analysis.redFlags && analysis.redFlags.length > 0 && (
+                {analysis!.redFlags && analysis!.redFlags.length > 0 && (
                     <Alert variant="destructive">
                         <AlertTriangle className="h-4 w-4" />
                         <AlertTitle>Red Flags Identified</AlertTitle>
                         <AlertDescription>
                             <ul className="list-disc list-inside mt-2">
-                                {analysis.redFlags.map((flag, i) => (
+                                {analysis!.redFlags.map((flag, i) => (
                                     <li key={i} className="font-semibold">{flag}</li>
                                 ))}
                             </ul>
@@ -281,10 +283,10 @@ export function SymptomCheckerClient() {
                     </Alert>
                 )}
                 
-                {analysis.suggestedDoctors && analysis.suggestedDoctors.length > 0 && (
+                {analysis!.suggestedDoctors && analysis!.suggestedDoctors.length > 0 && (
                     <div className="space-y-3">
                         <h3 className="font-semibold text-xl">Recommended Specialists</h3>
-                        {analysis.suggestedDoctors.map((doctor, i) => (
+                        {analysis!.suggestedDoctors.map((doctor, i) => (
                             <div key={i} className="p-3 bg-muted/30 rounded-lg border-l-4 border-primary">
                                 <div className="flex justify-between items-start">
                                     <div>
@@ -344,7 +346,7 @@ export function SymptomCheckerClient() {
     );
   }
 
-  if (currentStep === 'questions' && state?.triageQuestions) {
+  if (currentStep === 'questions' && state && 'triageQuestions' in state) {
     return (
         <Card>
             <CardHeader>
@@ -354,7 +356,7 @@ export function SymptomCheckerClient() {
             <CardContent>
                 <Form {...answerForm}>
                     <form onSubmit={handleAnswerSubmit} className="space-y-6">
-                        {state.triageQuestions.map((q, index) => (
+                        {state.triageQuestions!.map((q, index) => (
                             <FormField key={index} name={`answers.${index}.answer`} control={answerForm.control}
                                 render={({ field }) => (
                                     <FormItem className="p-4 border rounded-lg">

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Shield, Gavel, FileText, CheckCircle, XCircle, AlertTriangle, Clock, Calendar,
   TrendingUp, TrendingDown, ArrowUp, ArrowDown, Minus, Percent, Tag, MapPin,
-  ShoppingCart, Package, Globe, Wifi, Layers, Archive, Truck, Box, Megaphone,
+  Package, Globe, Wifi, Layers, Archive, Box, Megaphone,
   Building, Clipboard, BookOpen, Scale, Lock, Key, CheckSquare, Square, Play,
   Pause, Send, Share2, Image, Video, Printer, BarChart3, PieChart, LineChart,
   Activity, Search, Filter, Plus, Edit, Trash2, Eye, Download, Upload, Settings,

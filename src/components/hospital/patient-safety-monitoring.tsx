@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Shield, AlertTriangle, AlertCircle, CheckCircle, XCircle, Clock, Calendar,
   TrendingUp, TrendingDown, ArrowUp, ArrowDown, Minus, Percent, Tag, MapPin,
-  ShoppingCart, Package, Globe, Wifi, Layers, Archive, Truck, Box, Megaphone,
+  ShoppingCart, Package, Globe, Wifi, Layers, Archive, Box, Megaphone,
   Building, Clipboard, BookOpen, Scale, Gavel, Lock, Key, CheckSquare, Square,
   Play, Pause, Send, Share2, Image, Video, FileText, Printer, BarChart3, PieChart,
   LineChart, Activity, Search, Filter, Plus, Edit, Trash2, Eye, Download, Upload,
@@ -14,11 +14,11 @@ import {
   AlertTriangle as AlertTriangleIcon, Clock as ClockIcon, Calendar as CalendarIcon,
   User, Users, Star, Award, Phone, Mail, MessageSquare, Camera, Mic, Headphones,
   Volume2, VolumeX, Wifi as WifiIcon, Battery, Signal, Bluetooth, Hospital,
-  UserCheck, UserPlus, UserMinus, UserX, UserEdit, UserSearch, UserSettings, Map,
+  UserCheck, UserPlus, UserMinus, UserX, UserSearch, Map,
   Navigation, Compass, Home, Building2, Ambulance, Siren, Zap, Flame, Skull, Cross,
-  FirstAid, Heart, Shield as ShieldIcon, Stethoscope, Monitor, HardDrive, Wrench,
-  Tool, Cog, Power, PowerOff, AlertCircle as AlertCircleIcon, DollarSign, Target,
-  Pill, Syringe, Microscope, TestTube, Beaker, Flask, Droplet, Thermometer,
+  Heart, Shield as ShieldIcon, Stethoscope, Monitor, HardDrive, Wrench,
+  Cog, Power, PowerOff, AlertCircle as AlertCircleIcon, DollarSign, Target,
+  Pill, Syringe, Microscope, TestTube, Beaker, FlaskConical, Droplet, Thermometer,
   Bandage, X, Plus as PlusIcon, Truck, Warehouse, ShoppingCart as ShoppingCartIcon
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

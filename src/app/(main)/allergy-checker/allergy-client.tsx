@@ -104,7 +104,7 @@ export function AllergyClient() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { mode } = useMode();
-  const { getActivePatientRecord } = usePatient();
+  const { getActivePatientRecord, patientState } = usePatient();
   const activePatientRecord = getActivePatientRecord();
   const { toast } = useToast();
 
@@ -250,7 +250,7 @@ export function AllergyClient() {
           triggers: data.triggers || [],
           bodyParts: data.bodyParts || [],
         },
-        demographics: activePatientRecord?.history?.demographics,
+        demographics: patientState.activeUser?.demographics,
         emergencyMode,
       });
     });
@@ -267,7 +267,7 @@ export function AllergyClient() {
           familyAllergyHistory: data.familyAllergyHistory || [],
           previousReactions: data.previousReactions || [],
         },
-        demographics: activePatientRecord?.history?.demographics,
+        demographics: patientState.activeUser?.demographics,
         emergencyMode,
       });
     });
@@ -279,7 +279,7 @@ export function AllergyClient() {
       startTransition(() => {
         runAssessment({
           ingredientScan: scanResult,
-          demographics: activePatientRecord?.history?.demographics,
+          demographics: patientState.activeUser?.demographics,
           emergencyMode,
         });
       });
