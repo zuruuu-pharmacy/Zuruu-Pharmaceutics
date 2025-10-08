@@ -1,8 +1,32 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  env: {
-    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-    NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+  // Basic configuration for Vercel deployment
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  eslint: {
+    ignoreDuringBuilds: false,
+  },
+  // Optimize for production
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  // Image optimization
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+        port: '',
+        pathname: '/**',
+      },
+    ],
   },
 }
 
