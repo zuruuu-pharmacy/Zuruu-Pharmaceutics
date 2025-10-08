@@ -1,6 +1,6 @@
 
 import { BackButton } from "@/components/back-button";
-import { AnalyticsDashboardClient } from "@/app/(main)/progress-tracker/progress-tracker-client";
+import { AnalyticsDashboardClient } from "./progress-tracker-client";
 
 export default function ProgressTrackerPage() {
   return (
