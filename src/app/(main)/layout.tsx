@@ -1,16 +1,11 @@
 
-"use client";
-
 import type { ReactNode } from "react";
-import { AppShell } from "@/components/app-shell";
-import { AnimatePresence } from "framer-motion";
+import { MainLayoutClient } from "./main-layout-client";
 
 export default function MainLayout({ children }: { children: ReactNode }) {
   return (
-    <AppShell>
-      <AnimatePresence mode="wait" initial={false}>
-        {children}
-      </AnimatePresence>
-    </AppShell>
+    <MainLayoutClient>
+      {children}
+    </MainLayoutClient>
   );
 }
