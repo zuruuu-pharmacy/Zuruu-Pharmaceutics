@@ -40,8 +40,6 @@ import { CinematicHeroVideo } from "@/components/landing/cinematic-hero-video";
 import { PillarsSectionEnhanced } from "@/components/landing/pillars-section-enhanced";
 import { HowZuruuWorksEnhanced } from "@/components/landing/how-zuruu-works-enhanced";
 import { TestimonialsSection } from "@/components/landing/testimonials-section";
-import { PricingSection } from "@/components/landing/pricing-section";
-import { CTASection } from "@/components/landing/cta-section";
 import { FooterSection } from "@/components/landing/footer-section";
 import { DemoModal } from "@/components/landing/demo-modal";
 import { DashboardAccessModal } from "@/components/landing/dashboard-access-modal";
@@ -171,15 +169,6 @@ export default function RoleSelectionPage() {
       {/* Testimonials Section */}
       <TestimonialsSection />
       
-      {/* Pricing Section */}
-      <section id="pricing">
-        <PricingSection />
-      </section>
-      
-      {/* Contact Section */}
-      <section id="contact">
-        <CTASection />
-      </section>
       
       {/* Footer Section */}
       <FooterSection />
