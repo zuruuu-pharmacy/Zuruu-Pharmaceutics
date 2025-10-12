@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import "@/styles/design-system.css";
@@ -16,7 +14,6 @@ interface ScrollHeaderProps {
 
 export function ScrollHeader({ onPatientClick, onPharmacistClick, onStudentClick }: ScrollHeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,18 +25,6 @@ export function ScrollHeader({ onPatientClick, onPharmacistClick, onStudentClick
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const menuItems: any[] = [];
-
-  const handleMenuClick = (item: typeof menuItems[0]) => {
-    if (item.href.endsWith('.pdf')) {
-      window.open(item.href, '_blank');
-    } else if (item.href.startsWith('http')) {
-      window.open(item.href, '_blank');
-    } else {
-      window.location.href = item.href;
-    }
-    setIsProfileOpen(false);
-  };
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -316,81 +301,6 @@ export function ScrollHeader({ onPatientClick, onPharmacistClick, onStudentClick
                 </Button>
               </div>
 
-              {/* Profile Menu */}
-              <DropdownMenu open={isProfileOpen} onOpenChange={setIsProfileOpen}>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={`relative h-12 w-12 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#1F59FF] focus:ring-offset-2 ${
-                      isScrolled 
-                        ? 'border-2 border-[#1F59FF]/20 hover:border-[#1F59FF]/40 bg-white/80 backdrop-blur-sm shadow-lg' 
-                        : 'border-2 border-white/20 hover:border-white/40 bg-white/10 backdrop-blur-sm'
-                    }`}
-                  >
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage 
-                        src="/profile-picture.jpg" 
-                        alt="Profile Picture"
-                        className="object-cover rounded-full"
-                      />
-                      <AvatarFallback className="bg-gradient-to-br from-[#1F59FF] to-[#14B8A6] text-white text-lg font-semibold">
-                        👤
-                      </AvatarFallback>
-                    </Avatar>
-                    
-                    {/* Animated ring when menu is open */}
-                    <AnimatePresence>
-                      {isProfileOpen && (
-                        <motion.div
-                          initial={{ scale: 1, opacity: 0 }}
-                          animate={{ scale: 1.2, opacity: 1 }}
-                          exit={{ scale: 1, opacity: 0 }}
-                          className="absolute inset-0 rounded-full border-2 border-[#1F59FF] animate-ping"
-                        />
-                      )}
-                    </AnimatePresence>
-                  </Button>
-                </DropdownMenuTrigger>
-                
-                <DropdownMenuContent 
-                  align="end" 
-                  className="w-64 p-2 bg-white/95 backdrop-blur-sm border shadow-xl"
-                >
-                  <div className="px-3 py-2 text-sm font-medium text-[#6B7280] border-b mb-2 font-primary">
-                    Profile Menu
-                  </div>
-                  
-                  {menuItems.map((item, index) => (
-                    <motion.div
-                      key={item.label}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <DropdownMenuItem
-                        className="flex items-center space-x-3 p-3 rounded-lg hover:bg-[#1F59FF]/10 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-[#1F59FF] focus:ring-offset-2"
-                        onClick={() => handleMenuClick(item)}
-                      >
-                        <div className={`p-2 rounded-lg bg-gray-100 ${item.color}`}>
-                          <item.icon className="h-4 w-4" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="font-medium font-primary">{item.label}</div>
-                          <div className="text-xs text-[#6B7280] font-primary">
-                            {item.description}
-                          </div>
-                        </div>
-                        <ExternalLink className="h-3 w-3 text-[#6B7280]" />
-                      </DropdownMenuItem>
-                    </motion.div>
-                  ))}
-                  
-                  <div className="px-3 py-2 text-xs text-[#6B7280] border-t mt-2 text-center font-primary">
-                    Click to explore more
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
           </div>
         </div>
