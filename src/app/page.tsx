@@ -39,7 +39,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CinematicHeroVideo } from "@/components/landing/cinematic-hero-video";
 import { PillarsSectionEnhanced } from "@/components/landing/pillars-section-enhanced";
 import { HowZuruuWorksEnhanced } from "@/components/landing/how-zuruu-works-enhanced";
-import { TestimonialsSection } from "@/components/landing/testimonials-section";
 import { FooterSection } from "@/components/landing/footer-section";
 import { DemoModal } from "@/components/landing/demo-modal";
 import { DashboardAccessModal } from "@/components/landing/dashboard-access-modal";
@@ -164,11 +163,6 @@ export default function RoleSelectionPage() {
       
       {/* How Zuruu Works Section */}
       <HowZuruuWorksEnhanced />
-      
-      
-      {/* Testimonials Section */}
-      <TestimonialsSection />
-      
       
       {/* Footer Section */}
       <FooterSection />
