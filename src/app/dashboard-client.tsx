@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { BookText, Calculator, FlaskConical, ShieldAlert, ArrowRight, ScanEye, User, Users, TestTube, Sparkles, Zap, Brain, Target } from "lucide-react";
+import { BookText, Calculator, FlaskConical, ShieldAlert, ArrowRight, ScanEye, User, Users, TestTube, Sparkles, Zap, Brain, Target, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -10,6 +10,8 @@ import { ParticleBackground } from "@/components/ui/particle-background";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { QuickInsights } from "@/components/ui/mini-charts";
 import { ProgressOverview } from "@/components/ui/progress-indicators";
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const tools = [
   {
@@ -73,6 +75,12 @@ const tools = [
 export function DashboardClient() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [activeCard, setActiveCard] = useState<string | null>(null);
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: "/auth/login" });
+  };
 
   useEffect(() => {
     setIsLoaded(true);
@@ -80,14 +88,42 @@ export function DashboardClient() {
 
   return (
       <div className="flex flex-col gap-8">
-        {/* Theme Toggle */}
+        {/* Header Controls */}
         <motion.div 
-          className="flex justify-end"
+          className="flex justify-between items-center"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <ThemeToggle />
+          {/* User Info */}
+          <div className="flex items-center space-x-3">
+            {session?.user && (
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-semibold">
+                    {session.user.name?.charAt(0) || session.user.email?.charAt(0) || 'U'}
+                  </span>
+                </div>
+                <span className="text-sm text-gray-600">
+                  {session.user.name || session.user.email}
+                </span>
+              </div>
+            )}
+          </div>
+          
+          {/* Controls */}
+          <div className="flex items-center space-x-3">
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              size="sm"
+              className="flex items-center space-x-2"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Logout</span>
+            </Button>
+            <ThemeToggle />
+          </div>
         </motion.div>
 
         {/* Cinematic Hero Header */}
