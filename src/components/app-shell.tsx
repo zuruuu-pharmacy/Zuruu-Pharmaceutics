@@ -21,125 +21,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { useMode } from "@/contexts/mode-context";
 import { usePatient } from "@/contexts/patient-context";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Button } from "./ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Briefcase, ExternalLink } from "lucide-react";
-import { useState } from "react";
 
-// Profile Menu Component
-function ProfileMenu() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const menuItems = [
-    {
-      icon: FileText,
-      label: "My CV",
-      description: "Download my resume",
-      href: "/CV.pdf",
-      color: "text-blue-600",
-    },
-    {
-      icon: Briefcase,
-      label: "My Portfolio",
-      description: "View my work",
-      href: "https://ohsin-aesthetics.lovable.app/",
-      color: "text-green-600",
-    },
-    {
-      icon: User,
-      label: "About Me",
-      description: "Learn more about me",
-      href: "/about.html",
-      color: "text-purple-600",
-    },
-  ];
-
-  const handleMenuClick = (item: typeof menuItems[0]) => {
-    if (item.href.endsWith('.pdf')) {
-      window.open(item.href, '_blank');
-    } else if (item.href.startsWith('http')) {
-      window.open(item.href, '_blank');
-    } else {
-      window.location.href = item.href;
-    }
-    setIsOpen(false);
-  };
-
-  return (
-    <div className="fixed top-4 right-4 z-50">
-      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="relative h-12 w-12 rounded-full border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:scale-105 bg-background/80 backdrop-blur-sm shadow-lg"
-          >
-            <Avatar className="h-10 w-10">
-              <AvatarImage 
-                src="/profile-picture.jpg" 
-                alt="Profile Picture"
-                className="object-cover rounded-full"
-              />
-              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-sm font-semibold">
-                👤
-              </AvatarFallback>
-            </Avatar>
-            
-            <AnimatePresence>
-              {isOpen && (
-                <motion.div
-                  initial={{ scale: 1, opacity: 0 }}
-                  animate={{ scale: 1.2, opacity: 1 }}
-                  exit={{ scale: 1, opacity: 0 }}
-                  className="absolute inset-0 rounded-full border-2 border-primary animate-ping"
-                />
-              )}
-            </AnimatePresence>
-          </Button>
-        </DropdownMenuTrigger>
-        
-        <DropdownMenuContent 
-          align="end" 
-          className="w-64 p-2 bg-background/95 backdrop-blur-sm border shadow-xl"
-        >
-          <div className="px-3 py-2 text-sm font-medium text-muted-foreground border-b mb-2">
-            Profile Menu
-          </div>
-          
-          {menuItems.map((item, index) => (
-            <motion.div
-              key={item.label}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <DropdownMenuItem
-                className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent cursor-pointer transition-colors"
-                onClick={() => handleMenuClick(item)}
-              >
-                <div className={`p-2 rounded-lg bg-muted ${item.color}`}>
-                  <item.icon className="h-4 w-4" />
-                </div>
-                <div className="flex-1">
-                  <div className="font-medium">{item.label}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {item.description}
-                  </div>
-                </div>
-                <ExternalLink className="h-3 w-3 text-muted-foreground" />
-              </DropdownMenuItem>
-            </motion.div>
-          ))}
-          
-          <div className="px-3 py-2 text-xs text-muted-foreground border-t mt-2 text-center">
-            Click to explore more
-          </div>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-  );
-}
 
 const pharmacistTools = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -374,8 +256,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen">
-        {/* Profile Menu - Fixed in top-right corner */}
-        <ProfileMenu />
         
         <Sidebar>
           <SidebarHeader>
