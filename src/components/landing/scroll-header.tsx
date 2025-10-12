@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { FileText, Briefcase, User, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import "@/styles/design-system.css";
 
 interface ScrollHeaderProps {
@@ -28,29 +28,7 @@ export function ScrollHeader({ onPatientClick, onPharmacistClick, onStudentClick
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const menuItems = [
-    {
-      icon: FileText,
-      label: "My CV",
-      description: "Download my resume",
-      href: "/CV.pdf",
-      color: "text-[#1F59FF]",
-    },
-    {
-      icon: Briefcase,
-      label: "My Portfolio",
-      description: "View my work",
-      href: "https://ohsin-aesthetics.lovable.app/",
-      color: "text-[#14B8A6]",
-    },
-    {
-      icon: User,
-      label: "About Me",
-      description: "Learn more about me",
-      href: "/about.html",
-      color: "text-[#1F59FF]",
-    },
-  ];
+  const menuItems: any[] = [];
 
   const handleMenuClick = (item: typeof menuItems[0]) => {
     if (item.href.endsWith('.pdf')) {

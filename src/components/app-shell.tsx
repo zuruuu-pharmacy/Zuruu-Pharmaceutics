@@ -24,36 +24,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Briefcase, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 
 // Profile Menu Component
 function ProfileMenu() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const menuItems = [
-    {
-      icon: FileText,
-      label: "My CV",
-      description: "Download my resume",
-      href: "/CV.pdf",
-      color: "text-blue-600",
-    },
-    {
-      icon: Briefcase,
-      label: "My Portfolio",
-      description: "View my work",
-      href: "https://ohsin-aesthetics.lovable.app/",
-      color: "text-green-600",
-    },
-    {
-      icon: User,
-      label: "About Me",
-      description: "Learn more about me",
-      href: "/about.html",
-      color: "text-purple-600",
-    },
-  ];
+  const menuItems: any[] = [];
 
   const handleMenuClick = (item: typeof menuItems[0]) => {
     if (item.href.endsWith('.pdf')) {
