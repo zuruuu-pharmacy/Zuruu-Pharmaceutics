@@ -4,6 +4,7 @@ import './globals.css';
 import { ModeProvider } from '@/contexts/mode-context';
 import { ThemeProvider } from '@/contexts/theme-context';
 import { AuthProvider } from '@/contexts/auth-context';
+import { AuthSessionProvider } from '@/components/providers/session-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { PatientProvider } from '@/contexts/patient-context';
 import { LectureNotesProvider } from '@/contexts/lecture-notes-context';
@@ -31,8 +32,9 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning>
         <ThemeProvider>
-          <AuthProvider>
-            <ModeProvider>
+          <AuthSessionProvider>
+            <AuthProvider>
+              <ModeProvider>
               <PatientProvider>
                 <LectureNotesProvider>
                   <OsceSessionsProvider>
@@ -49,6 +51,7 @@ export default function RootLayout({
               </PatientProvider>
             </ModeProvider>
           </AuthProvider>
+          </AuthSessionProvider>
         </ThemeProvider>
       </body>
     </html>

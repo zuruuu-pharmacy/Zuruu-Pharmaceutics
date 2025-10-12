@@ -154,32 +154,35 @@ export default function SignupPage() {
     setIsLoading(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
       
-      const userData = {
-        id: Date.now().toString(),
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        role: 'user',
-        createdAt: new Date().toISOString(),
-        isVerified: false,
-        profileComplete: false
-      };
+      const data = await response.json();
       
-      login(userData);
+      if (!response.ok) {
+        throw new Error(data.error || "Signup failed");
+      }
       
       toast({
         title: "Account Created Successfully!",
-        description: "Welcome to Zuruu Pharmaceutics. Please complete your profile.",
+        description: "Welcome to Zuruu Pharmaceutics. You can now login.",
       });
       
-      router.push('/profile');
+      router.push('/auth/login');
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Signup Failed",
-        description: "Something went wrong. Please try again.",
+        description: error instanceof Error ? error.message : "Something went wrong. Please try again.",
       });
     } finally {
       setIsLoading(false);

@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { useAuth } from "@/contexts/auth-context";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 
 export default function LoginPage() {
@@ -80,31 +81,24 @@ export default function LoginPage() {
     setIsLoading(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const googleUserData = {
-        id: Date.now().toString(),
-        firstName: "John",
-        lastName: "Doe",
-        email: "john.doe@gmail.com",
-        phone: "+1234567890",
-        role: "pharmacist",
-        organization: "Google Pharmacy",
-        experience: "5-10 years",
-        profilePicture: "https://lh3.googleusercontent.com/a/default-user",
-        createdAt: new Date().toISOString(),
-        isVerified: true,
-        profileComplete: true
-      };
-      
-      login(googleUserData);
-      
-      toast({
-        title: "Google Login Successful!",
-        description: "Welcome back to Zuruu Pharmaceutics.",
+      const result = await signIn("google", {
+        callbackUrl: "/dashboard",
+        redirect: false,
       });
       
-      router.push('/profile');
+      if (result?.error) {
+        toast({
+          variant: "destructive",
+          title: "Google Login Failed",
+          description: "Something went wrong. Please try again.",
+        });
+      } else {
+        toast({
+          title: "Google Login Successful!",
+          description: "Welcome back to Zuruu Pharmaceutics.",
+        });
+        router.push("/dashboard");
+      }
     } catch (error) {
       toast({
         variant: "destructive",
@@ -126,32 +120,30 @@ export default function LoginPage() {
     setIsLoading(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const userData = {
-        id: Date.now().toString(),
-        firstName: formData.email.split('@')[0],
-        lastName: '',
+      const result = await signIn("credentials", {
         email: formData.email,
-        role: 'user',
-        createdAt: new Date().toISOString(),
-        isVerified: true,
-        profileComplete: false
-      };
-      
-      login(userData);
-      
-      toast({
-        title: "Login Successful!",
-        description: "Welcome back to Zuruu Pharmaceutics.",
+        password: formData.password,
+        redirect: false,
       });
       
-      router.push('/profile');
+      if (result?.error) {
+        toast({
+          variant: "destructive",
+          title: "Login Failed",
+          description: "Invalid email or password. Please try again.",
+        });
+      } else {
+        toast({
+          title: "Login Successful!",
+          description: "Welcome back to Zuruu Pharmaceutics.",
+        });
+        router.push("/dashboard");
+      }
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: "Invalid email or password. Please try again.",
+        description: "Something went wrong. Please try again.",
       });
     } finally {
       setIsLoading(false);
