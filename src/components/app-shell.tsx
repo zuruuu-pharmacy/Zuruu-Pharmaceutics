@@ -20,6 +20,7 @@ import {
 import { ModeToggle } from "@/components/mode-toggle";
 import { useMode } from "@/contexts/mode-context";
 import { usePatient } from "@/contexts/patient-context";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 
 
 const pharmacistTools = [
