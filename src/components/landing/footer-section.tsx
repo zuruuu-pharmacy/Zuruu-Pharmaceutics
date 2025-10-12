@@ -42,13 +42,6 @@ const footerLinks = {
       { name: "Industry Solutions", href: "/industry-dashboard", internal: true }
     ]
   },
-  information: {
-    title: "INFORMATION",
-    links: [
-      { name: "Pricing", href: "#pricing", internal: true },
-      { name: "Contact Us", href: "#contact", internal: true }
-    ]
-  },
   account: {
     title: "MY ACCOUNT",
     links: [
@@ -189,7 +182,7 @@ export function FooterSection() {
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.8 }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Brand Section */}
             <motion.div
               className="lg:col-span-1"
@@ -294,53 +287,13 @@ export function FooterSection() {
               </ul>
             </motion.div>
 
-            {/* Information */}
-            <motion.div
-              className="lg:col-span-1"
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-            >
-              <h4 className="text-sm font-semibold text-gray-400 mb-4 uppercase tracking-wider">
-                {footerLinks.information.title}
-              </h4>
-              <ul className="space-y-3">
-                {footerLinks.information.links.map((link, index) => (
-                  <motion.li
-                    key={link.name}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                    transition={{ duration: 0.4, delay: 0.7 + index * 0.1 }}
-                  >
-                    <button
-                      onClick={() => handleLinkClick(link.href, link.internal)}
-                      className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-sm text-left"
-                    >
-                      {link.name}
-                    </button>
-                  </motion.li>
-                ))}
-                <motion.li
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                  transition={{ duration: 0.4, delay: 0.8 }}
-                >
-                  <button
-                    onClick={() => handleLinkClick("/blog", true)}
-                    className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-sm text-left"
-                  >
-                    Blog
-                  </button>
-                </motion.li>
-              </ul>
-            </motion.div>
 
             {/* My Account */}
             <motion.div
               className="lg:col-span-1"
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
             >
               <h4 className="text-sm font-semibold text-gray-400 mb-4 uppercase tracking-wider">
                 {footerLinks.account.title}
@@ -464,7 +417,7 @@ export function FooterSection() {
               className="lg:col-span-1"
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
             >
               <h4 className="text-sm font-semibold text-gray-400 mb-4 uppercase tracking-wider">
                 {footerLinks.contact.title}
