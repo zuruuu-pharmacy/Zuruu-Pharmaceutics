@@ -70,9 +70,9 @@ const footerLinks = {
   owner: {
     title: "OWNER PROFILE",
     links: [
-      { name: "My CV", href: "/CV.pdf", internal: false, icon: FileText, description: "Download my resume", useProfilePic: true },
-      { name: "My Portfolio", href: "#", internal: false, icon: Briefcase, description: "View my work", useProfilePic: true },
-      { name: "About Me", href: "#", internal: false, icon: User, description: "Learn more about me", useProfilePic: true }
+      { name: "My CV", href: "/CV.pdf", internal: false, icon: FileText, description: "Download my resume" },
+      { name: "My Portfolio", href: "#", internal: false, icon: Briefcase, description: "View my work" },
+      { name: "About Me", href: "#", internal: false, icon: User, description: "Learn more about me" }
     ]
   }
 };
@@ -247,15 +247,11 @@ export function FooterSection() {
                     transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
                   >
                     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 overflow-hidden">
-                      {link.useProfilePic ? (
-                        <img
-                          src="/profile-picture.jpg"
-                          alt="Profile Picture"
-                          className="w-full h-full object-cover rounded-full"
-                        />
-                      ) : (
-                        <link.icon className="w-4 h-4 text-white" />
-                      )}
+                      <img
+                        src="/profile-picture.jpg"
+                        alt="Profile Picture"
+                        className="w-full h-full object-cover rounded-full"
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-gray-200 group-hover:text-blue-400 transition-colors duration-300">
