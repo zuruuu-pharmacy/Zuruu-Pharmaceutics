@@ -52,8 +52,6 @@ const footerLinks = {
   account: {
     title: "MY ACCOUNT",
     links: [
-      { name: "Login", href: "/auth/login", internal: true },
-      { name: "Sign Up", href: "/auth/signup", internal: true },
       { name: "Dashboard", href: "/dashboard", internal: true },
       { name: "Profile", href: "/profile", internal: true },
       { name: "Support", href: "/support", internal: true }

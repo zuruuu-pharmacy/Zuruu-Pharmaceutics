@@ -279,27 +279,6 @@ export function ScrollHeader({ onPatientClick, onPharmacistClick, onStudentClick
                 )}
               </AnimatePresence>
 
-              {/* Auth Buttons */}
-              <div className="flex items-center space-x-3">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => window.location.href = '/auth/login'}
-                  className={`${isScrolled 
-                    ? 'text-gray-700 border-gray-300 hover:text-blue-600 hover:border-blue-500 hover:bg-blue-50' 
-                    : 'text-white/90 border-white/30 hover:text-white hover:border-white hover:bg-white/10'
-                  } transition-all duration-300 transform hover:scale-105 backdrop-blur-sm font-semibold px-6 py-2`}
-                >
-                  Login
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => window.location.href = '/auth/signup'}
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg font-semibold px-6 py-2"
-                >
-                  Sign Up
-                </Button>
-              </div>
 
             </div>
           </div>
