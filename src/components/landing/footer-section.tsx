@@ -26,7 +26,10 @@ import {
   Globe,
   Star,
   Send,
-  ExternalLink
+  ExternalLink,
+  FileText,
+  Briefcase,
+  User
 } from "lucide-react";
 
 const footerLinks = {
@@ -63,6 +66,14 @@ const footerLinks = {
       { icon: MapPin, text: "Zuruu Pharmaceutics, XYZ (Coming Soon)", href: "#" },
       { icon: Phone, text: "Call Us Now: 03287989758", href: "tel:03287989758" },
       { icon: Mail, text: "Email: junaidbutt123909@gmail.com", href: "mailto:junaidbutt123909@gmail.com" }
+    ]
+  },
+  owner: {
+    title: "OWNER PROFILE",
+    links: [
+      { name: "My CV", href: "/CV.pdf", internal: false, icon: FileText, description: "Download my resume" },
+      { name: "My Portfolio", href: "#", internal: false, icon: Briefcase, description: "View my work" },
+      { name: "About Me", href: "#", internal: false, icon: User, description: "Learn more about me" }
     ]
   }
 };
@@ -181,7 +192,7 @@ export function FooterSection() {
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.8 }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
             {/* Brand Section */}
             <motion.div
               className="lg:col-span-1"
@@ -433,6 +444,43 @@ export function FooterSection() {
                     <detail.icon className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
                     <span>{detail.text}</span>
                     <ExternalLink className="w-3 h-3 ml-1 mt-0.5 flex-shrink-0" />
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Owner Profile */}
+            <motion.div
+              className="lg:col-span-1"
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+            >
+              <h4 className="text-sm font-semibold text-gray-400 mb-4 uppercase tracking-wider">
+                {footerLinks.owner.title}
+              </h4>
+              <div className="space-y-3">
+                {footerLinks.owner.links.map((link, index) => (
+                  <motion.button
+                    key={link.name}
+                    onClick={() => handleLinkClick(link.href, link.internal)}
+                    className="flex items-start gap-3 text-gray-300 text-sm hover:text-blue-400 transition-colors duration-300 text-left w-full group"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                    transition={{ duration: 0.4, delay: 0.9 + index * 0.1 }}
+                  >
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <link.icon className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-gray-200 group-hover:text-blue-400 transition-colors duration-300">
+                        {link.name}
+                      </div>
+                      <div className="text-xs text-gray-400 mt-0.5">
+                        {link.description}
+                      </div>
+                    </div>
+                    <ExternalLink className="w-3 h-3 mt-1 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </motion.button>
                 ))}
               </div>
