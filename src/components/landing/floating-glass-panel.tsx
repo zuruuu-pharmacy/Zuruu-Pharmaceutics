@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, BriefcaseMedical, School, ArrowRight } from "lucide-react";
+import { User, BriefcaseMedical, School, ArrowRight, LogIn, UserPlus } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { MobileLoginSheet } from "./mobile-login-sheet";
 import { CTAButtonWithRipple } from "./cta-button-with-ripple";
+import Link from "next/link";
 import "@/styles/design-system.css";
 
 interface FloatingGlassPanelProps {
@@ -148,7 +150,47 @@ export function FloatingGlassPanel({
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <h3 className="text-xl font-display font-bold text-white mb-1">Get Started</h3>
-          <p className="text-white/80 text-sm font-primary">Choose your role</p>
+          <p className="text-white/80 text-sm font-primary">Choose your role or sign in directly</p>
+        </motion.div>
+
+        {/* Direct Authentication Buttons */}
+        <motion.div
+          className="flex gap-2 mb-4"
+          initial={{ opacity: 0, y: 10 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <Link href="/auth/login" className="flex-1">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-200"
+            >
+              <LogIn className="w-4 h-4 mr-2" />
+              Login
+            </Button>
+          </Link>
+          <Link href="/auth/signup" className="flex-1">
+            <Button
+              size="sm"
+              className="w-full bg-[#1F59FF] hover:bg-[#0D47D9] text-white border-0 transition-all duration-200"
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              Sign Up
+            </Button>
+          </Link>
+        </motion.div>
+
+        {/* Divider */}
+        <motion.div
+          className="flex items-center mb-4"
+          initial={{ opacity: 0 }}
+          animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
+        >
+          <div className="flex-1 h-px bg-white/20"></div>
+          <span className="px-3 text-xs text-white/60 font-primary">or</span>
+          <div className="flex-1 h-px bg-white/20"></div>
         </motion.div>
 
         {/* Login Cards - Compact Version */}
