@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendPasswordResetEmail } from "@/lib/email";
-import jwt from "jsonwebtoken";
+import { cleanupExpiredTokens, checkResetTokenLimit } from "@/lib/token-cleanup";
 import crypto from "crypto";
 
 export async function POST(req: NextRequest) {
@@ -16,6 +16,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Clean up expired tokens first
+    await cleanupExpiredTokens();
+
     // Check if user exists
     const user = await prisma.user.findUnique({
       where: { email },
@@ -26,6 +29,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { message: "If an account with that email exists, we've sent a password reset link." },
         { status: 200 }
+      );
+    }
+
+    // Check if user has too many pending reset tokens
+    const canRequestReset = await checkResetTokenLimit(user.id);
+    if (!canRequestReset) {
+      return NextResponse.json(
+        { error: "Too many reset requests. Please wait before requesting another reset." },
+        { status: 429 }
       );
     }
 
