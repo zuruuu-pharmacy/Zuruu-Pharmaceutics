@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import { NextAuthOptions } from "next-auth";
 
 const authOptions: NextAuthOptions = {
+  debug: process.env.NODE_ENV === "development",
   providers: [
     // Email + Password login
     CredentialsProvider({
@@ -60,13 +61,21 @@ const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account, profile }) {
+      console.log("🔐 SignIn callback called:", { 
+        provider: account?.provider, 
+        userEmail: user?.email,
+        accountId: account?.providerAccountId 
+      });
+      
       if (account?.provider === "google") {
         try {
+          console.log("🔍 Checking for existing Google user:", user.email);
           const existingUser = await prisma.user.findUnique({
             where: { email: user.email! },
           });
           
           if (!existingUser) {
+            console.log("👤 Creating new Google user:", user.email);
             await prisma.user.create({
               data: {
                 name: user.name,
@@ -74,9 +83,12 @@ const authOptions: NextAuthOptions = {
                 image: user.image,
               },
             });
+            console.log("✅ New Google user created successfully");
+          } else {
+            console.log("👤 Existing Google user found:", existingUser.email);
           }
         } catch (error) {
-          console.error("Google sign-in error:", error);
+          console.error("❌ Google sign-in error:", error);
           return false;
         }
       }
@@ -98,4 +110,14 @@ const authOptions: NextAuthOptions = {
 };
 
 const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };
+
+// Add debugging for OAuth callbacks
+export async function GET(request: Request) {
+  console.log("🔗 NextAuth GET request:", request.url);
+  return handler(request);
+}
+
+export async function POST(request: Request) {
+  console.log("🔗 NextAuth POST request:", request.url);
+  return handler(request);
+}
