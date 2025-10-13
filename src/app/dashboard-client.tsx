@@ -75,7 +75,7 @@ const tools = [
 export function DashboardClient() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [activeCard, setActiveCard] = useState<string | null>(null);
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -85,6 +85,32 @@ export function DashboardClient() {
   useEffect(() => {
     setIsLoaded(true);
   }, []);
+
+  // Handle loading and error states
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Authentication Required</h2>
+          <p className="text-gray-600 mb-6">Please log in to access the dashboard.</p>
+          <Button onClick={() => router.push('/auth/login')}>
+            Go to Login
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
       <div className="flex flex-col gap-8">

@@ -11,6 +11,7 @@ import { OsceSessionsProvider } from '@/contexts/osce-sessions-context';
 import { DiscussionForumProvider } from '@/contexts/discussion-forum-context';
 import { PollsProvider } from '@/contexts/polls-context';
 import { PathologyProvider } from '@/contexts/pathology-context';
+import { AuthSessionProvider } from '@/components/providers/session-provider';
 
 export const metadata: Metadata = {
   title: 'Zuruu Pharmaceutics',
@@ -30,26 +31,28 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
       </head>
       <body suppressHydrationWarning>
-        <ThemeProvider>
-          <AuthProvider>
-            <ModeProvider>
-              <PatientProvider>
-                <LectureNotesProvider>
-                  <OsceSessionsProvider>
-                    <DiscussionForumProvider>
-                      <PollsProvider>
-                        <PathologyProvider>
-                            {children}
-                        </PathologyProvider>
-                        <Toaster />
-                      </PollsProvider>
-                    </DiscussionForumProvider>
-                  </OsceSessionsProvider>
-                </LectureNotesProvider>
-              </PatientProvider>
-            </ModeProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        <AuthSessionProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <ModeProvider>
+                <PatientProvider>
+                  <LectureNotesProvider>
+                    <OsceSessionsProvider>
+                      <DiscussionForumProvider>
+                        <PollsProvider>
+                          <PathologyProvider>
+                              {children}
+                          </PathologyProvider>
+                          <Toaster />
+                        </PollsProvider>
+                      </DiscussionForumProvider>
+                    </OsceSessionsProvider>
+                  </LectureNotesProvider>
+                </PatientProvider>
+              </ModeProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </AuthSessionProvider>
       </body>
     </html>
   );
