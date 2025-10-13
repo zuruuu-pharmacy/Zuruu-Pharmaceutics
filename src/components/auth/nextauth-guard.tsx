@@ -67,3 +67,4 @@ export function NextAuthGuard({ children, fallback }: NextAuthGuardProps) {
 
   return <>{children}</>;
 }
+
