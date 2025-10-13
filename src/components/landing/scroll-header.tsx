@@ -55,7 +55,7 @@ export function ScrollHeader({ onPatientClick, onPharmacistClick, onStudentClick
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-8 sm:px-12 lg:px-16 xl:px-20">
           <div className="flex items-center justify-between h-16">
             
             {/* Left Logo */}

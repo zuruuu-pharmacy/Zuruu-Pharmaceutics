@@ -2,12 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, BriefcaseMedical, School, ArrowRight, LogIn, UserPlus } from "lucide-react";
+import { User, BriefcaseMedical, School, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { MobileLoginSheet } from "./mobile-login-sheet";
 import { CTAButtonWithRipple } from "./cta-button-with-ripple";
-import Link from "next/link";
 import "@/styles/design-system.css";
 
 interface FloatingGlassPanelProps {

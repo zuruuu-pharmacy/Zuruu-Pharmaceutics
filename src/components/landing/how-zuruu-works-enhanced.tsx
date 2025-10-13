@@ -383,7 +383,7 @@ export function HowZuruuWorksEnhanced() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(236,72,153,0.1),transparent_50%)]" />
       </div>
       
-      <div className="max-w-7xl mx-auto relative">
+      <div className="max-w-6xl mx-auto px-8 sm:px-12 lg:px-16 xl:px-20 relative">
         <ProcessFlow />
       </div>
     </motion.section>

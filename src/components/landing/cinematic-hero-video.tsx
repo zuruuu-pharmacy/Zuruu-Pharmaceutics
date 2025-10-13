@@ -206,8 +206,8 @@ export function CinematicHeroVideo({
       </div>
 
       {/* Main Content */}
-      <div id="main-content" className="relative z-10 flex items-center justify-center min-h-[78vh] px-6">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+      <div id="main-content" className="relative z-10 flex items-center justify-center min-h-[78vh] px-8 sm:px-12 lg:px-16 xl:px-20">
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full">
           
           {/* Left Content */}
           <motion.div 
