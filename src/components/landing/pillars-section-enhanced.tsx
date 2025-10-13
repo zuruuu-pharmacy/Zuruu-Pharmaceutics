@@ -144,7 +144,7 @@ export function PillarsSectionEnhanced() {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-500 rounded-full blur-3xl" />
       </motion.div>
 
-      <div className="max-w-6xl mx-auto px-8 sm:px-12 lg:px-16 xl:px-20 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <motion.div
           className="text-center mb-16"
