@@ -11,6 +11,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "postinstall": "prisma generate",
     "perf:test": "node scripts/performance-test.js",
     "perf:test:prod": "node scripts/performance-test.js https://your-production-url.com",
     "lighthouse": "npx lighthouse http://localhost:9002 --output=html --output-path=./lighthouse-report.html",
