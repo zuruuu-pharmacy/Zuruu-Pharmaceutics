@@ -104,6 +104,12 @@ export function PatientProvider({ children }: { children: ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') {
+      setIsLoaded(true);
+      return;
+    }
+
     try {
       const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (savedData) {
@@ -122,13 +128,14 @@ export function PatientProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if(isLoaded) {
-        try {
-            const dataToSave = { ...patientState, lastPrescription: null }; // Never save lastPrescription
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(dataToSave));
-        } catch (error) {
-            console.error("Failed to save data to localStorage", error);
-        }
+    // Only run on client side and when loaded
+    if (typeof window === 'undefined' || !isLoaded) return;
+
+    try {
+        const dataToSave = { ...patientState, lastPrescription: null }; // Never save lastPrescription
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(dataToSave));
+    } catch (error) {
+        console.error("Failed to save data to localStorage", error);
     }
   }, [patientState, isLoaded]);
 

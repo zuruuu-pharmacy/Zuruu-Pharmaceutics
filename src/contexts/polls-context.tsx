@@ -43,6 +43,12 @@ export function PollsProvider({ children }: { children: ReactNode }) {
 
   // Load from localStorage on initial render
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') {
+      setIsLoaded(true);
+      return;
+    }
+
     try {
       const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (savedData) {
@@ -56,12 +62,13 @@ export function PollsProvider({ children }: { children: ReactNode }) {
 
   // Save to localStorage whenever polls change
   useEffect(() => {
-    if(isLoaded) {
-      try {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(polls));
-      } catch (error) {
-        console.error("Failed to save polls to localStorage", error);
-      }
+    // Only run on client side and when loaded
+    if (typeof window === 'undefined' || !isLoaded) return;
+
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(polls));
+    } catch (error) {
+      console.error("Failed to save polls to localStorage", error);
     }
   }, [polls, isLoaded]);
 

@@ -42,6 +42,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check for existing authentication on mount
     const checkAuth = () => {
       try {
+        // Check if we're on the client side
+        if (typeof window === 'undefined') {
+          setIsLoading(false);
+          return;
+        }
+
         const isAuth = localStorage.getItem('isAuthenticated');
         const userData = localStorage.getItem('user');
         
@@ -52,9 +58,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       } catch (error) {
         console.error('Error checking authentication:', error);
-        // Clear invalid data
-        localStorage.removeItem('isAuthenticated');
-        localStorage.removeItem('user');
+        // Clear invalid data only if we're on client side
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('isAuthenticated');
+          localStorage.removeItem('user');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -66,15 +74,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (userData: User) => {
     setUser(userData);
     setIsAuthenticated(true);
-    localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('isAuthenticated', 'true');
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('isAuthenticated', 'true');
+    }
   };
 
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('user');
-    localStorage.removeItem('isAuthenticated');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('user');
+      localStorage.removeItem('isAuthenticated');
+    }
     router.push('/');
   };
 
@@ -82,7 +94,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (user) {
       const updatedUser = { ...user, ...userData };
       setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
     }
   };
 
