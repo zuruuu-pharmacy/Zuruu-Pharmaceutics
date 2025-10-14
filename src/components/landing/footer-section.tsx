@@ -17,6 +17,7 @@ import {
   Linkedin, 
   Instagram,
   ArrowRight,
+  Heart,
   Shield,
   Award,
   CreditCard,
