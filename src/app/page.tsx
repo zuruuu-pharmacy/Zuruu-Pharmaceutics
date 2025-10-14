@@ -73,7 +73,7 @@ export default function RoleSelectionPage() {
 
   const handlePharmacistLogin = () => {
     setMode('pharmacist');
-    router.push('/retail-dashboard');
+    router.push('/pharmacist-dashboard');
   };
 
   const handlePatientLogin = () => {
@@ -88,7 +88,7 @@ export default function RoleSelectionPage() {
 
   const handleStudentLogin = () => {
     setMode('student');
-    router.push('/academia-dashboard');
+    router.push('/student-dashboard');
   };
 
   const handleEmergency = () => {
@@ -118,7 +118,7 @@ export default function RoleSelectionPage() {
   
   const openStudentLogin = () => {
     setMode('student');
-    router.push('/academia-dashboard');
+    router.push('/student-dashboard');
   }
 
   const handleDemoClick = () => {
