@@ -44,7 +44,7 @@ import { DemoModal } from "@/components/landing/demo-modal";
 import { DashboardAccessModal } from "@/components/landing/dashboard-access-modal";
 import { EnhancedLoginModal } from "@/components/landing/enhanced-login-modal";
 
-const PHARMACIST_CODE = "239773";
+// Removed access code requirement - direct login/signup only
 
 
 export default function RoleSelectionPage() {
@@ -74,25 +74,21 @@ export default function RoleSelectionPage() {
   const handlePharmacistLogin = () => {
     setSelectedRole('pharmacist');
     setEnhancedLoginOpen(true);
-    setPharmacistModalOpen(false);
   };
 
   const handlePatientLogin = () => {
     setSelectedRole('patient');
     setEnhancedLoginOpen(true);
-    setPatientLoginModalOpen(false);
   };
   
   const handleNewPatient = () => {
-    setMode('patient');
-    clearActiveUser();
-    router.push('/patient-history');
+    setSelectedRole('patient');
+    setEnhancedLoginOpen(true);
   }
 
   const handleStudentLogin = () => {
     setSelectedRole('student');
     setEnhancedLoginOpen(true);
-    setStudentLoginModalOpen(false);
   };
 
   const handleEmergency = () => {
@@ -103,38 +99,26 @@ export default function RoleSelectionPage() {
 
   const handleEnhancedLoginSuccess = (role: string, action?: string) => {
     if (role === 'patient') {
-      if (action === 'login') {
-        // Handle patient login
-        setMode('patient');
-        router.push('/dashboard');
-      } else if (action === 'register') {
-        // Handle new patient registration
-        setMode('patient');
-        clearActiveUser();
-        router.push('/patient-history');
-      } else if (action === 'emergency') {
-        // Handle emergency
-        setMode('patient');
-        clearActiveUser();
-        router.push('/emergency');
-      }
+      setMode('patient');
+      router.push('/patients'); // Go to patient dashboard
     } else if (role === 'pharmacist') {
       setMode('pharmacist');
-      router.push('/dashboard');
+      router.push('/retail-dashboard'); // Go to pharmacist dashboard
     } else if (role === 'student') {
       setMode('student');
-      router.push('/dashboard');
+      router.push('/academia-dashboard'); // Go to student dashboard
     }
     setEnhancedLoginOpen(false);
   };
 
   const openPatientLogin = () => {
-    setPatientOptionsModalOpen(false);
-    setPatientLoginModalOpen(true);
+    setSelectedRole('patient');
+    setEnhancedLoginOpen(true);
   }
   
   const openStudentLogin = () => {
-    setStudentLoginModalOpen(true);
+    setSelectedRole('student');
+    setEnhancedLoginOpen(true);
   }
 
   const handleDemoClick = () => {

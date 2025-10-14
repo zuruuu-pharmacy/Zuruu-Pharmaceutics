@@ -26,7 +26,7 @@ import {
   School
 } from "lucide-react";
 
-const ACCESS_CODE = "239773";
+// Removed access code requirement - direct access now
 
 const dashboardInfo = {
   industry: {
@@ -118,53 +118,33 @@ export function DashboardAccessModal({ isOpen, onClose, dashboardType, onSuccess
   }, [isOpen]);
 
   const handleVerification = async () => {
-    if (!accessCode.trim()) {
-      toast({
-        variant: "destructive",
-        title: "Access Code Required",
-        description: "Please enter the access code to continue.",
-      });
-      return;
-    }
-
     setIsVerifying(true);
     
     // Simulate verification delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
-    if (accessCode === ACCESS_CODE) {
-      setIsSuccess(true);
-      toast({
-        title: "Access Granted!",
-        description: `Welcome to ${dashboard.title}. Redirecting...`,
-      });
-      
-      // Redirect after success animation
-      setTimeout(() => {
-        if (onSuccess) {
-          onSuccess(dashboardType);
-        }
-        if (dashboardType === 'patient' || dashboardType === 'pharmacist' || dashboardType === 'student') {
-          router.push('/dashboard');
-        } else {
-          router.push(`/${dashboardType}-dashboard`);
-        }
-        onClose();
-      }, 2000);
-    } else {
-      setAttempts(prev => prev + 1);
-      setShake(true);
-      setIsVerifying(false);
-      
-      toast({
-        variant: "destructive",
-        title: "Access Denied",
-        description: attempts >= 2 ? "Multiple failed attempts. Please contact support." : "Invalid access code. Please try again.",
-      });
-      
-      // Reset shake animation
-      setTimeout(() => setShake(false), 500);
-    }
+    setIsSuccess(true);
+    toast({
+      title: "Access Granted!",
+      description: `Welcome to ${dashboard.title}. Redirecting...`,
+    });
+    
+    // Redirect after success animation
+    setTimeout(() => {
+      if (onSuccess) {
+        onSuccess(dashboardType);
+      }
+      if (dashboardType === 'patient') {
+        router.push('/patients');
+      } else if (dashboardType === 'pharmacist') {
+        router.push('/retail-dashboard');
+      } else if (dashboardType === 'student') {
+        router.push('/academia-dashboard');
+      } else {
+        router.push(`/${dashboardType}-dashboard`);
+      }
+      onClose();
+    }, 1500);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -268,49 +248,28 @@ export function DashboardAccessModal({ isOpen, onClose, dashboardType, onSuccess
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
             >
-              {/* Security Badge */}
+              {/* Welcome Message */}
               <motion.div
-                className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm rounded-full px-4 py-2 border border-blue-400/30"
+                className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-500/20 to-blue-500/20 backdrop-blur-sm rounded-full px-4 py-2 border border-green-400/30"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 1 }}
               >
-                <Shield className="w-4 h-4 text-blue-400" />
-                <span className="text-blue-300 text-sm font-semibold">Secure Access Required</span>
-                <Sparkles className="w-4 h-4 text-purple-400" />
+                <CheckCircle className="w-4 h-4 text-green-400" />
+                <span className="text-green-300 text-sm font-semibold">Direct Access Available</span>
+                <Sparkles className="w-4 h-4 text-blue-400" />
               </motion.div>
 
-              {/* Access Code Input */}
+              {/* Access Message */}
               <motion.div
-                className="space-y-3"
-                animate={shake ? { x: [-10, 10, -10, 10, 0] } : {}}
-                transition={{ duration: 0.5 }}
+                className="text-center space-y-2"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.1 }}
               >
-                <Label htmlFor="access-code" className="text-gray-300 font-semibold">
-                  Access Code
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <Input
-                    id="access-code"
-                    type={showPassword ? "text" : "password"}
-                    value={accessCode}
-                    onChange={(e) => setAccessCode(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Enter access code"
-                    className={`pl-10 pr-12 bg-gray-800/50 border-gray-600 text-white placeholder-gray-400 focus:border-blue-400 focus:ring-blue-400/20 ${
-                      isSuccess ? 'border-green-400 bg-green-900/20' : ''
-                    }`}
-                    disabled={isVerifying || isSuccess}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
+                <p className="text-gray-300 text-sm">
+                  Click the button below to access your dashboard
+                </p>
               </motion.div>
 
               {/* Submit Button */}
@@ -358,29 +317,14 @@ export function DashboardAccessModal({ isOpen, onClose, dashboardType, onSuccess
                       className="flex items-center gap-3"
                       whileHover={{ x: 5 }}
                     >
-                      <Shield className="w-5 h-5" />
-                      Verify Access
+                      <ArrowRight className="w-5 h-5" />
+                      Access Dashboard
                       <ArrowRight className="w-4 h-4" />
                     </motion.div>
                   )}
                 </Button>
               </motion.div>
 
-              {/* Attempt Counter */}
-              {attempts > 0 && (
-                <motion.div
-                  className="text-center"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <p className="text-red-400 text-sm">
-                    {attempts === 1 && "1 failed attempt"}
-                    {attempts === 2 && "2 failed attempts"}
-                    {attempts >= 3 && "Multiple failed attempts"}
-                  </p>
-                </motion.div>
-              )}
 
               {/* Success Animation */}
               <AnimatePresence>
