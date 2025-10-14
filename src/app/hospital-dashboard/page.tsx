@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { NextAuthGuard } from "@/components/auth/nextauth-guard";
 import { 
   ArrowLeft, 
   BarChart3, 
@@ -50,6 +51,14 @@ interface FeatureCard {
 }
 
 export default function HospitalDashboard() {
+  return (
+    <NextAuthGuard>
+      <HospitalDashboardContent />
+    </NextAuthGuard>
+  );
+}
+
+function HospitalDashboardContent() {
   const router = useRouter();
   const [activeFeature, setActiveFeature] = useState<string>('overview');
   const [isLoading, setIsLoading] = useState(false);
