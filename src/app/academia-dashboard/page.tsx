@@ -1002,6 +1002,5 @@ export default function AcademiaDashboard() {
         {renderFeatureContent()}
       </motion.div>
     </div>
-    </NextAuthGuard>
   );
 }

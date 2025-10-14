@@ -1012,6 +1012,5 @@ export default function RetailDashboard() {
         {renderFeatureContent()}
       </motion.div>
     </div>
-    </NextAuthGuard>
   );
 }
