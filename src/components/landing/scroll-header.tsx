@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, LogIn, UserPlus } from "lucide-react";
-import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 import "@/styles/design-system.css";
 
 interface ScrollHeaderProps {
@@ -240,38 +239,8 @@ export function ScrollHeader({ onPatientClick, onPharmacistClick, onStudentClick
               </motion.a>
             </nav>
 
-            {/* Right Authentication & Access Buttons */}
+            {/* Right Access Buttons */}
             <div className="flex items-center space-x-3">
-              {/* Direct Login/Signup Buttons - Always visible */}
-              <div className="flex items-center space-x-2">
-                <Link href="/auth/login">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={`transition-colors duration-200 ${
-                      isScrolled 
-                        ? 'text-[#6B7280] hover:text-[#1F59FF] hover:bg-[#1F59FF]/10' 
-                        : 'text-white/90 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    <LogIn className="w-4 h-4 mr-2" />
-                    Login
-                  </Button>
-                </Link>
-                <Link href="/auth/signup">
-                  <Button
-                    size="sm"
-                    className={`transition-all duration-200 ${
-                      isScrolled 
-                        ? 'bg-[#1F59FF] hover:bg-[#0D47D9] text-white' 
-                        : 'bg-white/20 hover:bg-white/30 text-white border border-white/30'
-                    }`}
-                  >
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    Sign Up
-                  </Button>
-                </Link>
-              </div>
 
               {/* Quick Access Buttons - Only show when scrolled */}
               <AnimatePresence>

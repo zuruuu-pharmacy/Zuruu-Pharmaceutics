@@ -8,7 +8,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { DashboardAccessModal } from "@/components/landing/dashboard-access-modal";
 import { FooterDashboardModal } from "@/components/landing/footer-dashboard-modal";
-import { useAuth } from "@/contexts/auth-context";
 import { 
   Mail, 
   Phone, 
@@ -18,12 +17,9 @@ import {
   Linkedin, 
   Instagram,
   ArrowRight,
-  Heart,
   Shield,
   Award,
-  Users,
   CreditCard,
-  Globe,
   Star,
   Send,
   ExternalLink,
@@ -40,14 +36,6 @@ const footerLinks = {
       { name: "Hospital Systems", href: "/hospital-dashboard", internal: true },
       { name: "Academia & R&D", href: "/academia-dashboard", internal: true },
       { name: "Industry Solutions", href: "/industry-dashboard", internal: true }
-    ]
-  },
-  account: {
-    title: "MY ACCOUNT",
-    links: [
-      { name: "Dashboard", href: "/dashboard", internal: true },
-      { name: "Profile", href: "/profile", internal: true },
-      { name: "Support", href: "/support", internal: true }
     ]
   },
   contact: {
@@ -94,7 +82,6 @@ export function FooterSection() {
   const [footerDashboardModalOpen, setFooterDashboardModalOpen] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
-  const { user, isAuthenticated, logout } = useAuth();
 
   const handleLinkClick = (href: string, internal: boolean) => {
     if (internal) {
@@ -288,129 +275,6 @@ export function FooterSection() {
             </motion.div>
 
 
-            {/* My Account */}
-            <motion.div
-              className="lg:col-span-1"
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-            >
-              <h4 className="text-sm font-semibold text-gray-400 mb-4 uppercase tracking-wider">
-                {footerLinks.account.title}
-              </h4>
-              <ul className="space-y-3">
-                {isAuthenticated ? (
-                  // Show user profile and logout when authenticated
-                  <>
-                    <motion.li
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                      transition={{ duration: 0.4, delay: 0.7 }}
-                      className="flex items-center gap-3 mb-4"
-                    >
-                      {user?.profilePicture ? (
-                        <img
-                          src={user.profilePicture}
-                          alt={user.firstName || 'User'}
-                          className="w-8 h-8 rounded-full border-2 border-blue-400"
-                        />
-                      ) : (
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-semibold">
-                          {(user?.firstName?.[0] || 'U')}
-                        </div>
-                      )}
-                      <div>
-                        <div className="text-white text-sm font-medium">
-                          {user?.firstName} {user?.lastName}
-                        </div>
-                        <div className="text-gray-400 text-xs">
-                          {user?.email}
-                        </div>
-                      </div>
-                    </motion.li>
-                    
-                    <motion.li
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                      transition={{ duration: 0.4, delay: 0.8 }}
-                    >
-                      <button
-                        onClick={() => router.push('/profile')}
-                        className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-sm text-left flex items-center gap-2"
-                      >
-                        <Users className="w-4 h-4" />
-                        My Profile
-                      </button>
-                    </motion.li>
-                    
-                    <motion.li
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                      transition={{ duration: 0.4, delay: 0.9 }}
-                    >
-                      <button
-                        onClick={() => router.push('/dashboard')}
-                        className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-sm text-left flex items-center gap-2"
-                      >
-                        <Globe className="w-4 h-4" />
-                        Dashboard
-                      </button>
-                    </motion.li>
-                    
-                    <motion.li
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                      transition={{ duration: 0.4, delay: 1.0 }}
-                    >
-                      <button
-                        onClick={() => router.push('/support')}
-                        className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-sm text-left flex items-center gap-2"
-                      >
-                        <Heart className="w-4 h-4" />
-                        Support
-                      </button>
-                    </motion.li>
-                    
-                    <motion.li
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                      transition={{ duration: 0.4, delay: 1.1 }}
-                    >
-                      <button
-                        onClick={() => {
-                          logout();
-                          toast({
-                            title: "Logged out successfully",
-                            description: "You have been logged out of your account.",
-                          });
-                        }}
-                        className="text-gray-300 hover:text-red-400 transition-colors duration-300 text-sm text-left flex items-center gap-2"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        Logout
-                      </button>
-                    </motion.li>
-                  </>
-                ) : (
-                  // Show login/signup when not authenticated
-                  footerLinks.account.links.map((link, index) => (
-                    <motion.li
-                      key={link.name}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                      transition={{ duration: 0.4, delay: 0.7 + index * 0.1 }}
-                    >
-                      <button
-                        onClick={() => handleLinkClick(link.href, link.internal)}
-                        className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-sm text-left"
-                      >
-                        {link.name}
-                      </button>
-                    </motion.li>
-                  ))
-                )}
-              </ul>
-            </motion.div>
 
             {/* Contact Us */}
             <motion.div
