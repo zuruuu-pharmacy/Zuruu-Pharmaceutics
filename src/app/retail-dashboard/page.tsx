@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { NextAuthGuard } from "@/components/auth/nextauth-guard";
 import { 
   ArrowLeft, 
   BarChart3, 
@@ -857,7 +858,8 @@ export default function RetailDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-rose-50 to-pink-50">
+    <NextAuthGuard>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-rose-50 to-pink-50">
       {/* Cinematic Hero Header */}
       <motion.header 
         className="relative bg-gradient-to-br from-rose-600 via-pink-500 to-red-500 text-white rounded-xl mx-4 mt-4 p-8 overflow-hidden"
@@ -1012,5 +1014,6 @@ export default function RetailDashboard() {
         {renderFeatureContent()}
       </motion.div>
     </div>
+    </NextAuthGuard>
   );
 }
