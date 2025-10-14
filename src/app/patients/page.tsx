@@ -3,12 +3,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, Plus, Search } from "lucide-react";
-import { NextAuthGuard } from "@/components/auth/nextauth-guard";
 
 export default function PatientsPage() {
   return (
-    <NextAuthGuard>
-      <div className="container mx-auto p-6">
+    <div className="container mx-auto p-6">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Patients</h1>
@@ -42,7 +40,6 @@ export default function PatientsPage() {
         </Card>
       </div>
     </div>
-    </NextAuthGuard>
   );
 }
 

@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { NextAuthGuard } from "@/components/auth/nextauth-guard";
 import { 
   Building2, 
   ArrowLeft, 
@@ -105,11 +104,7 @@ interface FeatureCard {
 }
 
 export default function IndustryDashboard() {
-  return (
-    <NextAuthGuard>
-      <IndustryDashboardContent />
-    </NextAuthGuard>
-  );
+  return <IndustryDashboardContent />;
 }
 
 function IndustryDashboardContent() {
