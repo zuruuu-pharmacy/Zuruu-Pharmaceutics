@@ -23,7 +23,6 @@ import {
   ClipboardList,
   TestTube,
   Pill,
-  Calendar as CalendarIcon,
   Phone,
   Mail,
   MapPin,
@@ -44,13 +43,184 @@ import {
   Eye,
   Filter,
   SortAsc,
-  MoreHorizontal
+  MoreHorizontal,
+  UserPlus,
+  Edit3,
+  AlertCircle,
+  X,
+  Save,
+  Minus,
+  ChevronRight,
+  ChevronDown,
+  Mic,
+  MicOff,
+  Upload,
+  Share2,
+  Copy,
+  ExternalLink,
+  Search as SearchIcon,
+  SortDesc,
+  Grid,
+  List,
+  MoreVertical,
+  Flag,
+  Tag,
+  Info,
+  HelpCircle,
+  Lock,
+  Unlock,
+  ShieldCheck,
+  UserCheck,
+  UserX
 } from 'lucide-react';
+
+// Mock patient data structure
+interface Patient {
+  id: string;
+  name: string;
+  age: number;
+  gender: string;
+  contact: string;
+  email: string;
+  address: string;
+  status: 'Active' | 'Needs Refill' | 'Critical';
+  profilePicture?: string;
+  allergies: Array<{
+    type: string;
+    severity: 'Mild' | 'Moderate' | 'Severe';
+  }>;
+  prescriptions: Array<{
+    drug: string;
+    dosage: string;
+    doctor: string;
+    issuedDate: string;
+    notes?: string;
+    duration?: string;
+    refills?: number;
+  }>;
+  medicalHistory: string[];
+  labReports: Array<{
+    test: string;
+    date: string;
+    result: string;
+    status: 'Normal' | 'Abnormal' | 'Critical';
+  }>;
+  doctorNotes: Array<{
+    doctor: string;
+    date: string;
+    note: string;
+  }>;
+}
+
+// Mock data
+const mockPatients: Patient[] = [
+  {
+    id: '1',
+    name: 'Ayesha Khan',
+    age: 42,
+    gender: 'Female',
+    contact: '+92-300-1234567',
+    email: 'ayesha.khan@email.com',
+    address: '123 Main Street, Karachi, Pakistan',
+    status: 'Needs Refill',
+    allergies: [
+      { type: 'Penicillin', severity: 'Severe' },
+      { type: 'Dust', severity: 'Mild' }
+    ],
+    prescriptions: [
+      {
+        drug: 'Metformin',
+        dosage: '500mg twice daily',
+        doctor: 'Dr. Faraz Ahmed',
+        issuedDate: '2025-09-10',
+        notes: 'Monitor blood sugar weekly',
+        duration: '3 months',
+        refills: 2
+      }
+    ],
+    medicalHistory: ['Diabetes Type II', 'Hypertension'],
+    labReports: [
+      { test: 'Blood Glucose', date: '2025-09-15', result: '95 mg/dL', status: 'Normal' },
+      { test: 'HbA1c', date: '2025-09-15', result: '6.2%', status: 'Normal' }
+    ],
+    doctorNotes: [
+      { doctor: 'Dr. Faraz Ahmed', date: '2025-09-10', note: 'Patient responding well to Metformin. Continue current dosage.' }
+    ]
+  },
+  {
+    id: '2',
+    name: 'Ahmed Hassan',
+    age: 35,
+    gender: 'Male',
+    contact: '+92-301-9876543',
+    email: 'ahmed.hassan@email.com',
+    address: '456 Park Avenue, Lahore, Pakistan',
+    status: 'Active',
+    allergies: [
+      { type: 'Shellfish', severity: 'Moderate' }
+    ],
+    prescriptions: [
+      {
+        drug: 'Lisinopril',
+        dosage: '10mg once daily',
+        doctor: 'Dr. Sarah Malik',
+        issuedDate: '2025-09-05',
+        notes: 'Monitor blood pressure',
+        duration: '6 months',
+        refills: 4
+      }
+    ],
+    medicalHistory: ['Hypertension'],
+    labReports: [
+      { test: 'Blood Pressure', date: '2025-09-12', result: '120/80 mmHg', status: 'Normal' }
+    ],
+    doctorNotes: [
+      { doctor: 'Dr. Sarah Malik', date: '2025-09-05', note: 'Blood pressure well controlled with current medication.' }
+    ]
+  },
+  {
+    id: '3',
+    name: 'Fatima Ali',
+    age: 28,
+    gender: 'Female',
+    contact: '+92-302-5555555',
+    email: 'fatima.ali@email.com',
+    address: '789 Garden Road, Islamabad, Pakistan',
+    status: 'Critical',
+    allergies: [
+      { type: 'Latex', severity: 'Severe' },
+      { type: 'Aspirin', severity: 'Moderate' }
+    ],
+    prescriptions: [
+      {
+        drug: 'Warfarin',
+        dosage: '5mg once daily',
+        doctor: 'Dr. Omar Sheikh',
+        issuedDate: '2025-09-08',
+        notes: 'Monitor INR weekly',
+        duration: '1 year',
+        refills: 11
+      }
+    ],
+    medicalHistory: ['Atrial Fibrillation', 'Deep Vein Thrombosis'],
+    labReports: [
+      { test: 'INR', date: '2025-09-14', result: '3.2', status: 'Critical' }
+    ],
+    doctorNotes: [
+      { doctor: 'Dr. Omar Sheikh', date: '2025-09-14', note: 'INR elevated. Reduce Warfarin dose to 3mg daily. Recheck in 3 days.' }
+    ]
+  }
+];
 
 export default function PatientDashboard() {
   const router = useRouter();
   const [activeFeature, setActiveFeature] = useState<string>('overview');
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [isPatientPanelOpen, setIsPatientPanelOpen] = useState(false);
+  const [activePatientTab, setActivePatientTab] = useState<string>('profile');
+  const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
+  const [patients, setPatients] = useState<Patient[]>(mockPatients);
 
   const handleFeatureClick = (feature: string) => {
     setIsLoading(true);
@@ -64,6 +234,56 @@ export default function PatientDashboard() {
 
   const handleBackToHome = () => {
     router.push('/');
+  };
+
+  const handlePatientClick = (patient: Patient) => {
+    setSelectedPatient(patient);
+    setIsPatientPanelOpen(true);
+    setActivePatientTab('profile');
+  };
+
+  const closePatientPanel = () => {
+    setIsPatientPanelOpen(false);
+    setSelectedPatient(null);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Active':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'Needs Refill':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'Critical':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getStatusBorderColor = (status: string) => {
+    switch (status) {
+      case 'Active':
+        return 'border-green-300';
+      case 'Needs Refill':
+        return 'border-orange-300';
+      case 'Critical':
+        return 'border-red-300';
+      default:
+        return 'border-gray-300';
+    }
+  };
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case 'Severe':
+        return 'bg-red-100 text-red-800';
+      case 'Moderate':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'Mild':
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
   };
 
   const renderFeatureContent = () => {
@@ -528,6 +748,69 @@ export default function PatientDashboard() {
           </div>
         );
 
+      case 'profiles':
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900">Patient Profiles</h2>
+              <div className="flex space-x-3">
+                <button className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                  <SearchIcon className="w-4 h-4 inline mr-2" />
+                  Search Patients
+                </button>
+                <button 
+                  onClick={() => setIsAddPatientModalOpen(true)}
+                  className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+                >
+                  <UserPlus className="w-4 h-4 inline mr-2" />
+                  Add Patient
+                </button>
+              </div>
+            </div>
+
+            {/* Patient Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {patients.map((patient) => (
+                <motion.div
+                  key={patient.id}
+                  className={`bg-white rounded-2xl p-6 shadow-lg border-2 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl ${getStatusBorderColor(patient.status)}`}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handlePatientClick(patient)}
+                >
+                  {/* Profile Picture */}
+                  <div className="flex justify-center mb-4">
+                    <div className="w-16 h-16 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                      {patient.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                  </div>
+
+                  {/* Patient Info */}
+                  <div className="text-center mb-4">
+                    <h3 className="text-lg font-bold text-gray-900 mb-1">{patient.name}</h3>
+                    <p className="text-sm text-gray-600 mb-2">{patient.age} years old • {patient.gender}</p>
+                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(patient.status)}`}>
+                      {patient.status}
+                    </span>
+                  </div>
+
+                  {/* Quick Stats */}
+                  <div className="grid grid-cols-2 gap-2 text-center text-xs text-gray-500">
+                    <div className="flex items-center justify-center space-x-1">
+                      <Pill className="w-3 h-3" />
+                      <span>{patient.prescriptions.length} Rx</span>
+                    </div>
+                    <div className="flex items-center justify-center space-x-1">
+                      <AlertCircle className="w-3 h-3" />
+                      <span>{patient.allergies.length} Allergies</span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        );
+
       default:
         return (
           <div className="text-center py-12">
@@ -621,6 +904,7 @@ export default function PatientDashboard() {
               { id: 'medications', label: 'Medications', icon: Pill },
               { id: 'appointments', label: 'Appointments', icon: Calendar },
               { id: 'health', label: 'Health Records', icon: FileText },
+              { id: 'profiles', label: 'Patient Profiles', icon: Users },
               { id: 'profile', label: 'Profile', icon: User },
               { id: 'tools', label: 'Tools', icon: Settings }
             ].map((tab) => (
@@ -675,6 +959,229 @@ export default function PatientDashboard() {
           <span>Back to Home</span>
         </button>
       </motion.div>
+
+      {/* Patient Details Side Panel */}
+      {isPatientPanelOpen && selectedPatient && (
+        <motion.div
+          className="fixed inset-0 z-50 flex"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          {/* Backdrop */}
+          <div 
+            className="flex-1 bg-black bg-opacity-50"
+            onClick={closePatientPanel}
+          />
+          
+          {/* Side Panel */}
+          <motion.div
+            className="w-full max-w-2xl bg-white shadow-2xl"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+          >
+            {/* Panel Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                  {selectedPatient.name.split(' ').map(n => n[0]).join('')}
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">{selectedPatient.name}</h2>
+                  <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(selectedPatient.status)}`}>
+                    {selectedPatient.status}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={closePatientPanel}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            {/* Tab Navigation */}
+            <div className="flex border-b border-gray-200">
+              {[
+                { id: 'profile', label: 'Profile', icon: User },
+                { id: 'allergies', label: 'Allergies', icon: AlertCircle },
+                { id: 'prescriptions', label: 'Prescriptions', icon: Pill },
+                { id: 'lab-reports', label: 'Lab Reports', icon: TestTube },
+                { id: 'doctor-notes', label: 'Doctor Notes', icon: FileText }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActivePatientTab(tab.id)}
+                  className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                    activePatientTab === tab.id
+                      ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  <tab.icon className="w-4 h-4 inline mr-2" />
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Tab Content */}
+            <div className="p-6 max-h-96 overflow-y-auto">
+              {activePatientTab === 'profile' && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-center space-x-3">
+                      <User className="w-5 h-5 text-gray-400" />
+                      <div>
+                        <p className="text-sm text-gray-500">Name</p>
+                        <p className="font-medium">{selectedPatient.name}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Calendar className="w-5 h-5 text-gray-400" />
+                      <div>
+                        <p className="text-sm text-gray-500">Age</p>
+                        <p className="font-medium">{selectedPatient.age} years old</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <User className="w-5 h-5 text-gray-400" />
+                      <div>
+                        <p className="text-sm text-gray-500">Gender</p>
+                        <p className="font-medium">{selectedPatient.gender}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Phone className="w-5 h-5 text-gray-400" />
+                      <div>
+                        <p className="text-sm text-gray-500">Contact</p>
+                        <p className="font-medium">{selectedPatient.contact}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Mail className="w-5 h-5 text-gray-400" />
+                      <div>
+                        <p className="text-sm text-gray-500">Email</p>
+                        <p className="font-medium">{selectedPatient.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <MapPin className="w-5 h-5 text-gray-400" />
+                      <div>
+                        <p className="text-sm text-gray-500">Address</p>
+                        <p className="font-medium">{selectedPatient.address}</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Medical History</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedPatient.medicalHistory.map((condition, index) => (
+                        <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                          {condition}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activePatientTab === 'allergies' && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Allergies</h3>
+                  <div className="space-y-3">
+                    {selectedPatient.allergies.map((allergy, index) => (
+                      <div key={index} className="p-4 border border-gray-200 rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium text-gray-900">{allergy.type}</p>
+                            <p className="text-sm text-gray-600">Allergy Type</p>
+                          </div>
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getSeverityColor(allergy.severity)}`}>
+                            {allergy.severity}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activePatientTab === 'prescriptions' && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Current Prescriptions</h3>
+                  <div className="space-y-3">
+                    {selectedPatient.prescriptions.map((prescription, index) => (
+                      <div key={index} className="p-4 border border-gray-200 rounded-lg">
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <p className="font-medium text-gray-900">{prescription.drug}</p>
+                            <p className="text-sm text-gray-600">{prescription.dosage}</p>
+                          </div>
+                          <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Active</span>
+                        </div>
+                        <div className="text-sm text-gray-600 space-y-1">
+                          <p><strong>Doctor:</strong> {prescription.doctor}</p>
+                          <p><strong>Issued:</strong> {prescription.issuedDate}</p>
+                          {prescription.duration && <p><strong>Duration:</strong> {prescription.duration}</p>}
+                          {prescription.refills && <p><strong>Refills:</strong> {prescription.refills}</p>}
+                          {prescription.notes && <p><strong>Notes:</strong> {prescription.notes}</p>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activePatientTab === 'lab-reports' && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Lab Reports</h3>
+                  <div className="space-y-3">
+                    {selectedPatient.labReports.map((report, index) => (
+                      <div key={index} className="p-4 border border-gray-200 rounded-lg">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="font-medium text-gray-900">{report.test}</p>
+                            <p className="text-sm text-gray-600">Date: {report.date}</p>
+                            <p className="text-sm text-gray-600">Result: {report.result}</p>
+                          </div>
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            report.status === 'Normal' ? 'bg-green-100 text-green-800' :
+                            report.status === 'Abnormal' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            {report.status}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activePatientTab === 'doctor-notes' && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Doctor Notes</h3>
+                  <div className="space-y-3">
+                    {selectedPatient.doctorNotes.map((note, index) => (
+                      <div key={index} className="p-4 border border-gray-200 rounded-lg">
+                        <div className="flex justify-between items-start mb-2">
+                          <p className="font-medium text-gray-900">{note.doctor}</p>
+                          <p className="text-sm text-gray-500">{note.date}</p>
+                        </div>
+                        <p className="text-gray-700">{note.note}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 }
