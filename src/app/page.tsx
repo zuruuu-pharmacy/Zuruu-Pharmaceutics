@@ -72,23 +72,23 @@ export default function RoleSelectionPage() {
   const { toast } = useToast();
 
   const handlePharmacistLogin = () => {
-    setSelectedRole('pharmacist');
-    setEnhancedLoginOpen(true);
+    setMode('pharmacist');
+    router.push('/retail-dashboard');
   };
 
   const handlePatientLogin = () => {
-    setSelectedRole('patient');
-    setEnhancedLoginOpen(true);
+    setMode('patient');
+    router.push('/patients');
   };
   
   const handleNewPatient = () => {
-    setSelectedRole('patient');
-    setEnhancedLoginOpen(true);
+    setMode('patient');
+    router.push('/patients');
   }
 
   const handleStudentLogin = () => {
-    setSelectedRole('student');
-    setEnhancedLoginOpen(true);
+    setMode('student');
+    router.push('/academia-dashboard');
   };
 
   const handleEmergency = () => {
@@ -112,13 +112,13 @@ export default function RoleSelectionPage() {
   };
 
   const openPatientLogin = () => {
-    setSelectedRole('patient');
-    setEnhancedLoginOpen(true);
+    setMode('patient');
+    router.push('/patients');
   }
   
   const openStudentLogin = () => {
-    setSelectedRole('student');
-    setEnhancedLoginOpen(true);
+    setMode('student');
+    router.push('/academia-dashboard');
   }
 
   const handleDemoClick = () => {
