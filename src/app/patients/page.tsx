@@ -110,6 +110,19 @@ interface Patient {
     date: string;
     note: string;
   }>;
+  medicationHistory: Array<{
+    id: string;
+    drugName: string;
+    dosage: string;
+    dateDispensed: string;
+    pharmacistId: string;
+    pharmacistName: string;
+    response: '😊' | '😐' | '😞';
+    notes: string;
+    durationDays: number;
+    category: string;
+    branch: string;
+  }>;
 }
 
 // Mock data
@@ -145,6 +158,47 @@ const mockPatients: Patient[] = [
     ],
     doctorNotes: [
       { doctor: 'Dr. Faraz Ahmed', date: '2025-09-10', note: 'Patient responding well to Metformin. Continue current dosage.' }
+    ],
+    medicationHistory: [
+      {
+        id: '1',
+        drugName: 'Metformin',
+        dosage: '500mg twice daily',
+        dateDispensed: '2025-09-10',
+        pharmacistId: 'pharm001',
+        pharmacistName: 'Sarah Johnson',
+        response: '😊',
+        notes: 'Patient reported improved blood sugar control after 2 weeks',
+        durationDays: 14,
+        category: 'Antidiabetic',
+        branch: 'Main Branch'
+      },
+      {
+        id: '2',
+        drugName: 'Metformin',
+        dosage: '500mg twice daily',
+        dateDispensed: '2025-08-15',
+        pharmacistId: 'pharm002',
+        pharmacistName: 'Michael Chen',
+        response: '😐',
+        notes: 'Initial prescription, patient adjusting to medication',
+        durationDays: 7,
+        category: 'Antidiabetic',
+        branch: 'Main Branch'
+      },
+      {
+        id: '3',
+        drugName: 'Glipizide',
+        dosage: '5mg once daily',
+        dateDispensed: '2025-07-20',
+        pharmacistId: 'pharm001',
+        pharmacistName: 'Sarah Johnson',
+        response: '😞',
+        notes: 'Patient experienced hypoglycemia episodes, switched to Metformin',
+        durationDays: 21,
+        category: 'Antidiabetic',
+        branch: 'Main Branch'
+      }
     ]
   },
   {
@@ -176,6 +230,34 @@ const mockPatients: Patient[] = [
     ],
     doctorNotes: [
       { doctor: 'Dr. Sarah Malik', date: '2025-09-05', note: 'Blood pressure well controlled with current medication.' }
+    ],
+    medicationHistory: [
+      {
+        id: '4',
+        drugName: 'Lisinopril',
+        dosage: '10mg once daily',
+        dateDispensed: '2025-09-05',
+        pharmacistId: 'pharm003',
+        pharmacistName: 'Emily Davis',
+        response: '😊',
+        notes: 'Excellent blood pressure control, no side effects reported',
+        durationDays: 30,
+        category: 'Antihypertensive',
+        branch: 'Downtown Branch'
+      },
+      {
+        id: '5',
+        drugName: 'Amlodipine',
+        dosage: '5mg once daily',
+        dateDispensed: '2025-08-01',
+        pharmacistId: 'pharm002',
+        pharmacistName: 'Michael Chen',
+        response: '😐',
+        notes: 'Moderate blood pressure reduction, some ankle swelling',
+        durationDays: 21,
+        category: 'Antihypertensive',
+        branch: 'Downtown Branch'
+      }
     ]
   },
   {
@@ -208,6 +290,47 @@ const mockPatients: Patient[] = [
     ],
     doctorNotes: [
       { doctor: 'Dr. Omar Sheikh', date: '2025-09-14', note: 'INR elevated. Reduce Warfarin dose to 3mg daily. Recheck in 3 days.' }
+    ],
+    medicationHistory: [
+      {
+        id: '6',
+        drugName: 'Warfarin',
+        dosage: '5mg once daily',
+        dateDispensed: '2025-09-08',
+        pharmacistId: 'pharm001',
+        pharmacistName: 'Sarah Johnson',
+        response: '😞',
+        notes: 'INR elevated to 3.2, dose reduction required',
+        durationDays: 6,
+        category: 'Anticoagulant',
+        branch: 'Main Branch'
+      },
+      {
+        id: '7',
+        drugName: 'Warfarin',
+        dosage: '3mg once daily',
+        dateDispensed: '2025-08-15',
+        pharmacistId: 'pharm003',
+        pharmacistName: 'Emily Davis',
+        response: '😊',
+        notes: 'Stable INR levels, good therapeutic response',
+        durationDays: 24,
+        category: 'Anticoagulant',
+        branch: 'Main Branch'
+      },
+      {
+        id: '8',
+        drugName: 'Aspirin',
+        dosage: '81mg once daily',
+        dateDispensed: '2025-07-20',
+        pharmacistId: 'pharm002',
+        pharmacistName: 'Michael Chen',
+        response: '😞',
+        notes: 'Patient developed allergic reaction, discontinued',
+        durationDays: 3,
+        category: 'Antiplatelet',
+        branch: 'Main Branch'
+      }
     ]
   }
 ];
@@ -221,6 +344,12 @@ export default function PatientDashboard() {
   const [activePatientTab, setActivePatientTab] = useState<string>('profile');
   const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
   const [patients, setPatients] = useState<Patient[]>(mockPatients);
+  const [medicationHistoryFilter, setMedicationHistoryFilter] = useState({
+    search: '',
+    dateRange: 'all',
+    category: 'all',
+    responseType: 'all'
+  });
 
   const handleFeatureClick = (feature: string) => {
     setIsLoading(true);
@@ -284,6 +413,60 @@ export default function PatientDashboard() {
       default:
         return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const getResponseColor = (response: string) => {
+    switch (response) {
+      case '😊':
+        return 'bg-green-100 text-green-800';
+      case '😐':
+        return 'bg-gray-100 text-gray-800';
+      case '😞':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getTimelineLineColor = (history: any[]) => {
+    const positiveCount = history.filter(h => h.response === '😊').length;
+    const negativeCount = history.filter(h => h.response === '😞').length;
+    const total = history.length;
+    
+    if (total === 0) return 'from-gray-300 to-gray-400';
+    
+    const positiveRatio = positiveCount / total;
+    const negativeRatio = negativeCount / total;
+    
+    if (positiveRatio > 0.6) return 'from-green-400 to-green-500';
+    if (negativeRatio > 0.3) return 'from-red-400 to-red-500';
+    return 'from-yellow-400 to-yellow-500';
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const getFilteredMedicationHistory = (patient: Patient) => {
+    let filtered = patient.medicationHistory;
+    
+    if (medicationHistoryFilter.search) {
+      filtered = filtered.filter(h => 
+        h.drugName.toLowerCase().includes(medicationHistoryFilter.search.toLowerCase()) ||
+        h.category.toLowerCase().includes(medicationHistoryFilter.search.toLowerCase())
+      );
+    }
+    
+    if (medicationHistoryFilter.responseType !== 'all') {
+      const responseMap = { 'positive': '😊', 'neutral': '😐', 'adverse': '😞' };
+      filtered = filtered.filter(h => h.response === responseMap[medicationHistoryFilter.responseType as keyof typeof responseMap]);
+    }
+    
+    return filtered.sort((a, b) => new Date(b.dateDispensed).getTime() - new Date(a.dateDispensed).getTime());
   };
 
   const renderFeatureContent = () => {
@@ -811,6 +994,162 @@ export default function PatientDashboard() {
           </div>
         );
 
+      case 'medication-history':
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900">Medication History Tracker</h2>
+              <div className="flex space-x-3">
+                <button className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                  <Download className="w-4 h-4 inline mr-2" />
+                  Export PDF
+                </button>
+                <button className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                  <Download className="w-4 h-4 inline mr-2" />
+                  Export CSV
+                </button>
+              </div>
+            </div>
+
+            {/* Filter Bar */}
+            <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-100 sticky top-0 z-10">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Search by drug name or category..."
+                    value={medicationHistoryFilter.search}
+                    onChange={(e) => setMedicationHistoryFilter(prev => ({ ...prev, search: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <select
+                    value={medicationHistoryFilter.dateRange}
+                    onChange={(e) => setMedicationHistoryFilter(prev => ({ ...prev, dateRange: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="all">All Dates</option>
+                    <option value="last30">Last 30 Days</option>
+                    <option value="last90">Last 90 Days</option>
+                    <option value="lastyear">Last Year</option>
+                  </select>
+                </div>
+                <div>
+                  <select
+                    value={medicationHistoryFilter.category}
+                    onChange={(e) => setMedicationHistoryFilter(prev => ({ ...prev, category: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="all">All Categories</option>
+                    <option value="Antidiabetic">Antidiabetic</option>
+                    <option value="Antihypertensive">Antihypertensive</option>
+                    <option value="Anticoagulant">Anticoagulant</option>
+                    <option value="Antiplatelet">Antiplatelet</option>
+                  </select>
+                </div>
+                <div>
+                  <select
+                    value={medicationHistoryFilter.responseType}
+                    onChange={(e) => setMedicationHistoryFilter(prev => ({ ...prev, responseType: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="all">All Responses</option>
+                    <option value="positive">Positive (😊)</option>
+                    <option value="neutral">Neutral (😐)</option>
+                    <option value="adverse">Adverse (😞)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Patient Selection */}
+            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Select Patient to View History</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {patients.map((patient) => {
+                  const filteredHistory = getFilteredMedicationHistory(patient);
+                  return (
+                    <motion.div
+                      key={patient.id}
+                      className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:shadow-md transition-all duration-200"
+                      whileHover={{ scale: 1.02 }}
+                      onClick={() => {
+                        setSelectedPatient(patient);
+                        setActivePatientTab('medication-history');
+                        setIsPatientPanelOpen(true);
+                      }}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                          {patient.name.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900">{patient.name}</p>
+                          <p className="text-sm text-gray-600">{filteredHistory.length} medication entries</p>
+                        </div>
+                        <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${getTimelineLineColor(patient.medicationHistory)}`} />
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Timeline Preview */}
+            {selectedPatient && (
+              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  {selectedPatient.name}'s Medication Timeline
+                </h3>
+                <div className="relative">
+                  {/* Timeline Line */}
+                  <div className={`absolute left-6 top-0 bottom-0 w-1 bg-gradient-to-b ${getTimelineLineColor(selectedPatient.medicationHistory)}`} />
+                  
+                  {/* Timeline Nodes */}
+                  <div className="space-y-6">
+                    {getFilteredMedicationHistory(selectedPatient).map((entry, index) => (
+                      <motion.div
+                        key={entry.id}
+                        className="relative flex items-start space-x-4"
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: index * 0.05 }}
+                      >
+                        {/* Timeline Node */}
+                        <div className="relative z-10 flex-shrink-0">
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg ${getResponseColor(entry.response)}`}>
+                            {entry.response}
+                          </div>
+                        </div>
+                        
+                        {/* Event Card */}
+                        <motion.div
+                          className="flex-1 bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer"
+                          whileHover={{ scale: 1.02 }}
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <h4 className="font-bold text-gray-900">{entry.drugName}</h4>
+                              <p className="text-sm text-gray-600">{entry.dosage}</p>
+                            </div>
+                            <span className="text-xs text-gray-500">{formatDate(entry.dateDispensed)}</span>
+                          </div>
+                          <p className="text-sm text-gray-700 mb-2">{entry.notes}</p>
+                          <div className="flex justify-between items-center text-xs text-gray-500">
+                            <span>Duration: {entry.durationDays} days</span>
+                            <span>{entry.pharmacistName} • {entry.branch}</span>
+                          </div>
+                        </motion.div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
       default:
         return (
           <div className="text-center py-12">
@@ -905,6 +1244,7 @@ export default function PatientDashboard() {
               { id: 'appointments', label: 'Appointments', icon: Calendar },
               { id: 'health', label: 'Health Records', icon: FileText },
               { id: 'profiles', label: 'Patient Profiles', icon: Users },
+              { id: 'medication-history', label: 'Medication History', icon: Clock },
               { id: 'profile', label: 'Profile', icon: User },
               { id: 'tools', label: 'Tools', icon: Settings }
             ].map((tab) => (
@@ -1004,13 +1344,14 @@ export default function PatientDashboard() {
             </div>
 
             {/* Tab Navigation */}
-            <div className="flex border-b border-gray-200">
+            <div className="flex border-b border-gray-200 overflow-x-auto">
               {[
                 { id: 'profile', label: 'Profile', icon: User },
                 { id: 'allergies', label: 'Allergies', icon: AlertCircle },
                 { id: 'prescriptions', label: 'Prescriptions', icon: Pill },
                 { id: 'lab-reports', label: 'Lab Reports', icon: TestTube },
-                { id: 'doctor-notes', label: 'Doctor Notes', icon: FileText }
+                { id: 'doctor-notes', label: 'Doctor Notes', icon: FileText },
+                { id: 'medication-history', label: 'Med History', icon: Clock }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -1175,6 +1516,52 @@ export default function PatientDashboard() {
                         <p className="text-gray-700">{note.note}</p>
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {activePatientTab === 'medication-history' && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Medication History Timeline</h3>
+                  <div className="relative">
+                    {/* Timeline Line */}
+                    <div className={`absolute left-6 top-0 bottom-0 w-1 bg-gradient-to-b ${getTimelineLineColor(selectedPatient.medicationHistory)}`} />
+                    
+                    {/* Timeline Nodes */}
+                    <div className="space-y-4">
+                      {getFilteredMedicationHistory(selectedPatient).map((entry, index) => (
+                        <motion.div
+                          key={entry.id}
+                          className="relative flex items-start space-x-4"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3, delay: index * 0.05 }}
+                        >
+                          {/* Timeline Node */}
+                          <div className="relative z-10 flex-shrink-0">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${getResponseColor(entry.response)}`}>
+                              {entry.response}
+                            </div>
+                          </div>
+                          
+                          {/* Event Card */}
+                          <div className="flex-1 bg-gray-50 rounded-lg p-3">
+                            <div className="flex justify-between items-start mb-1">
+                              <div>
+                                <h4 className="font-semibold text-gray-900 text-sm">{entry.drugName}</h4>
+                                <p className="text-xs text-gray-600">{entry.dosage}</p>
+                              </div>
+                              <span className="text-xs text-gray-500">{formatDate(entry.dateDispensed)}</span>
+                            </div>
+                            <p className="text-xs text-gray-700 mb-1">{entry.notes}</p>
+                            <div className="flex justify-between items-center text-xs text-gray-500">
+                              <span>Duration: {entry.durationDays} days</span>
+                              <span>{entry.pharmacistName}</span>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
