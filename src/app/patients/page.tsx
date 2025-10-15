@@ -102,7 +102,8 @@ import {
   SignalHigh as SignalHighIcon,
   SignalLow as SignalLowIcon,
   SignalZero as SignalZeroIcon,
-  X
+  X,
+  RefreshCw
 } from 'lucide-react';
 
 // Mock data interfaces
@@ -275,6 +276,9 @@ export default function PatientDashboard() {
     setActiveSection('chat');
     setShowNotifications(false);
   };
+
+
+
 
   // Mock data
   const [medications] = useState<Medication[]>([
@@ -1093,6 +1097,7 @@ export default function PatientDashboard() {
     const [selectedRefill, setSelectedRefill] = useState<any>(null);
     const [showRefillModal, setShowRefillModal] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
+    const [showExportDropdown, setShowExportDropdown] = useState(false);
 
     // Mock refill data
     const refillData = [
@@ -1183,15 +1188,35 @@ export default function PatientDashboard() {
       console.log(`Marking refill ${refillId} as done`);
     };
 
-    return (
+    const handleExportData = (format: string) => {
+      // Mock function - would export data in specified format
+      console.log(`Exporting refill data as ${format}`);
+      setShowExportDropdown(false);
+      
+      // Simulate export process
+      const exportData = {
+        format,
+        timestamp: new Date().toISOString(),
+        data: refillData,
+        summary: {
+          totalRefills: refillData.length,
+          overdueCount: refillData.filter(r => r.daysRemaining < 0).length,
+          complianceRate: 87
+        }
+      };
+      
+      console.log('Export data:', exportData);
+    };
+
+  return (
       <div className="space-y-6">
         {/* Section Header */}
         <div className="flex items-center justify-between">
-          <div>
+        <div>
             <h2 className="text-2xl font-bold text-gray-900">Refill Reminders & Alerts</h2>
             <p className="text-gray-600 mt-1">Automated medication refill tracking and notifications</p>
-          </div>
         </div>
+      </div>
 
         {/* Top Toolbar */}
         <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
@@ -1234,37 +1259,169 @@ export default function PatientDashboard() {
           </div>
         </div>
 
-        {/* AI Analytics Panel */}
+        {/* Enhanced AI Analytics Panel */}
         <motion.div
-          className="bg-gradient-to-r from-teal-50 to-blue-50 rounded-lg p-4 border border-teal-200"
+          className="bg-gradient-to-r from-teal-50 to-blue-50 rounded-lg p-6 border border-teal-200"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="flex items-center space-x-2 mb-3">
-            <Brain className="w-5 h-5 text-teal-600" />
-            <h3 className="text-lg font-semibold text-gray-900">AI Analytics Summary</h3>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-2">
+              <Brain className="w-6 h-6 text-teal-600" />
+              <h3 className="text-xl font-semibold text-gray-900">AI Analytics & Insights</h3>
+            </div>
+            <button className="text-sm text-teal-600 hover:text-teal-700 transition-colors">
+              <RefreshCw className="w-4 h-4 inline mr-1" />
+              Refresh Analysis
+            </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-white rounded-lg p-3">
-              <div className="text-sm text-gray-600 mb-1">Refill Compliance</div>
-              <div className="text-lg font-bold text-teal-600">87%</div>
-              <div className="text-xs text-gray-500">Last 3 months</div>
+          
+          {/* Primary Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-sm text-gray-600">Refill Compliance</div>
+                <TrendingUp className="w-4 h-4 text-green-500" />
+              </div>
+              <div className="text-2xl font-bold text-teal-600 mb-1">87%</div>
+              <div className="text-xs text-gray-500">+5% vs last month</div>
+              <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div className="bg-teal-500 h-2 rounded-full" style={{ width: '87%' }}></div>
+              </div>
             </div>
-            <div className="bg-white rounded-lg p-3">
-              <div className="text-sm text-gray-600 mb-1">Overdue Refills</div>
-              <div className="text-lg font-bold text-red-600">2</div>
-              <div className="text-xs text-gray-500">Require attention</div>
+            
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-sm text-gray-600">Overdue Refills</div>
+                <AlertTriangle className="w-4 h-4 text-red-500" />
+              </div>
+              <div className="text-2xl font-bold text-red-600 mb-1">2</div>
+              <div className="text-xs text-gray-500">Critical attention needed</div>
+              <div className="mt-2">
+                <span className="inline-block w-2 h-2 bg-red-500 rounded-full mr-1"></span>
+                <span className="text-xs text-gray-600">Ahmed Hassan, John Doe</span>
+              </div>
             </div>
-            <div className="bg-white rounded-lg p-3">
-              <div className="text-sm text-gray-600 mb-1">Risk Score</div>
-              <div className="text-lg font-bold text-yellow-600">Low</div>
+            
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-sm text-gray-600">Risk Score</div>
+                <Shield className="w-4 h-4 text-yellow-500" />
+              </div>
+              <div className="text-2xl font-bold text-yellow-600 mb-1">Low</div>
               <div className="text-xs text-gray-500">Overall assessment</div>
+              <div className="mt-2">
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                  <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                </div>
+              </div>
             </div>
-            <div className="bg-white rounded-lg p-3">
-              <div className="text-sm text-gray-600 mb-1">Auto-Reminders</div>
-              <div className="text-lg font-bold text-green-600">12</div>
+            
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-sm text-gray-600">Auto-Reminders</div>
+                <Bell className="w-4 h-4 text-green-500" />
+              </div>
+              <div className="text-2xl font-bold text-green-600 mb-1">12</div>
               <div className="text-xs text-gray-500">Sent this week</div>
+              <div className="mt-2">
+                <span className="text-xs text-gray-600">92% response rate</span>
+              </div>
+            </div>
+          </div>
+
+          {/* AI Insights & Recommendations */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Risk Assessment */}
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                <AlertTriangle className="w-4 h-4 text-orange-500 mr-2" />
+                Risk Assessment
+              </h4>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-2 bg-red-50 rounded-lg">
+                  <div>
+                    <div className="text-sm font-medium text-red-800">High Risk</div>
+                    <div className="text-xs text-red-600">Ahmed Hassan - Insulin overdue</div>
+                  </div>
+                  <div className="text-xs text-red-500 font-medium">Critical</div>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-yellow-50 rounded-lg">
+                  <div>
+                    <div className="text-sm font-medium text-yellow-800">Medium Risk</div>
+                    <div className="text-xs text-yellow-600">John Doe - Adherence declining</div>
+                  </div>
+                  <div className="text-xs text-yellow-500 font-medium">Monitor</div>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-green-50 rounded-lg">
+                  <div>
+                    <div className="text-sm font-medium text-green-800">Low Risk</div>
+                    <div className="text-xs text-green-600">Sarah Smith, Maria Garcia</div>
+                  </div>
+                  <div className="text-xs text-green-500 font-medium">Stable</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Smart Recommendations */}
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                <Brain className="w-4 h-4 text-blue-500 mr-2" />
+                Smart Recommendations
+              </h4>
+              <div className="space-y-3">
+                <div className="p-3 bg-blue-50 rounded-lg">
+                  <div className="text-sm font-medium text-blue-800 mb-1">Immediate Action</div>
+                  <div className="text-xs text-blue-600">Contact Ahmed Hassan for insulin refill - critical medication</div>
+                  <button className="mt-2 text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition-colors">
+                    Take Action
+                  </button>
+                </div>
+                <div className="p-3 bg-teal-50 rounded-lg">
+                  <div className="text-sm font-medium text-teal-800 mb-1">Optimization</div>
+                  <div className="text-xs text-teal-600">Consider extended-release Metformin for John Doe</div>
+                  <button className="mt-2 text-xs bg-teal-600 text-white px-2 py-1 rounded hover:bg-teal-700 transition-colors">
+                    Review
+                  </button>
+                </div>
+                <div className="p-3 bg-green-50 rounded-lg">
+                  <div className="text-sm font-medium text-green-800 mb-1">Maintenance</div>
+                  <div className="text-xs text-green-600">Continue current regimen for Sarah & Maria</div>
+                  <button className="mt-2 text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 transition-colors">
+                    Confirm
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Predictive Analytics */}
+          <div className="mt-6 bg-white rounded-lg p-4 shadow-sm">
+            <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+              <TrendingUp className="w-4 h-4 text-purple-500 mr-2" />
+              Predictive Analytics
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-600 mb-1">94%</div>
+                <div className="text-sm text-gray-600">Predicted compliance next month</div>
+                <div className="text-xs text-green-600 mt-1">↑ Improving trend</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-orange-600 mb-1">3</div>
+                <div className="text-sm text-gray-600">Potential refill delays</div>
+                <div className="text-xs text-orange-600 mt-1">Early intervention needed</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600 mb-1">$2,340</div>
+                <div className="text-sm text-gray-600">Estimated cost savings</div>
+                <div className="text-xs text-blue-600 mt-1">From improved adherence</div>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -1382,6 +1539,187 @@ export default function PatientDashboard() {
           </div>
         </div>
 
+        {/* Settings Panel Modal */}
+        <AnimatePresence>
+          {showSettings && (
+            <motion.div
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowSettings(false)}
+            >
+              <motion.div
+                className="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-gray-900">Notification Settings</h3>
+                  <button
+                    onClick={() => setShowSettings(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="space-y-6">
+                  {/* Notification Frequency */}
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">Notification Frequency</h4>
+                    <div className="space-y-3">
+                      <label className="flex items-center space-x-3">
+                        <input type="radio" name="frequency" value="immediate" className="text-teal-600" defaultChecked />
+                        <span className="text-sm text-gray-700">Immediate alerts for critical medications</span>
+                      </label>
+                      <label className="flex items-center space-x-3">
+                        <input type="radio" name="frequency" value="daily" className="text-teal-600" />
+                        <span className="text-sm text-gray-700">Daily summary at 9:00 AM</span>
+                      </label>
+                      <label className="flex items-center space-x-3">
+                        <input type="radio" name="frequency" value="weekly" className="text-teal-600" />
+                        <span className="text-sm text-gray-700">Weekly summary on Mondays</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Urgency Thresholds */}
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">Urgency Thresholds</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-1">Critical Alert</label>
+                        <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                          <option value="0">Same day</option>
+                          <option value="1">1 day before</option>
+                          <option value="2">2 days before</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-1">Warning Alert</label>
+                        <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                          <option value="3">3 days before</option>
+                          <option value="5">5 days before</option>
+                          <option value="7">1 week before</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-1">Reminder Alert</label>
+                        <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                          <option value="7">1 week before</option>
+                          <option value="14">2 weeks before</option>
+                          <option value="30">1 month before</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Channel Preferences */}
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">Notification Channels</h4>
+                    <div className="space-y-3">
+                      <label className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Bell className="w-4 h-4 text-gray-600" />
+                          <span className="text-sm text-gray-700">Dashboard notifications</span>
+                        </div>
+                        <input type="checkbox" defaultChecked className="text-teal-600" />
+                      </label>
+                      <label className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Mail className="w-4 h-4 text-gray-600" />
+                          <span className="text-sm text-gray-700">Email notifications</span>
+                        </div>
+                        <input type="checkbox" defaultChecked className="text-teal-600" />
+                      </label>
+                      <label className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <MessageCircle className="w-4 h-4 text-gray-600" />
+                          <span className="text-sm text-gray-700">SMS notifications</span>
+                        </div>
+                        <input type="checkbox" className="text-teal-600" />
+                      </label>
+                      <label className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Phone className="w-4 h-4 text-gray-600" />
+                          <span className="text-sm text-gray-700">Push notifications</span>
+                        </div>
+                        <input type="checkbox" defaultChecked className="text-teal-600" />
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Auto-Message Templates */}
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">Auto-Message Templates</h4>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-1">Refill Reminder Template</label>
+                        <textarea
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                          rows={3}
+                          defaultValue="Hi {patient_name}, your {medication_name} refill is due in {days_remaining} days. Please contact us to schedule your refill. - Zuruu Pharmacy"
+                        ></textarea>
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-1">Overdue Alert Template</label>
+                        <textarea
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                          rows={3}
+                          defaultValue="URGENT: {patient_name}, your {medication_name} refill is overdue by {days_overdue} days. Please contact us immediately. - Zuruu Pharmacy"
+                        ></textarea>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* AI Suggestions */}
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">AI Features</h4>
+                    <div className="space-y-3">
+                      <label className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Brain className="w-4 h-4 text-gray-600" />
+                          <span className="text-sm text-gray-700">Enable AI suggestions</span>
+                        </div>
+                        <input type="checkbox" defaultChecked className="text-teal-600" />
+                      </label>
+                      <label className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <TrendingUp className="w-4 h-4 text-gray-600" />
+                          <span className="text-sm text-gray-700">Predictive analytics</span>
+                        </div>
+                        <input type="checkbox" defaultChecked className="text-teal-600" />
+                      </label>
+                      <label className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Shield className="w-4 h-4 text-gray-600" />
+                          <span className="text-sm text-gray-700">Risk assessment alerts</span>
+                        </div>
+                        <input type="checkbox" defaultChecked className="text-teal-600" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex space-x-3 pt-6 border-t border-gray-200 mt-6">
+                  <button className="flex-1 bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition-colors">
+                    Save Settings
+                  </button>
+                  <button 
+                    onClick={() => setShowSettings(false)}
+                    className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Refill Detail Modal */}
         <AnimatePresence>
           {showRefillModal && selectedRefill && (
@@ -1458,6 +1796,7 @@ export default function PatientDashboard() {
     const [filterStatus, setFilterStatus] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
     const [zoomLevel, setZoomLevel] = useState(1);
+    const [showExportDropdown, setShowExportDropdown] = useState(false);
 
     // Mock medication data with timeline information
     const timelineMedications = [
@@ -1561,6 +1900,26 @@ export default function PatientDashboard() {
       );
     };
 
+    const handleExportData = (format: string) => {
+      // Mock function - would export data in specified format
+      console.log(`Exporting medication data as ${format}`);
+      setShowExportDropdown(false);
+      
+      // Simulate export process
+      const exportData = {
+        format,
+        timestamp: new Date().toISOString(),
+        data: timelineMedications,
+        summary: {
+          totalMedications: timelineMedications.length,
+          activeMedications: timelineMedications.filter(m => m.status === 'Active').length,
+          averageAdherence: Math.round(timelineMedications.reduce((acc, m) => acc + m.adherence, 0) / timelineMedications.length)
+        }
+      };
+      
+      console.log('Export data:', exportData);
+    };
+
     return (
       <div className="space-y-6">
         {/* Section Header with Controls */}
@@ -1569,12 +1928,62 @@ export default function PatientDashboard() {
             <h2 className="text-2xl font-bold text-gray-900">Medication History Tracker</h2>
             <p className="text-gray-600 mt-1">Interactive timeline view of your medication journey</p>
         </div>
-          <div className="flex items-center space-x-4">
-            <button className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors">
-              <Download className="w-4 h-4 inline mr-2" />
-              Export History
-            </button>
-          </div>
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowExportDropdown(!showExportDropdown)}
+                    className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors flex items-center"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Export Data
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  </button>
+                  
+                  {/* Export Dropdown */}
+                  <AnimatePresence>
+                    {showExportDropdown && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10"
+                      >
+                        <div className="py-1">
+                          <button 
+                            onClick={() => handleExportData('PDF')}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center transition-colors"
+                          >
+                            <FileText className="w-4 h-4 mr-2" />
+                            Export as PDF
+                          </button>
+                          <button 
+                            onClick={() => handleExportData('CSV')}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center transition-colors"
+                          >
+                            <Download className="w-4 h-4 mr-2" />
+                            Export as CSV
+                          </button>
+                          <button 
+                            onClick={() => handleExportData('Excel')}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center transition-colors"
+                          >
+                            <BarChart3 className="w-4 h-4 mr-2" />
+                            Export as Excel
+                          </button>
+                          <button 
+                            onClick={() => handleExportData('Share')}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center transition-colors"
+                          >
+                            <Share className="w-4 h-4 mr-2" />
+                            Share Report
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
       </div>
 
         {/* Filter Controls */}
