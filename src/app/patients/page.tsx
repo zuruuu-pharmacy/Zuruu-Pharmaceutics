@@ -2649,12 +2649,350 @@ export default function PatientDashboard() {
     </div>
   );
 
+  const renderInteractionChecker = () => {
+    const [smartMode, setSmartMode] = useState(true);
+    const [showSettings, setShowSettings] = useState(false);
+    const [showInteractionModal, setShowInteractionModal] = useState(false);
+    const [selectedInteraction, setSelectedInteraction] = useState<any>(null);
+    const [riskLevel, setRiskLevel] = useState('moderate');
+    const [interactionCount, setInteractionCount] = useState(2);
+
+    // Mock interaction data
+    const interactions = [
+      {
+        id: '1',
+        type: 'Drug-Drug Interaction',
+        drugs: ['Warfarin', 'Aspirin'],
+        severity: 'High',
+        mechanism: 'Increased bleeding risk due to platelet inhibition',
+        recommendation: 'Avoid combination or monitor INR closely',
+        confidence: 94,
+        evidence: 'FDA LexiComp Database, updated 2025'
+      },
+      {
+        id: '2',
+        type: 'Drug-Disease Interaction',
+        drugs: ['Metoprolol', 'Asthma'],
+        severity: 'Moderate',
+        mechanism: 'Beta-blockers can worsen bronchospasm in asthma patients',
+        recommendation: 'Consider alternative antihypertensive or monitor closely',
+        confidence: 87,
+        evidence: 'WHO Drug Safety Database'
+      }
+    ];
+
+    const getSeverityColor = (severity: string) => {
+      switch (severity) {
+        case 'High': return 'bg-red-100 text-red-800 border-red-200';
+        case 'Moderate': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        case 'Low': return 'bg-green-100 text-green-800 border-green-200';
+        default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      }
+    };
+
+    const getRiskLevelColor = (level: string) => {
+      switch (level) {
+        case 'high': return 'bg-red-500';
+        case 'moderate': return 'bg-yellow-500';
+        case 'low': return 'bg-green-500';
+        default: return 'bg-gray-500';
+      }
+    };
+
+    const handleInteractionClick = (interaction: any) => {
+      setSelectedInteraction(interaction);
+      setShowInteractionModal(true);
+    };
+
+    return (
+      <div className="space-y-6">
+        {/* Header & Quick Actions */}
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-4">
+              <h2 className="text-2xl font-bold text-gray-900">AI Drug Interaction Checker</h2>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600">Smart Mode:</span>
+                <button
+                  onClick={() => setSmartMode(!smartMode)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    smartMode ? 'bg-teal-600' : 'bg-gray-200'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      smartMode ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+                <span className={`text-sm ${smartMode ? 'text-teal-600' : 'text-gray-500'}`}>
+                  {smartMode ? 'ON' : 'OFF'}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setShowSettings(true)}
+                className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                title="Settings"
+              >
+                <Settings className="w-5 h-5" />
+              </button>
+              <button className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+                <RefreshCw className="w-5 h-5" />
+              </button>
+              <button className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+          <p className="text-gray-600">
+            Automatically analyzes prescriptions and clinical records for unsafe combinations in real time.
+          </p>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Panel - Medication Input & Patient Context */}
+          <div className="space-y-6">
+            {/* Current Medications */}
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Current Medications</h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <h4 className="font-medium text-gray-900">Warfarin 5mg</h4>
+                    <p className="text-sm text-gray-600">Once daily • Dr. Smith</p>
+                  </div>
+                  <button className="text-gray-400 hover:text-red-500 transition-colors">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <h4 className="font-medium text-gray-900">Aspirin 81mg</h4>
+                    <p className="text-sm text-gray-600">Once daily • Dr. Johnson</p>
+                  </div>
+                  <button className="text-gray-400 hover:text-red-500 transition-colors">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <h4 className="font-medium text-gray-900">Metoprolol 50mg</h4>
+                    <p className="text-sm text-gray-600">Twice daily • Dr. Brown</p>
+                  </div>
+                  <button className="text-gray-400 hover:text-red-500 transition-colors">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+              <button className="w-full mt-4 p-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-teal-500 hover:text-teal-600 transition-colors">
+                <Plus className="w-5 h-5 inline mr-2" />
+                Add New Medication
+              </button>
+            </div>
+
+            {/* Patient Conditions */}
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Patient Conditions</h3>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-2 bg-blue-50 rounded-lg">
+                  <span className="text-sm text-blue-800">Hypertension</span>
+                  <button className="text-blue-600 hover:text-blue-800">
+                    <Edit className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-blue-50 rounded-lg">
+                  <span className="text-sm text-blue-800">Type 2 Diabetes</span>
+                  <button className="text-blue-600 hover:text-blue-800">
+                    <Edit className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-blue-50 rounded-lg">
+                  <span className="text-sm text-blue-800">Mild Asthma</span>
+                  <button className="text-blue-600 hover:text-blue-800">
+                    <Edit className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Allergies */}
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Known Allergies</h3>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-2 bg-red-50 rounded-lg">
+                  <span className="text-sm text-red-800">Penicillin (Severe Rash)</span>
+                  <button className="text-red-600 hover:text-red-800">
+                    <Edit className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-red-50 rounded-lg">
+                  <span className="text-sm text-red-800">Sulfa Drugs (Hives)</span>
+                  <button className="text-red-600 hover:text-red-800">
+                    <Edit className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Panel - AI Detection Output */}
+          <div className="space-y-6">
+            {/* Summary Risk Meter */}
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Risk Assessment</h3>
+              <div className="flex items-center justify-center mb-4">
+                <div className="relative w-32 h-32">
+                  <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 36 36">
+                    <path
+                      className="text-gray-200"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="none"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <path
+                      className={riskLevel === 'high' ? 'text-red-500' : riskLevel === 'moderate' ? 'text-yellow-500' : 'text-green-500'}
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="none"
+                      strokeDasharray={`${riskLevel === 'high' ? '75' : riskLevel === 'moderate' ? '50' : '25'}, 100`}
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className={`text-2xl font-bold ${riskLevel === 'high' ? 'text-red-600' : riskLevel === 'moderate' ? 'text-yellow-600' : 'text-green-600'}`}>
+                        {riskLevel === 'high' ? 'High' : riskLevel === 'moderate' ? 'Moderate' : 'Low'}
+                      </div>
+                      <div className="text-xs text-gray-500">Risk Level</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p className="text-center text-sm text-gray-600">
+                Current Risk Level: {riskLevel === 'high' ? 'High' : riskLevel === 'moderate' ? 'Moderate' : 'Low'} — {interactionCount} potential conflicts detected.
+              </p>
+            </div>
+
+            {/* Interaction Result Table */}
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Detected Interactions</h3>
+              <div className="space-y-4">
+                {interactions.map((interaction) => (
+                  <motion.div
+                    key={interaction.id}
+                    className={`p-4 rounded-lg border-l-4 cursor-pointer transition-all hover:shadow-md ${getSeverityColor(interaction.severity)}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    onClick={() => handleInteractionClick(interaction)}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-semibold">{interaction.type}</h4>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs bg-white px-2 py-1 rounded-full">
+                          {interaction.confidence}% confidence
+                        </span>
+                        <AlertTriangle className="w-4 h-4" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-sm">
+                        <strong>Drugs:</strong> {interaction.drugs.join(' + ')}
+                      </p>
+                      <p className="text-sm">
+                        <strong>Mechanism:</strong> {interaction.mechanism}
+                      </p>
+                      <p className="text-sm">
+                        <strong>Recommendation:</strong> {interaction.recommendation}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Interaction Detail Modal */}
+        <AnimatePresence>
+          {showInteractionModal && selectedInteraction && (
+            <motion.div
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowInteractionModal(false)}
+            >
+              <motion.div
+                className="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-gray-900">Interaction Analysis</h3>
+                  <button
+                    onClick={() => setShowInteractionModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="space-y-6">
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-2">Drugs Involved</h4>
+                    <p className="text-gray-700">{selectedInteraction.drugs.join(' + ')}</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-2">Pharmacokinetic Explanation</h4>
+                    <p className="text-gray-700">{selectedInteraction.mechanism}</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-2">Clinical Guidance</h4>
+                    <p className="text-gray-700">{selectedInteraction.recommendation}</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-2">Evidence Source</h4>
+                    <p className="text-gray-700">{selectedInteraction.evidence}</p>
+                  </div>
+                  
+                  <div className="flex space-x-3 pt-4 border-t border-gray-200">
+                    <button className="flex-1 bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition-colors">
+                      Recommend Alternate Drug
+                    </button>
+                    <button className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                      Add Monitoring Plan
+                    </button>
+                    <button className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                      Ignore Alert
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  };
+
   const renderContent = () => {
     switch (activeSection) {
       case 'dashboard':
         return renderDashboard();
       case 'medications':
         return renderMedications();
+      case 'interaction-checker':
+        return renderInteractionChecker();
       case 'refill-reminders':
         return renderRefillReminders();
       case 'appointments':
@@ -3088,6 +3426,7 @@ export default function PatientDashboard() {
             {[
               { id: 'dashboard', label: 'Dashboard', icon: Home },
               { id: 'medications', label: 'My Medications', icon: Pill },
+              { id: 'interaction-checker', label: 'Safety & Interactions', icon: Shield },
               { id: 'refill-reminders', label: 'Refill Reminders', icon: Bell },
               { id: 'appointments', label: 'My Appointments', icon: Calendar },
               { id: 'health-records', label: 'Health Records', icon: FileText },
