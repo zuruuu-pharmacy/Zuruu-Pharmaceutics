@@ -728,12 +728,12 @@ export default function PatientDashboard() {
             <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-blue-500 rounded-full flex items-center justify-center">
               <span className="text-white text-xl font-bold">AS</span>
             </div>
-            <div>
+        <div>
               <h3 className="text-xl font-bold text-gray-900">Alex Smith</h3>
               <p className="text-gray-600">Patient ID: P-2024-001</p>
               <p className="text-gray-600">Male, 35 years old</p>
-            </div>
-          </div>
+        </div>
+      </div>
           <div className="text-center">
             <p className="text-sm text-gray-600">Primary Conditions</p>
             <p className="font-medium text-gray-900">Diabetes Type 2, Hypertension</p>
@@ -779,7 +779,7 @@ export default function PatientDashboard() {
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
                       <Pill className="w-5 h-5 text-teal-600" />
-                    </div>
+      </div>
                     <div>
                       <h4 className="font-medium text-gray-900">{med.name} {med.strength}</h4>
                       <p className="text-sm text-gray-600">{med.dosage} • {med.frequency}</p>
@@ -995,49 +995,416 @@ export default function PatientDashboard() {
     </div>
   );
 
-  const renderMedications = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">My Medications</h2>
-        <button className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors">
-          <Plus className="w-4 h-4 inline mr-2" />
-          Add Medication
-        </button>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {medications.map((med) => (
-          <motion.div
-            key={med.id}
-            className="bg-white rounded-lg p-6 shadow-sm border border-gray-100"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
-                <Pill className="w-6 h-6 text-teal-600" />
+  const renderMedications = () => {
+    const [selectedMedication, setSelectedMedication] = useState<string | null>(null);
+    const [expandedCard, setExpandedCard] = useState<string | null>(null);
+    const [timeRange, setTimeRange] = useState('6months');
+    const [filterStatus, setFilterStatus] = useState('all');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [zoomLevel, setZoomLevel] = useState(1);
+
+    // Mock medication data with timeline information
+    const timelineMedications = [
+      {
+        id: '1',
+        name: 'Metformin',
+        strength: '500mg',
+        dosage: '500 mg twice daily',
+        frequency: 'BID',
+        startDate: '2024-08-01',
+        endDate: '2024-10-01',
+        status: 'Active',
+        adherence: 85,
+        effectiveness: 4,
+        drugClass: 'Antidiabetic',
+        color: 'green',
+        sideEffects: [
+          { date: '2024-08-15', effect: 'Mild nausea', severity: 'mild' },
+          { date: '2024-09-02', effect: 'Stomach upset', severity: 'mild' }
+        ],
+        notes: 'Patient reports good glucose control. Continue current dose.',
+        attachments: ['lab_report_aug.pdf']
+      },
+      {
+        id: '2',
+        name: 'Lisinopril',
+        strength: '10mg',
+        dosage: '10 mg once daily',
+        frequency: 'QD',
+        startDate: '2024-07-15',
+        endDate: '2024-12-15',
+        status: 'Active',
+        adherence: 92,
+        effectiveness: 5,
+        drugClass: 'Antihypertensive',
+        color: 'red',
+        sideEffects: [],
+        notes: 'Excellent blood pressure control. No side effects reported.',
+        attachments: []
+      },
+      {
+        id: '3',
+        name: 'Amoxicillin',
+        strength: '500mg',
+        dosage: '500 mg three times daily',
+        frequency: 'TID',
+        startDate: '2024-09-20',
+        endDate: '2024-09-27',
+        status: 'Discontinued',
+        adherence: 100,
+        effectiveness: 5,
+        drugClass: 'Antibiotic',
+        color: 'blue',
+        sideEffects: [
+          { date: '2024-09-22', effect: 'Mild diarrhea', severity: 'mild' }
+        ],
+        notes: 'Course completed successfully. Infection resolved.',
+        attachments: []
+      }
+    ];
+
+    const getDrugClassColor = (drugClass: string) => {
+      switch (drugClass) {
+        case 'Antibiotic': return '#3B82F6'; // Blue
+        case 'Antihypertensive': return '#EF4444'; // Red
+        case 'Antidiabetic': return '#10B981'; // Green
+        case 'Supplement': return '#F59E0B'; // Yellow
+        default: return '#009688'; // Teal
+      }
+    };
+
+    const renderAdherenceBar = (adherence: number) => {
+      const filledBars = Math.round(adherence / 10);
+      return (
+        <div className="flex items-center space-x-1">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div
+              key={i}
+              className={`w-2 h-2 rounded-full ${
+                i < filledBars ? 'bg-teal-500' : 'bg-gray-200'
+              }`}
+            />
+          ))}
+          <span className="text-xs text-gray-600 ml-2">{adherence}%</span>
+        </div>
+      );
+    };
+
+    const renderEffectivenessStars = (rating: number) => {
+      return (
+        <div className="flex items-center space-x-1">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Star
+              key={i}
+              className={`w-3 h-3 ${
+                i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
+              }`}
+            />
+          ))}
+        </div>
+      );
+    };
+
+    return (
+      <div className="space-y-6">
+        {/* Section Header with Controls */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Medication History Tracker</h2>
+            <p className="text-gray-600 mt-1">Interactive timeline view of your medication journey</p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <button className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors">
+              <Download className="w-4 h-4 inline mr-2" />
+              Export History
+            </button>
+          </div>
+        </div>
+
+        {/* Filter Controls */}
+        <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search medications..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent w-64"
+              />
+            </div>
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            >
+              <option value="all">All Medications</option>
+              <option value="Active">Active</option>
+              <option value="Discontinued">Discontinued</option>
+              <option value="Pending">Pending Refill</option>
+            </select>
+            <select
+              value={timeRange}
+              onChange={(e) => setTimeRange(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            >
+              <option value="1month">Last Month</option>
+              <option value="3months">3 Months</option>
+              <option value="6months">6 Months</option>
+              <option value="1year">1 Year</option>
+            </select>
+          </div>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setZoomLevel(Math.max(0.5, zoomLevel - 0.1))}
+              className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              <Minus className="w-4 h-4" />
+            </button>
+            <span className="text-sm text-gray-600 px-2">{Math.round(zoomLevel * 100)}%</span>
+            <button
+              onClick={() => setZoomLevel(Math.min(2, zoomLevel + 0.1))}
+              className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* AI Analytics Panel */}
+        <motion.div
+          className="bg-gradient-to-r from-teal-50 to-blue-50 rounded-lg p-4 border border-teal-200"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="flex items-center space-x-2 mb-3">
+            <Brain className="w-5 h-5 text-teal-600" />
+            <h3 className="text-lg font-semibold text-gray-900">AI Analytics Summary</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-white rounded-lg p-3">
+              <div className="text-sm text-gray-600 mb-1">Adherence Trend</div>
+              <div className="text-lg font-bold text-teal-600">+5% this month</div>
+              <div className="text-xs text-gray-500">Improving consistently</div>
+            </div>
+            <div className="bg-white rounded-lg p-3">
+              <div className="text-sm text-gray-600 mb-1">Therapy Stability</div>
+              <div className="text-lg font-bold text-green-600">Stable</div>
+              <div className="text-xs text-gray-500">No changes needed</div>
+            </div>
+            <div className="bg-white rounded-lg p-3">
+              <div className="text-sm text-gray-600 mb-1">Risk Assessment</div>
+              <div className="text-lg font-bold text-yellow-600">Low Risk</div>
+              <div className="text-xs text-gray-500">Continue monitoring</div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Timeline Container */}
+        <div 
+          className="bg-gray-50 rounded-lg p-6 relative overflow-hidden"
+          style={{ 
+            height: '700px',
+            backgroundColor: '#FAFAFA'
+          }}
+        >
+          {/* Timeline Axis */}
+          <div className="absolute top-1/2 left-6 right-6 h-0.5 bg-gray-300 transform -translate-y-1/2"></div>
+          
+          {/* Current Day Indicator */}
+          <div 
+            className="absolute top-1/2 w-1 h-8 bg-teal-500 transform -translate-y-1/2 rounded-full"
+            style={{
+              left: '70%',
+              boxShadow: '0 0 10px rgba(0, 150, 136, 0.5)',
+              animation: 'pulse 2s infinite'
+            }}
+          ></div>
+
+          {/* Date Markers */}
+          <div className="absolute top-1/2 left-6 right-6 transform -translate-y-1/2">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div
+                key={i}
+                className="absolute top-0 w-px h-3 bg-gray-400"
+                style={{ left: `${i * 8.33}%` }}
+              >
+                <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-500">
+                  {i % 2 === 0 ? `Aug ${i * 15 + 1}` : ''}
+                </div>
               </div>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(med.status)}`}>
-                {med.status}
-              </span>
+            ))}
+          </div>
+
+          {/* Medication Cards */}
+          <div className="relative h-full">
+            {timelineMedications.map((med, index) => (
+              <motion.div
+                key={med.id}
+                className="absolute bg-white rounded-xl shadow-lg border border-gray-100 cursor-pointer"
+                style={{
+                  width: '320px',
+                  height: '160px',
+                  left: `${20 + index * 25}%`,
+                  top: index % 2 === 0 ? '20%' : '60%',
+                  transform: `scale(${zoomLevel})`,
+                  borderLeft: `4px solid ${getDrugClassColor(med.drugClass)}`
+                }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ scale: 1.02 }}
+                onClick={() => setExpandedCard(expandedCard === med.id ? null : med.id)}
+              >
+                {/* Connector Line to Timeline */}
+                <div 
+                  className="absolute w-px bg-teal-500"
+                  style={{
+                    height: index % 2 === 0 ? '60px' : '60px',
+                    top: index % 2 === 0 ? '100%' : '-60px',
+                    left: '50%',
+                    transform: 'translateX(-50%)'
+                  }}
+                >
+                  <div className="absolute w-2 h-2 bg-teal-500 rounded-full transform -translate-x-1/2 -translate-y-1/2"
+                    style={{ top: index % 2 === 0 ? '100%' : '0%' }}></div>
+                </div>
+
+                <div className="p-4 h-full flex flex-col">
+                  {/* Top Row */}
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-bold text-gray-900" style={{ fontSize: '18px' }}>
+                      {med.name} {med.strength}
+                    </h3>
+                    <button className="text-gray-400 hover:text-gray-600">
+                      <MoreHorizontal className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Middle Section */}
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-600 mb-1">{med.dosage}</p>
+                    <p className="text-xs text-gray-500 mb-2">
+                      {med.startDate} → {med.endDate}
+                    </p>
+                  </div>
+
+                  {/* Bottom Row - Mini Analytics */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-600">Adherence:</span>
+                      {renderAdherenceBar(med.adherence)}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-600">Effectiveness:</span>
+                      {renderEffectivenessStars(med.effectiveness)}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-600">Status:</span>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(med.status)}`}>
+                        {med.status}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Expandable Response Logs */}
+                <AnimatePresence>
+                  {expandedCard === med.id && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 rounded-b-xl shadow-lg z-10"
+                    >
+                      <div className="p-4 space-y-4">
+                        {/* Side Effects */}
+                        {med.sideEffects.length > 0 && (
+                          <div>
+                            <h4 className="font-semibold text-gray-900 mb-2">Side Effects</h4>
+                            <div className="space-y-2">
+                              {med.sideEffects.map((effect, idx) => (
+                                <div key={idx} className="flex items-center justify-between text-sm">
+                                  <span className="text-gray-700">{effect.effect}</span>
+                                  <span className={`px-2 py-1 rounded-full text-xs ${
+                                    effect.severity === 'mild' ? 'bg-yellow-100 text-yellow-800' :
+                                    effect.severity === 'moderate' ? 'bg-orange-100 text-orange-800' :
+                                    'bg-red-100 text-red-800'
+                                  }`}>
+                                    {effect.severity}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Pharmacist Notes */}
+                        <div>
+                          <h4 className="font-semibold text-gray-900 mb-2">Pharmacist Notes</h4>
+                          <p className="text-sm text-gray-700">{med.notes}</p>
+                        </div>
+
+                        {/* Attachments */}
+                        {med.attachments.length > 0 && (
+                          <div>
+                            <h4 className="font-semibold text-gray-900 mb-2">Attachments</h4>
+                            <div className="space-y-1">
+                              {med.attachments.map((attachment, idx) => (
+                                <div key={idx} className="flex items-center space-x-2 text-sm text-blue-600 hover:text-blue-800 cursor-pointer">
+                                  <FileText className="w-4 h-4" />
+                                  <span>{attachment}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Action Buttons */}
+                        <div className="flex space-x-2 pt-2 border-t border-gray-200">
+                          <button className="flex-1 bg-teal-600 text-white py-2 rounded text-sm hover:bg-teal-700 transition-colors">
+                            Edit Notes
+                          </button>
+                          <button className="flex-1 bg-gray-100 text-gray-700 py-2 rounded text-sm hover:bg-gray-200 transition-colors">
+                            Add Attachment
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Legend */}
+        <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+          <h4 className="font-semibold text-gray-900 mb-3">Drug Class Legend</h4>
+          <div className="flex flex-wrap gap-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 rounded" style={{ backgroundColor: '#3B82F6' }}></div>
+              <span className="text-sm text-gray-600">Antibiotics</span>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">{med.name}</h3>
-            <p className="text-gray-600 mb-1">{med.strength}</p>
-            <p className="text-gray-600 mb-1">{med.dosage}</p>
-            <p className="text-gray-600 mb-4">{med.frequency}</p>
-            <div className="flex space-x-2">
-              <button className="flex-1 bg-teal-600 text-white py-2 rounded text-sm hover:bg-teal-700 transition-colors">
-                View Details
-              </button>
-              <button className="flex-1 bg-gray-100 text-gray-700 py-2 rounded text-sm hover:bg-gray-200 transition-colors">
-                Edit
-              </button>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 rounded" style={{ backgroundColor: '#EF4444' }}></div>
+              <span className="text-sm text-gray-600">Antihypertensives</span>
             </div>
-          </motion.div>
-        ))}
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 rounded" style={{ backgroundColor: '#10B981' }}></div>
+              <span className="text-sm text-gray-600">Antidiabetics</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 rounded" style={{ backgroundColor: '#F59E0B' }}></div>
+              <span className="text-sm text-gray-600">Supplements</span>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderAppointments = () => (
     <div className="space-y-6">
