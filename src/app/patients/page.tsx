@@ -103,7 +103,9 @@ import {
   SignalLow as SignalLowIcon,
   SignalZero as SignalZeroIcon,
   X,
-  RefreshCw
+  RefreshCw,
+  ZoomIn,
+  ZoomOut
 } from 'lucide-react';
 
 // Mock data interfaces
@@ -2656,6 +2658,9 @@ export default function PatientDashboard() {
     const [selectedInteraction, setSelectedInteraction] = useState<any>(null);
     const [riskLevel, setRiskLevel] = useState('moderate');
     const [interactionCount, setInteractionCount] = useState(2);
+    const [isLoading, setIsLoading] = useState(false);
+    const [hasError, setHasError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     // Mock interaction data
     const interactions = [
@@ -2704,6 +2709,71 @@ export default function PatientDashboard() {
       setShowInteractionModal(true);
     };
 
+    const handleRefreshData = async () => {
+      setIsLoading(true);
+      setHasError(false);
+      try {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Mock successful data refresh
+        console.log('Data refreshed successfully');
+      } catch (error) {
+        setHasError(true);
+        setErrorMessage('Unable to complete AI check. Please retry.');
+        console.error('Error refreshing data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    // Error Fallback Component
+    if (hasError) {
+      return (
+        <div className="space-y-6">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+            <div className="flex items-center space-x-3">
+              <AlertTriangle className="w-6 h-6 text-red-600" />
+              <div>
+                <h3 className="text-lg font-semibold text-red-800">System Error</h3>
+                <p className="text-red-700 mt-1">{errorMessage}</p>
+              </div>
+            </div>
+            <div className="mt-4 flex space-x-3">
+              <button 
+                onClick={handleRefreshData}
+                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Retry
+              </button>
+              <button 
+                onClick={() => setHasError(false)}
+                className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Loading State
+    if (isLoading) {
+      return (
+        <div className="space-y-6">
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="w-16 h-16 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Analyzing Interactions</h3>
+                <p className="text-gray-600">AI is checking for potential drug interactions...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-6">
         {/* Header & Quick Actions */}
@@ -2738,8 +2808,12 @@ export default function PatientDashboard() {
               >
                 <Settings className="w-5 h-5" />
               </button>
-              <button className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
-                <RefreshCw className="w-5 h-5" />
+              <button 
+                onClick={handleRefreshData}
+                disabled={isLoading}
+                className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <RefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
               </button>
               <button className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
                 <X className="w-5 h-5" />
@@ -2751,8 +2825,175 @@ export default function PatientDashboard() {
           </p>
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Alert Warning System */}
+        <AnimatePresence>
+          <motion.div
+            className="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg shadow-sm"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+                <div>
+                  <h4 className="text-lg font-semibold text-red-800">⚠️ Interaction Alert</h4>
+                  <p className="text-sm text-red-700">
+                    Amoxicillin + Warfarin may increase bleeding risk. Severity: High | 
+                    <button className="underline ml-1 hover:text-red-900">View Details</button>
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <button className="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm">
+                  Flag for Physician
+                </button>
+                <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm">
+                  Mark as Reviewed
+                </button>
+                <button className="text-red-400 hover:text-red-600">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* AI Insights Panel */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+          <div className="flex items-center space-x-2 mb-4">
+            <Brain className="w-6 h-6 text-blue-600" />
+            <h3 className="text-lg font-semibold text-gray-900">AI Insights & Recommendations</h3>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Immediate Action */}
+            <div className="bg-white rounded-lg p-4 shadow-sm border border-red-200">
+              <div className="flex items-center space-x-2 mb-3">
+                <AlertTriangle className="w-5 h-5 text-red-600" />
+                <h4 className="font-semibold text-red-800">Immediate Action</h4>
+              </div>
+              <p className="text-sm text-gray-700 mb-3">
+                Warfarin + Aspirin combination poses high bleeding risk. Consider alternative antiplatelet therapy.
+              </p>
+              <button className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors text-sm">
+                Review Alternative
+              </button>
+            </div>
+
+            {/* Optimization */}
+            <div className="bg-white rounded-lg p-4 shadow-sm border border-yellow-200">
+              <div className="flex items-center space-x-2 mb-3">
+                <TrendingUp className="w-5 h-5 text-yellow-600" />
+                <h4 className="font-semibold text-yellow-800">Optimization</h4>
+              </div>
+              <p className="text-sm text-gray-700 mb-3">
+                Metoprolol may worsen asthma. Consider ACE inhibitor or ARB for hypertension management.
+              </p>
+              <button className="w-full bg-yellow-600 text-white py-2 rounded-lg hover:bg-yellow-700 transition-colors text-sm">
+                Suggest Alternative
+              </button>
+            </div>
+
+            {/* Monitoring */}
+            <div className="bg-white rounded-lg p-4 shadow-sm border border-green-200">
+              <div className="flex items-center space-x-2 mb-3">
+                <Shield className="w-5 h-5 text-green-600" />
+                <h4 className="font-semibold text-green-800">Monitoring</h4>
+              </div>
+              <p className="text-sm text-gray-700 mb-3">
+                Regular INR monitoring recommended for Warfarin therapy. Schedule weekly checks.
+              </p>
+              <button className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors text-sm">
+                Schedule Monitoring
+              </button>
+            </div>
+          </div>
+
+          {/* Predictive Analytics */}
+          <div className="mt-6 bg-white rounded-lg p-4 shadow-sm">
+            <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+              <TrendingUp className="w-4 h-4 text-purple-500 mr-2" />
+              Predictive Analytics
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-600 mb-1">87%</div>
+                <div className="text-sm text-gray-600">Risk reduction with alternative therapy</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600 mb-1">$1,240</div>
+                <div className="text-sm text-gray-600">Potential cost savings annually</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile View - Simplified Accordion Layout */}
+        <div className="lg:hidden space-y-4">
+          {/* Mobile Risk Summary */}
+          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-lg font-semibold text-gray-900">Risk Summary</h3>
+              <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                riskLevel === 'high' ? 'bg-red-100 text-red-800' :
+                riskLevel === 'moderate' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-green-100 text-green-800'
+              }`}>
+                {riskLevel === 'high' ? 'High Risk' : riskLevel === 'moderate' ? 'Moderate Risk' : 'Low Risk'}
+              </div>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className={`h-2 rounded-full ${
+                  riskLevel === 'high' ? 'bg-red-500' :
+                  riskLevel === 'moderate' ? 'bg-yellow-500' :
+                  'bg-green-500'
+                }`}
+                style={{ width: riskLevel === 'high' ? '75%' : riskLevel === 'moderate' ? '50%' : '25%' }}
+              ></div>
+            </div>
+            <p className="text-sm text-gray-600 mt-2">{interactionCount} potential conflicts detected</p>
+          </div>
+
+          {/* Mobile Interaction Cards */}
+          <div className="space-y-3">
+            {interactions.map((interaction) => (
+              <motion.div
+                key={interaction.id}
+                className="bg-white rounded-lg p-4 shadow-sm border border-gray-100"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-semibold text-gray-900">{interaction.type}</h4>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    interaction.severity === 'High' ? 'bg-red-100 text-red-800' :
+                    interaction.severity === 'Moderate' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-green-100 text-green-800'
+                  }`}>
+                    {interaction.severity}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700 mb-2">
+                  <strong>Drugs:</strong> {interaction.drugs.join(' + ')}
+                </p>
+                <p className="text-sm text-gray-600 mb-3">{interaction.mechanism}</p>
+                <button 
+                  onClick={() => handleInteractionClick(interaction)}
+                  className="w-full bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition-colors text-sm"
+                >
+                  View Details
+                </button>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop View - Main Content Grid */}
+        <div className="hidden lg:grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Panel - Medication Input & Patient Context */}
           <div className="space-y-6">
             {/* Current Medications */}
@@ -2877,6 +3118,128 @@ export default function PatientDashboard() {
               </p>
             </div>
 
+            {/* Visual Risk Network Graph */}
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Interaction Network</h3>
+              <div className="relative h-64 bg-gray-50 rounded-lg overflow-hidden">
+                {/* Network Graph SVG */}
+                <svg className="w-full h-full" viewBox="0 0 400 200">
+                  {/* Background Grid */}
+                  <defs>
+                    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#E5E7EB" strokeWidth="0.5"/>
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#grid)" />
+                  
+                  {/* Connection Lines */}
+                  <line x1="100" y1="100" x2="200" y2="100" stroke="#EF4444" strokeWidth="3" opacity="0.7">
+                    <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2s" repeatCount="indefinite"/>
+                  </line>
+                  <line x1="200" y1="100" x2="300" y2="100" stroke="#F59E0B" strokeWidth="2" opacity="0.6">
+                    <animate attributeName="opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite"/>
+                  </line>
+                  
+                  {/* Drug Nodes */}
+                  {/* Warfarin Node */}
+                  <g>
+                    <circle cx="100" cy="100" r="25" fill="#EF4444" stroke="#DC2626" strokeWidth="2">
+                      <animate attributeName="r" values="20;25;20" dur="2s" repeatCount="indefinite"/>
+                    </circle>
+                    <text x="100" y="105" textAnchor="middle" className="text-xs font-semibold fill-white">WAR</text>
+                    <text x="100" y="140" textAnchor="middle" className="text-xs fill-gray-600">Warfarin</text>
+                  </g>
+                  
+                  {/* Aspirin Node */}
+                  <g>
+                    <circle cx="200" cy="100" r="20" fill="#F59E0B" stroke="#D97706" strokeWidth="2">
+                      <animate attributeName="r" values="18;22;18" dur="2.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <text x="200" y="105" textAnchor="middle" className="text-xs font-semibold fill-white">ASP</text>
+                    <text x="200" y="140" textAnchor="middle" className="text-xs fill-gray-600">Aspirin</text>
+                  </g>
+                  
+                  {/* Metoprolol Node */}
+                  <g>
+                    <circle cx="300" cy="100" r="18" fill="#10B981" stroke="#059669" strokeWidth="2">
+                      <animate attributeName="r" values="16;20;16" dur="3s" repeatCount="indefinite"/>
+                    </circle>
+                    <text x="300" y="105" textAnchor="middle" className="text-xs font-semibold fill-white">MET</text>
+                    <text x="300" y="140" textAnchor="middle" className="text-xs fill-gray-600">Metoprolol</text>
+                  </g>
+                  
+                  {/* Patient Condition Nodes */}
+                  <g>
+                    <rect x="50" y="50" width="60" height="20" rx="10" fill="#3B82F6" stroke="#2563EB" strokeWidth="1"/>
+                    <text x="80" y="62" textAnchor="middle" className="text-xs font-medium fill-white">Hypertension</text>
+                  </g>
+                  
+                  <g>
+                    <rect x="50" y="80" width="60" height="20" rx="10" fill="#8B5CF6" stroke="#7C3AED" strokeWidth="1"/>
+                    <text x="80" y="92" textAnchor="middle" className="text-xs font-medium fill-white">Diabetes</text>
+                  </g>
+                  
+                  <g>
+                    <rect x="50" y="110" width="60" height="20" rx="10" fill="#F59E0B" stroke="#D97706" strokeWidth="1"/>
+                    <text x="80" y="122" textAnchor="middle" className="text-xs font-medium fill-white">Asthma</text>
+                  </g>
+                  
+                  {/* Connection to Conditions */}
+                  <line x1="100" y1="100" x2="80" y2="60" stroke="#6B7280" strokeWidth="1" strokeDasharray="2,2" opacity="0.5"/>
+                  <line x1="200" y1="100" x2="80" y2="90" stroke="#6B7280" strokeWidth="1" strokeDasharray="2,2" opacity="0.5"/>
+                  <line x1="300" y1="100" x2="80" y2="120" stroke="#6B7280" strokeWidth="1" strokeDasharray="2,2" opacity="0.5"/>
+                  
+                  {/* Risk Indicators */}
+                  <g>
+                    <circle cx="350" cy="50" r="8" fill="#EF4444">
+                      <animate attributeName="opacity" values="0.5;1;0.5" dur="1s" repeatCount="indefinite"/>
+                    </circle>
+                    <text x="365" y="55" className="text-xs fill-gray-700">High Risk</text>
+                  </g>
+                  
+                  <g>
+                    <circle cx="350" cy="80" r="6" fill="#F59E0B">
+                      <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <text x="365" y="85" className="text-xs fill-gray-700">Moderate Risk</text>
+                  </g>
+                  
+                  <g>
+                    <circle cx="350" cy="110" r="4" fill="#10B981">
+                      <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+                    </circle>
+                    <text x="365" y="115" className="text-xs fill-gray-700">Low Risk</text>
+                  </g>
+                </svg>
+                
+                {/* Interactive Tooltips */}
+                <div className="absolute top-2 left-2 bg-white rounded-lg shadow-lg p-2 border border-gray-200">
+                  <p className="text-xs text-gray-600">Hover over nodes for details</p>
+                </div>
+              </div>
+              
+              {/* Network Controls */}
+              <div className="flex items-center justify-between mt-4">
+                <div className="flex items-center space-x-2">
+                  <button className="px-3 py-1 bg-teal-100 text-teal-700 rounded-lg text-sm hover:bg-teal-200 transition-colors">
+                    <ZoomIn className="w-4 h-4 inline mr-1" />
+                    Zoom In
+                  </button>
+                  <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200 transition-colors">
+                    <ZoomOut className="w-4 h-4 inline mr-1" />
+                    Zoom Out
+                  </button>
+                  <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm hover:bg-blue-200 transition-colors">
+                    <RotateCcw className="w-4 h-4 inline mr-1" />
+                    Reset View
+                  </button>
+                </div>
+                <div className="text-xs text-gray-500">
+                  Node size = Drug importance | Edge color = Severity
+                </div>
+              </div>
+            </div>
+
             {/* Interaction Result Table */}
             <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Detected Interactions</h3>
@@ -2916,6 +3279,169 @@ export default function PatientDashboard() {
             </div>
           </div>
         </div>
+
+        {/* Settings Customization Modal */}
+        <AnimatePresence>
+          {showSettings && (
+            <motion.div
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowSettings(false)}
+            >
+              <motion.div
+                className="bg-white rounded-xl p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-gray-900">Interaction Checker Settings</h3>
+                  <button
+                    onClick={() => setShowSettings(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Sensitivity Controls */}
+                  <div className="space-y-4">
+                    <h4 className="font-semibold text-gray-900">Sensitivity Controls</h4>
+                    
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-2">Severity Level to Display</label>
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                        <option value="all">Show All Interactions</option>
+                        <option value="moderate+">Moderate and High Only</option>
+                        <option value="high">High Severity Only</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-2">AI Confidence Threshold</label>
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="range"
+                          min="50"
+                          max="100"
+                          defaultValue="70"
+                          className="flex-1"
+                        />
+                        <span className="text-sm text-gray-600">70%</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Ignore interactions below this confidence level</p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-2">Interaction Types</label>
+                      <div className="space-y-2">
+                        <label className="flex items-center space-x-2">
+                          <input type="checkbox" defaultChecked className="text-teal-600" />
+                          <span className="text-sm text-gray-700">Drug-Drug Interactions</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                          <input type="checkbox" defaultChecked className="text-teal-600" />
+                          <span className="text-sm text-gray-700">Drug-Disease Interactions</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                          <input type="checkbox" defaultChecked className="text-teal-600" />
+                          <span className="text-sm text-gray-700">Drug-Allergy Alerts</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                          <input type="checkbox" className="text-teal-600" />
+                          <span className="text-sm text-gray-700">Food Interactions</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                          <input type="checkbox" defaultChecked className="text-teal-600" />
+                          <span className="text-sm text-gray-700">Therapeutic Duplication</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Visual & Notification Settings */}
+                  <div className="space-y-4">
+                    <h4 className="font-semibold text-gray-900">Visual & Notification Settings</h4>
+                    
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-2">Display Style</label>
+                      <div className="space-y-2">
+                        <label className="flex items-center space-x-2">
+                          <input type="radio" name="displayStyle" value="table" defaultChecked className="text-teal-600" />
+                          <span className="text-sm text-gray-700">Table View</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                          <input type="radio" name="displayStyle" value="network" className="text-teal-600" />
+                          <span className="text-sm text-gray-700">Network Graph</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                          <input type="radio" name="displayStyle" value="summary" className="text-teal-600" />
+                          <span className="text-sm text-gray-700">Summary Only</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-2">Auto-Check Mode</label>
+                      <div className="space-y-2">
+                        <label className="flex items-center space-x-2">
+                          <input type="radio" name="autoCheck" value="immediate" defaultChecked className="text-teal-600" />
+                          <span className="text-sm text-gray-700">Check on prescription entry</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                          <input type="radio" name="autoCheck" value="manual" className="text-teal-600" />
+                          <span className="text-sm text-gray-700">Manual check only</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                          <input type="radio" name="autoCheck" value="scheduled" className="text-teal-600" />
+                          <span className="text-sm text-gray-700">Scheduled checks (daily)</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-2">Notification Preferences</label>
+                      <div className="space-y-2">
+                        <label className="flex items-center justify-between">
+                          <span className="text-sm text-gray-700">Dashboard Alerts</span>
+                          <input type="checkbox" defaultChecked className="text-teal-600" />
+                        </label>
+                        <label className="flex items-center justify-between">
+                          <span className="text-sm text-gray-700">Email Notifications</span>
+                          <input type="checkbox" defaultChecked className="text-teal-600" />
+                        </label>
+                        <label className="flex items-center justify-between">
+                          <span className="text-sm text-gray-700">SMS Alerts</span>
+                          <input type="checkbox" className="text-teal-600" />
+                        </label>
+                        <label className="flex items-center justify-between">
+                          <span className="text-sm text-gray-700">Auto-escalate to Physician</span>
+                          <input type="checkbox" defaultChecked className="text-teal-600" />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex space-x-3 pt-6 border-t border-gray-200 mt-6">
+                  <button className="flex-1 bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition-colors">
+                    Save Settings
+                  </button>
+                  <button 
+                    onClick={() => setShowSettings(false)}
+                    className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Interaction Detail Modal */}
         <AnimatePresence>
@@ -2975,6 +3501,32 @@ export default function PatientDashboard() {
                     <button className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors">
                       Ignore Alert
                     </button>
+                  </div>
+                  
+                  {/* Export Options */}
+                  <div className="pt-4 border-t border-gray-200">
+                    <h4 className="font-medium text-gray-900 mb-3">Export Report</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button className="flex items-center justify-center space-x-2 bg-red-100 text-red-700 py-2 rounded-lg hover:bg-red-200 transition-colors text-sm">
+                        <FileText className="w-4 h-4" />
+                        <span>PDF Report</span>
+                      </button>
+                      <button className="flex items-center justify-center space-x-2 bg-green-100 text-green-700 py-2 rounded-lg hover:bg-green-200 transition-colors text-sm">
+                        <Download className="w-4 h-4" />
+                        <span>CSV Data</span>
+                      </button>
+                      <button className="flex items-center justify-center space-x-2 bg-blue-100 text-blue-700 py-2 rounded-lg hover:bg-blue-200 transition-colors text-sm">
+                        <BarChart3 className="w-4 h-4" />
+                        <span>Excel Report</span>
+                      </button>
+                      <button className="flex items-center justify-center space-x-2 bg-purple-100 text-purple-700 py-2 rounded-lg hover:bg-purple-200 transition-colors text-sm">
+                        <Share className="w-4 h-4" />
+                        <span>Share Report</span>
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Export includes timestamp, system model version, and audit trail
+                    </p>
                   </div>
                 </div>
               </motion.div>
