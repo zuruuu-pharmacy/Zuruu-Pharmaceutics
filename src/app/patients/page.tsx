@@ -1798,6 +1798,9 @@ export default function PatientDashboard() {
     const [zoomLevel, setZoomLevel] = useState(1);
     const [showExportDropdown, setShowExportDropdown] = useState(false);
 
+    // Debug logging
+    console.log('renderMedications called');
+
     // Mock medication data with timeline information
     const timelineMedications = [
       {
@@ -1922,6 +1925,12 @@ export default function PatientDashboard() {
 
     return (
       <div className="space-y-6">
+        {/* Debug Info */}
+        <div className="bg-blue-50 p-4 rounded-lg">
+          <p className="text-sm text-blue-800">Debug: renderMedications function is working</p>
+          <p className="text-xs text-blue-600">Medications count: {timelineMedications.length}</p>
+        </div>
+        
         {/* Section Header with Controls */}
         <div className="flex items-center justify-between">
         <div>
