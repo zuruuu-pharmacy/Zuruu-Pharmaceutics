@@ -179,10 +179,102 @@ export default function PatientDashboard() {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showChat, setShowChat] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(5);
   const [darkMode, setDarkMode] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
   const [fontSize, setFontSize] = useState('medium');
   const [showHelp, setShowHelp] = useState(false);
+
+  // Mock notification data
+  const notifications = [
+    {
+      id: '1',
+      type: 'refill_reminder',
+      title: 'John Doe\'s Metformin refill due in 3 days',
+      message: 'Metformin 500mg | BID - Last refill: Sep 18, 2024',
+      time: '2 hours ago',
+      urgent: true,
+      read: false,
+      patientId: '1',
+      medicationId: '1'
+    },
+    {
+      id: '2',
+      type: 'overdue_alert',
+      title: 'Ahmed Hassan\'s Insulin refill overdue by 2 days',
+      message: 'Insulin Glargine | Daily - Critical medication',
+      time: '4 hours ago',
+      urgent: true,
+      read: false,
+      patientId: '3',
+      medicationId: '3'
+    },
+    {
+      id: '3',
+      type: 'adherence_warning',
+      title: 'Sarah Smith\'s adherence dropped to 78%',
+      message: 'Lisinopril 10mg - Consider intervention',
+      time: '6 hours ago',
+      urgent: false,
+      read: false,
+      patientId: '2',
+      medicationId: '2'
+    },
+    {
+      id: '4',
+      type: 'refill_reminder',
+      title: 'Maria Garcia\'s Atorvastatin refill due in 12 days',
+      message: 'Atorvastatin 20mg | QD - Excellent adherence (95%)',
+      time: '1 day ago',
+      urgent: false,
+      read: true,
+      patientId: '4',
+      medicationId: '4'
+    },
+    {
+      id: '5',
+      type: 'system_update',
+      title: 'New AI insights available',
+      message: 'Updated risk assessment for 3 patients',
+      time: '2 days ago',
+      urgent: false,
+      read: true,
+      patientId: null,
+      medicationId: null
+    }
+  ];
+
+  const handleNotificationClick = (notification: any) => {
+    // Mark as read
+    if (!notification.read) {
+      setUnreadNotifications(prev => Math.max(0, prev - 1));
+    }
+    
+    // Navigate based on notification type
+    if (notification.type === 'refill_reminder' || notification.type === 'overdue_alert') {
+      setActiveSection('refill-reminders');
+    } else if (notification.type === 'adherence_warning') {
+      setActiveSection('medications');
+    }
+    
+    setShowNotifications(false);
+  };
+
+  const handleMarkAllAsRead = () => {
+    setUnreadNotifications(0);
+  };
+
+  const handleSnoozeNotification = (notificationId: string) => {
+    // Mock function - would snooze notification
+    console.log(`Snoozing notification ${notificationId}`);
+  };
+
+  const handleSendMessage = (patientId: string) => {
+    // Mock function - would open chat with patient
+    console.log(`Opening chat with patient ${patientId}`);
+    setActiveSection('chat');
+    setShowNotifications(false);
+  };
 
   // Mock data
   const [medications] = useState<Medication[]>([
@@ -2268,22 +2360,170 @@ export default function PatientDashboard() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            {/* Notifications Bell */}
-            <button
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 group"
-              aria-label="Notifications"
-            >
-              <Bell 
-                className="w-6 h-6 transition-colors duration-200"
-                style={{ color: '#757575' }}
-              />
-              <span 
-                className="absolute top-1 right-1 w-2 h-2 rounded-full"
-                style={{ backgroundColor: '#E53935' }}
-              ></span>
-              <div className="absolute top-0 right-0 w-1 h-1 bg-teal-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-            </button>
+            {/* Enhanced Notifications Bell */}
+            <div className="relative">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 group"
+                aria-label="Notifications"
+              >
+                <Bell 
+                  className="w-6 h-6 transition-colors duration-200"
+                  style={{ color: '#757575' }}
+                />
+                {unreadNotifications > 0 && (
+                  <span 
+                    className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                    style={{ backgroundColor: '#E53935' }}
+                  >
+                    {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                  </span>
+                )}
+                <div className="absolute top-0 right-0 w-1 h-1 bg-teal-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+              </button>
+              
+              {/* Notification Dropdown */}
+              <AnimatePresence>
+                {showNotifications && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+                    style={{
+                      maxHeight: '500px',
+                      overflowY: 'auto'
+                    }}
+                  >
+                    {/* Header */}
+                    <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                      <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
+                      <div className="flex items-center space-x-2">
+                        {unreadNotifications > 0 && (
+                          <button
+                            onClick={handleMarkAllAsRead}
+                            className="text-sm text-teal-600 hover:text-teal-700 transition-colors"
+                          >
+                            Mark all read
+                          </button>
+                        )}
+                        <button
+                          onClick={() => setShowNotifications(false)}
+                          className="text-gray-400 hover:text-gray-600 transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {/* Notification List */}
+                    <div className="max-h-96 overflow-y-auto">
+                      {notifications.length === 0 ? (
+                        <div className="p-4 text-center text-gray-500">
+                          <Bell className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+                          <p>No notifications</p>
+                        </div>
+                      ) : (
+                        notifications.map((notification, index) => (
+                          <motion.div
+                            key={notification.id}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3, delay: index * 0.05 }}
+                            className={`p-4 border-b border-gray-100 cursor-pointer transition-colors hover:bg-gray-50 ${
+                              !notification.read ? 'bg-teal-50' : ''
+                            }`}
+                            onClick={() => handleNotificationClick(notification)}
+                          >
+                            <div className="flex items-start space-x-3">
+                              {/* Notification Icon */}
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                                notification.urgent 
+                                  ? 'bg-red-100' 
+                                  : notification.type === 'system_update'
+                                  ? 'bg-blue-100'
+                                  : 'bg-teal-100'
+                              }`}>
+                                {notification.type === 'refill_reminder' && (
+                                  <Pill className={`w-4 h-4 ${notification.urgent ? 'text-red-600' : 'text-teal-600'}`} />
+                                )}
+                                {notification.type === 'overdue_alert' && (
+                                  <AlertTriangle className="w-4 h-4 text-red-600" />
+                                )}
+                                {notification.type === 'adherence_warning' && (
+                                  <TrendingDown className="w-4 h-4 text-orange-600" />
+                                )}
+                                {notification.type === 'system_update' && (
+                                  <Brain className="w-4 h-4 text-blue-600" />
+                                )}
+                              </div>
+                              
+                              {/* Notification Content */}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between">
+                                  <h4 className={`text-sm font-medium ${
+                                    !notification.read ? 'text-gray-900' : 'text-gray-700'
+                                  }`}>
+                                    {notification.title}
+                                  </h4>
+                                  {!notification.read && (
+                                    <div className="w-2 h-2 bg-teal-500 rounded-full flex-shrink-0"></div>
+                                  )}
+                                </div>
+                                <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                                  {notification.message}
+                                </p>
+                                <div className="flex items-center justify-between mt-2">
+                                  <span className="text-xs text-gray-500">{notification.time}</span>
+                                  <div className="flex items-center space-x-2">
+                                    {notification.patientId && (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleSendMessage(notification.patientId);
+                                        }}
+                                        className="text-xs text-teal-600 hover:text-teal-700 transition-colors"
+                                      >
+                                        <MessageCircle className="w-3 h-3 inline mr-1" />
+                                        Message
+                                      </button>
+                                    )}
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleSnoozeNotification(notification.id);
+                                      }}
+                                      className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
+                                    >
+                                      <Clock className="w-3 h-3 inline mr-1" />
+                                      Snooze
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </motion.div>
+                        ))
+                      )}
+                    </div>
+                    
+                    {/* Footer */}
+                    <div className="p-3 border-t border-gray-200 bg-gray-50">
+                      <button
+                        onClick={() => {
+                          setActiveSection('refill-reminders');
+                          setShowNotifications(false);
+                        }}
+                        className="w-full text-sm text-teal-600 hover:text-teal-700 transition-colors font-medium"
+                      >
+                        View all notifications
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             
             {/* Chat Icon */}
             <button
