@@ -377,86 +377,342 @@ export default function PatientDashboard() {
 
   const renderDashboard = () => (
     <div className="space-y-6">
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Section 2: Patient Summary Panel */}
+      <div className="space-y-6" style={{ marginTop: '24px' }}>
+        {/* Health Summary Banner Card */}
         <motion.div
-          className="bg-white rounded-lg p-6 shadow-sm border border-gray-100"
-          whileHover={{ scale: 1.02 }}
-          transition={{ duration: 0.2 }}
+          className="w-full rounded-2xl p-8 relative overflow-hidden"
+          style={{
+            height: '180px',
+            background: 'linear-gradient(135deg, #009688 0%, #00BFA5 100%)',
+            borderRadius: '16px'
+          }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Medications Active</p>
-              <p className="text-2xl font-bold text-gray-900">5</p>
-              <div className="flex items-center mt-1">
-                <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-                <span className="text-sm text-green-600">+2 this month</span>
-              </div>
+          <div className="flex items-center justify-between h-full relative z-10">
+            {/* Left Side - Content */}
+            <div className="flex-1">
+              <motion.h1
+                className="text-white mb-2"
+                style={{
+                  fontSize: '24px',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 600
+                }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
+                Welcome back, John Doe
+              </motion.h1>
+              
+              <motion.p
+                className="text-white mb-4"
+                style={{
+                  opacity: 0.8,
+                  fontSize: '14px',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 400
+                }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 0.8, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
+                Last login: 14 Oct 2025 | Next Appointment: 18 Oct 2025
+              </motion.p>
+              
+              <motion.button
+                className="px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:scale-105"
+                style={{
+                  backgroundColor: 'white',
+                  color: '#009688',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 500
+                }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                View Full Profile
+              </motion.button>
             </div>
-            <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
-              <Pill className="w-6 h-6 text-teal-600" />
+
+            {/* Right Side - Visual Elements */}
+            <div className="flex items-center space-x-6">
+              {/* Health Score Donut Chart */}
+              <motion.div
+                className="relative"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+              >
+                <div
+                  className="w-20 h-20 rounded-full flex items-center justify-center border-4"
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderColor: 'white'
+                  }}
+                >
+                  <div className="text-center">
+                    <div
+                      className="text-white font-bold"
+                      style={{
+                        fontSize: '18px',
+                        fontFamily: 'Inter, sans-serif',
+                        fontWeight: 700
+                      }}
+                    >
+                      82%
+                    </div>
+                    <div
+                      className="text-white text-xs"
+                      style={{
+                        opacity: 0.8,
+                        fontFamily: 'Inter, sans-serif'
+                      }}
+                    >
+                      Health Index
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Pulse Line Illustration */}
+              <motion.div
+                className="hidden lg:block"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+              >
+                <div className="flex items-end space-x-1">
+                  {[20, 35, 25, 45, 30, 50, 40, 35, 25, 30].map((height, index) => (
+                    <motion.div
+                      key={index}
+                      className="bg-white rounded-full"
+                      style={{
+                        width: '4px',
+                        height: `${height}px`,
+                        opacity: 0.7
+                      }}
+                      initial={{ height: 0 }}
+                      animate={{ height: `${height}px` }}
+                      transition={{ duration: 0.3, delay: 0.8 + index * 0.1 }}
+                    />
+                  ))}
+                </div>
+              </motion.div>
             </div>
+          </div>
+
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-4 right-4 w-32 h-32 bg-white rounded-full"></div>
+            <div className="absolute bottom-4 left-4 w-24 h-24 bg-white rounded-full"></div>
           </div>
         </motion.div>
 
+        {/* Compact Info Cards */}
         <motion.div
-          className="bg-white rounded-lg p-6 shadow-sm border border-gray-100"
-          whileHover={{ scale: 1.02 }}
-          transition={{ duration: 0.2 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Appointments This Month</p>
-              <p className="text-2xl font-bold text-gray-900">3</p>
-              <div className="flex items-center mt-1">
-                <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-                <span className="text-sm text-green-600">+1 this week</span>
+          {/* Active Medications Card */}
+          <motion.div
+            className="bg-white rounded-xl p-6 relative cursor-pointer transition-all duration-200 hover:shadow-lg"
+            style={{
+              height: '120px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+              borderRadius: '12px'
+            }}
+            whileHover={{ y: -2 }}
+            onClick={() => setActiveSection('medications')}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: '#E0F2F1' }}
+              >
+                <Pill
+                  className="w-4 h-4"
+                  style={{ color: '#009688' }}
+                />
               </div>
+              <button className="text-gray-400 hover:text-gray-600 transition-colors">
+                <MoreHorizontal className="w-4 h-4" />
+              </button>
             </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-blue-600" />
+            <div
+              className="font-bold mb-1"
+              style={{
+                fontSize: '26px',
+                color: '#212121',
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 700
+              }}
+            >
+              5 Active
             </div>
-          </div>
-        </motion.div>
+            <div
+              className="text-sm"
+              style={{
+                color: '#6B6B6B',
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 400
+              }}
+            >
+              3 chronic | 2 acute
+            </div>
+          </motion.div>
 
-        <motion.div
-          className="bg-white rounded-lg p-6 shadow-sm border border-gray-100"
-          whileHover={{ scale: 1.02 }}
-          transition={{ duration: 0.2 }}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Adherence Rate</p>
-              <p className="text-2xl font-bold text-gray-900">92%</p>
-              <div className="flex items-center mt-1">
-                <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-                <span className="text-sm text-green-600">+5% this week</span>
+          {/* Upcoming Appointments Card */}
+          <motion.div
+            className="bg-white rounded-xl p-6 relative cursor-pointer transition-all duration-200 hover:shadow-lg"
+            style={{
+              height: '120px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+              borderRadius: '12px'
+            }}
+            whileHover={{ y: -2 }}
+            onClick={() => setActiveSection('appointments')}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: '#E0F2F1' }}
+              >
+                <Calendar
+                  className="w-4 h-4"
+                  style={{ color: '#009688' }}
+                />
               </div>
+              <button className="text-gray-400 hover:text-gray-600 transition-colors">
+                <MoreHorizontal className="w-4 h-4" />
+              </button>
             </div>
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-green-600" />
+            <div
+              className="font-bold mb-1"
+              style={{
+                fontSize: '26px',
+                color: '#212121',
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 700
+              }}
+            >
+              2 Scheduled
             </div>
-          </div>
-        </motion.div>
+            <div
+              className="text-sm"
+              style={{
+                color: '#6B6B6B',
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 400
+              }}
+            >
+              Next in 3 days
+            </div>
+          </motion.div>
 
-        <motion.div
-          className="bg-white rounded-lg p-6 shadow-sm border border-gray-100"
-          whileHover={{ scale: 1.02 }}
-          transition={{ duration: 0.2 }}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Overall Health Score</p>
-              <p className="text-2xl font-bold text-gray-900">84/100</p>
-              <div className="flex items-center mt-1">
-                <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-                <span className="text-sm text-green-600">+3 this month</span>
+          {/* Adherence Score Card */}
+          <motion.div
+            className="bg-white rounded-xl p-6 relative cursor-pointer transition-all duration-200 hover:shadow-lg"
+            style={{
+              height: '120px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+              borderRadius: '12px'
+            }}
+            whileHover={{ y: -2 }}
+            onClick={() => setActiveSection('reports')}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: '#E0F2F1' }}
+              >
+                <CheckCircle
+                  className="w-4 h-4"
+                  style={{ color: '#009688' }}
+                />
               </div>
+              <button className="text-gray-400 hover:text-gray-600 transition-colors">
+                <MoreHorizontal className="w-4 h-4" />
+              </button>
             </div>
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-              <Heart className="w-6 h-6 text-purple-600" />
+            <div
+              className="font-bold mb-1"
+              style={{
+                fontSize: '26px',
+                color: '#212121',
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 700
+              }}
+            >
+              92%
             </div>
-          </div>
+            <div
+              className="text-sm"
+              style={{
+                color: '#6B6B6B',
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 400
+              }}
+            >
+              Excellent adherence
+            </div>
+          </motion.div>
+
+          {/* Recent Refills Card */}
+          <motion.div
+            className="bg-white rounded-xl p-6 relative cursor-pointer transition-all duration-200 hover:shadow-lg"
+            style={{
+              height: '120px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+              borderRadius: '12px'
+            }}
+            whileHover={{ y: -2 }}
+            onClick={() => setActiveSection('medications')}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: '#E0F2F1' }}
+              >
+                <RotateCcw
+                  className="w-4 h-4"
+                  style={{ color: '#009688' }}
+                />
+              </div>
+              <button className="text-gray-400 hover:text-gray-600 transition-colors">
+                <MoreHorizontal className="w-4 h-4" />
+              </button>
+            </div>
+            <div
+              className="font-bold mb-1"
+              style={{
+                fontSize: '26px',
+                color: '#212121',
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 700
+              }}
+            >
+              3 Refills Done
+            </div>
+            <div
+              className="text-sm"
+              style={{
+                color: '#6B6B6B',
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 400
+              }}
+            >
+              Last refill 5 days ago
+            </div>
+          </motion.div>
         </motion.div>
       </div>
 
