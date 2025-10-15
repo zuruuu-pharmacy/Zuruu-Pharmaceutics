@@ -995,6 +995,370 @@ export default function PatientDashboard() {
     </div>
   );
 
+  const renderRefillReminders = () => {
+    const [selectedTimeRange, setSelectedTimeRange] = useState('30days');
+    const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+    const [selectedRefill, setSelectedRefill] = useState<any>(null);
+    const [showRefillModal, setShowRefillModal] = useState(false);
+    const [showSettings, setShowSettings] = useState(false);
+
+    // Mock refill data
+    const refillData = [
+      {
+        id: '1',
+        patientName: 'John Doe',
+        patientAvatar: 'JD',
+        medication: 'Metformin 500mg',
+        dosage: 'BID',
+        daysRemaining: 3,
+        refillDue: '2024-10-18',
+        urgency: 'orange',
+        lastRefill: '2024-09-18',
+        adherence: 85,
+        status: 'pending'
+      },
+      {
+        id: '2',
+        patientName: 'Sarah Smith',
+        patientAvatar: 'SS',
+        medication: 'Lisinopril 10mg',
+        dosage: 'QD',
+        daysRemaining: 8,
+        refillDue: '2024-10-23',
+        urgency: 'green',
+        lastRefill: '2024-09-23',
+        adherence: 92,
+        status: 'pending'
+      },
+      {
+        id: '3',
+        patientName: 'Ahmed Hassan',
+        patientAvatar: 'AH',
+        medication: 'Insulin Glargine',
+        dosage: 'Daily',
+        daysRemaining: -2,
+        refillDue: '2024-10-13',
+        urgency: 'red',
+        lastRefill: '2024-09-13',
+        adherence: 78,
+        status: 'overdue'
+      },
+      {
+        id: '4',
+        patientName: 'Maria Garcia',
+        patientAvatar: 'MG',
+        medication: 'Atorvastatin 20mg',
+        dosage: 'QD',
+        daysRemaining: 12,
+        refillDue: '2024-10-27',
+        urgency: 'green',
+        lastRefill: '2024-09-27',
+        adherence: 95,
+        status: 'pending'
+      }
+    ];
+
+    const getUrgencyColor = (urgency: string) => {
+      switch (urgency) {
+        case 'green': return '#10B981';
+        case 'orange': return '#F59E0B';
+        case 'red': return '#EF4444';
+        default: return '#6B7280';
+      }
+    };
+
+    const getUrgencyText = (urgency: string) => {
+      switch (urgency) {
+        case 'green': return 'Safe';
+        case 'orange': return 'Warning';
+        case 'red': return 'Critical';
+        default: return 'Unknown';
+      }
+    };
+
+    const handleRefillClick = (refill: any) => {
+      setSelectedRefill(refill);
+      setShowRefillModal(true);
+    };
+
+    const handleSendReminder = (refillId: string) => {
+      // Mock function - would send actual reminder
+      console.log(`Sending reminder for refill ${refillId}`);
+    };
+
+    const handleMarkAsDone = (refillId: string) => {
+      // Mock function - would mark refill as completed
+      console.log(`Marking refill ${refillId} as done`);
+    };
+
+    return (
+      <div className="space-y-6">
+        {/* Section Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Refill Reminders & Alerts</h2>
+            <p className="text-gray-600 mt-1">Automated medication refill tracking and notifications</p>
+          </div>
+        </div>
+
+        {/* Top Toolbar */}
+        <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <h3 className="text-lg font-semibold text-gray-900">Refill Reminder Center</h3>
+              <select
+                value={selectedTimeRange}
+                onChange={(e) => setSelectedTimeRange(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              >
+                <option value="7days">Next 7 Days</option>
+                <option value="30days">Next 30 Days</option>
+                <option value="90days">Next 90 Days</option>
+              </select>
+            </div>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+                className={`p-2 rounded-lg transition-colors ${
+                  notificationsEnabled 
+                    ? 'bg-teal-100 text-teal-600' 
+                    : 'bg-gray-100 text-gray-400'
+                }`}
+                title="Toggle notifications"
+              >
+                <Bell className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setShowSettings(true)}
+                className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                title="Settings"
+              >
+                <Settings className="w-5 h-5" />
+              </button>
+              <button className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+                <RotateCcw className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* AI Analytics Panel */}
+        <motion.div
+          className="bg-gradient-to-r from-teal-50 to-blue-50 rounded-lg p-4 border border-teal-200"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="flex items-center space-x-2 mb-3">
+            <Brain className="w-5 h-5 text-teal-600" />
+            <h3 className="text-lg font-semibold text-gray-900">AI Analytics Summary</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="bg-white rounded-lg p-3">
+              <div className="text-sm text-gray-600 mb-1">Refill Compliance</div>
+              <div className="text-lg font-bold text-teal-600">87%</div>
+              <div className="text-xs text-gray-500">Last 3 months</div>
+            </div>
+            <div className="bg-white rounded-lg p-3">
+              <div className="text-sm text-gray-600 mb-1">Overdue Refills</div>
+              <div className="text-lg font-bold text-red-600">2</div>
+              <div className="text-xs text-gray-500">Require attention</div>
+            </div>
+            <div className="bg-white rounded-lg p-3">
+              <div className="text-sm text-gray-600 mb-1">Risk Score</div>
+              <div className="text-lg font-bold text-yellow-600">Low</div>
+              <div className="text-xs text-gray-500">Overall assessment</div>
+            </div>
+            <div className="bg-white rounded-lg p-3">
+              <div className="text-sm text-gray-600 mb-1">Auto-Reminders</div>
+              <div className="text-lg font-bold text-green-600">12</div>
+              <div className="text-xs text-gray-500">Sent this week</div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Zone A: Upcoming Refill Cards */}
+          <div className="lg:col-span-2">
+            <h4 className="text-lg font-semibold text-gray-900 mb-4">Upcoming Refills</h4>
+            <div className="space-y-4">
+              {refillData.map((refill) => (
+                <motion.div
+                  key={refill.id}
+                  className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 cursor-pointer transition-all duration-200 hover:shadow-md"
+                  style={{
+                    borderLeft: `4px solid ${getUrgencyColor(refill.urgency)}`
+                  }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3 }}
+                  whileHover={{ scale: 1.02 }}
+                  onClick={() => handleRefillClick(refill)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+                        <span className="text-teal-600 font-semibold text-sm">{refill.patientAvatar}</span>
+                      </div>
+                      <div>
+                        <h5 className="font-semibold text-gray-900">{refill.patientName}</h5>
+                        <p className="text-sm text-gray-600">{refill.medication} | {refill.dosage}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          refill.urgency === 'green' ? 'bg-green-100 text-green-800' :
+                          refill.urgency === 'orange' ? 'bg-orange-100 text-orange-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {getUrgencyText(refill.urgency)}
+                        </span>
+                        <span className="text-sm text-gray-600">
+                          {refill.daysRemaining < 0 ? `${Math.abs(refill.daysRemaining)} days overdue` : 
+                           `${refill.daysRemaining} days remaining`}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500">Due: {refill.refillDue}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-3 flex items-center justify-between">
+                    <div className="flex items-center space-x-4 text-sm text-gray-600">
+                      <span>Adherence: {refill.adherence}%</span>
+                      <span>Last refill: {refill.lastRefill}</span>
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSendReminder(refill.id);
+                        }}
+                        className="px-3 py-1 bg-teal-600 text-white text-xs rounded-lg hover:bg-teal-700 transition-colors"
+                      >
+                        Send Reminder
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleMarkAsDone(refill.id);
+                        }}
+                        className="px-3 py-1 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 transition-colors"
+                      >
+                        Mark as Done
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Zone B: Alert Timeline */}
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-4">Refill Timeline</h4>
+            <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+              <div className="space-y-4">
+                {refillData.map((refill, index) => (
+                  <motion.div
+                    key={refill.id}
+                    className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    onClick={() => handleRefillClick(refill)}
+                  >
+                    <div
+                      className="w-4 h-4 rounded-full border-2 border-white shadow-sm"
+                      style={{ backgroundColor: getUrgencyColor(refill.urgency) }}
+                    ></div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">{refill.patientName}</p>
+                      <p className="text-xs text-gray-600">{refill.medication}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500">{refill.refillDue}</p>
+                      <p className="text-xs text-gray-400">
+                        {refill.daysRemaining < 0 ? 'Overdue' : `${refill.daysRemaining}d left`}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Refill Detail Modal */}
+        <AnimatePresence>
+          {showRefillModal && selectedRefill && (
+            <motion.div
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowRefillModal(false)}
+            >
+              <motion.div
+                className="bg-white rounded-xl p-6 max-w-md w-full mx-4"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Refill Details</h3>
+                  <button
+                    onClick={() => setShowRefillModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-medium text-gray-900">{selectedRefill.medication}</h4>
+                    <p className="text-sm text-gray-600">Patient: {selectedRefill.patientName}</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-600">Dosage:</span>
+                      <p className="font-medium">{selectedRefill.dosage}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Days Remaining:</span>
+                      <p className="font-medium">{selectedRefill.daysRemaining}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Last Refill:</span>
+                      <p className="font-medium">{selectedRefill.lastRefill}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Adherence:</span>
+                      <p className="font-medium">{selectedRefill.adherence}%</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex space-x-3 pt-4 border-t border-gray-200">
+                    <button className="flex-1 bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition-colors">
+                      Approve Refill
+                    </button>
+                    <button className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                      Send Reminder
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  };
+
   const renderMedications = () => {
     const [selectedMedication, setSelectedMedication] = useState<string | null>(null);
     const [expandedCard, setExpandedCard] = useState<string | null>(null);
@@ -1075,7 +1439,7 @@ export default function PatientDashboard() {
 
     const renderAdherenceBar = (adherence: number) => {
       const filledBars = Math.round(adherence / 10);
-      return (
+  return (
         <div className="flex items-center space-x-1">
           {Array.from({ length: 10 }).map((_, i) => (
             <div
@@ -1109,17 +1473,17 @@ export default function PatientDashboard() {
       <div className="space-y-6">
         {/* Section Header with Controls */}
         <div className="flex items-center justify-between">
-          <div>
+        <div>
             <h2 className="text-2xl font-bold text-gray-900">Medication History Tracker</h2>
             <p className="text-gray-600 mt-1">Interactive timeline view of your medication journey</p>
-          </div>
+        </div>
           <div className="flex items-center space-x-4">
             <button className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors">
               <Download className="w-4 h-4 inline mr-2" />
               Export History
             </button>
           </div>
-        </div>
+      </div>
 
         {/* Filter Controls */}
         <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border border-gray-100">
@@ -1167,9 +1531,9 @@ export default function PatientDashboard() {
               onClick={() => setZoomLevel(Math.min(2, zoomLevel + 0.1))}
               className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              <Plus className="w-4 h-4" />
+                <Plus className="w-4 h-4" />
             </button>
-          </div>
+            </div>
         </div>
 
         {/* AI Analytics Panel */}
@@ -1401,9 +1765,9 @@ export default function PatientDashboard() {
               <span className="text-sm text-gray-600">Supplements</span>
             </div>
           </div>
-        </div>
       </div>
-    );
+    </div>
+  );
   };
 
   const renderAppointments = () => (
@@ -1781,6 +2145,8 @@ export default function PatientDashboard() {
         return renderDashboard();
       case 'medications':
         return renderMedications();
+      case 'refill-reminders':
+        return renderRefillReminders();
       case 'appointments':
         return renderAppointments();
       case 'health-records':
@@ -2064,6 +2430,7 @@ export default function PatientDashboard() {
             {[
               { id: 'dashboard', label: 'Dashboard', icon: Home },
               { id: 'medications', label: 'My Medications', icon: Pill },
+              { id: 'refill-reminders', label: 'Refill Reminders', icon: Bell },
               { id: 'appointments', label: 'My Appointments', icon: Calendar },
               { id: 'health-records', label: 'Health Records', icon: FileText },
               { id: 'ai-assistant', label: 'AI Health Assistant', icon: Brain },
