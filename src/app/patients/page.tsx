@@ -101,7 +101,8 @@ import {
   Signal as SignalIcon,
   SignalHigh as SignalHighIcon,
   SignalLow as SignalLowIcon,
-  SignalZero as SignalZeroIcon
+  SignalZero as SignalZeroIcon,
+  X
 } from 'lucide-react';
 
 // Mock data interfaces
@@ -1177,110 +1178,266 @@ export default function PatientDashboard() {
   };
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={toggleSidebar}
-                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                {sidebarCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-              </button>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-teal-600 rounded-full flex items-center justify-center">
-                  <Heart className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-xl font-bold text-gray-900">Zuruu Pharmaceutics</span>
-              </div>
-            </div>
-
-            {/* Search Bar */}
-            <div className="flex-1 max-w-lg mx-8">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Search medications, prescriptions, or doctors..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-
-            {/* Right Icons */}
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setShowNotifications(!showNotifications)}
-                className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                <Bell className="w-5 h-5 text-gray-600" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-              </button>
-              
-              <button
-                onClick={() => setShowChat(!showChat)}
-                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                <MessageCircle className="w-5 h-5 text-gray-600" />
-              </button>
-              
-              <button
-                onClick={() => setShowHelp(!showHelp)}
-                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                <HelpCircle className="w-5 h-5 text-gray-600" />
-              </button>
-              
-              <div className="relative">
-                <button
-                  onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <div className="w-8 h-8 bg-teal-600 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">AS</span>
-                  </div>
-                  <ChevronDown className="w-4 h-4 text-gray-600" />
-                </button>
-                
-                <AnimatePresence>
-                  {showProfileDropdown && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
-                    >
-                      <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Profile</a>
-                      <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
-                      <hr className="my-1" />
-                      <button
-                        onClick={handleBackToHome}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        Logout
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="flex">
-        {/* Sidebar */}
-        <motion.aside
-          className={`bg-gray-50 border-r border-gray-200 transition-all duration-300 ${
-            sidebarCollapsed ? 'w-16' : 'w-64'
-          }`}
-          initial={{ width: 256 }}
-          animate={{ width: sidebarCollapsed ? 64 : 256 }}
+    <div className="min-h-screen bg-white">
+      {/* Section 1.2: Top Header Bar - Exact Specifications */}
+      <motion.header
+        className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 shadow-sm z-50"
+        style={{ 
+          height: '72px',
+          boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.08)'
+        }}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        <div 
+          className="flex items-center justify-between h-full px-6"
+          style={{ maxWidth: '1440px', margin: '0 auto' }}
         >
-          <nav className="p-4 space-y-2">
+          {/* Left Section - Logo Area */}
+          <motion.div 
+            className="flex items-center space-x-4"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <button
+              onClick={toggleSidebar}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-all duration-200"
+              aria-label="Toggle sidebar"
+            >
+              {sidebarCollapsed ? <ChevronRight className="w-5 h-5 text-gray-600" /> : <ChevronLeft className="w-5 h-5 text-gray-600" />}
+            </button>
+            <button
+              onClick={() => setActiveSection('dashboard')}
+              className="flex items-center space-x-2 hover:opacity-80 transition-opacity duration-200"
+            >
+              <div 
+                className="w-6 h-6 rounded-full flex items-center justify-center"
+                style={{ backgroundColor: '#009688' }}
+              >
+                <Pill className="w-4 h-4 text-white" />
+              </div>
+              <span 
+                className="font-bold text-xl"
+                style={{ 
+                  color: '#009688',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 700
+                }}
+              >
+                Zuruu Pharmaceutics
+              </span>
+            </button>
+          </motion.div>
+
+          {/* Center Section - Search Bar */}
+          <motion.div 
+            className="flex-1 max-w-lg mx-8"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <div className="relative">
+              <Search 
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4"
+                style={{ color: '#757575' }}
+              />
+              <input
+                type="text"
+                placeholder="Search medications, prescriptions, or doctors…"
+                className="w-full pl-10 pr-10 py-2 border rounded-full focus:outline-none focus:ring-3 transition-all duration-200"
+                style={{
+                  height: '40px',
+                  borderColor: '#E0E0E0',
+                  fontSize: '14px',
+                  fontFamily: 'Inter, sans-serif',
+                  backgroundColor: 'white'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#009688';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(0,150,136,0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#E0E0E0';
+                  e.target.style.boxShadow = 'none';
+                }}
+              />
+              <button
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                aria-label="Clear search"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </motion.div>
+
+          {/* Right Section - Quick Icons + Profile */}
+          <motion.div 
+            className="flex items-center space-x-6"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            {/* Notifications Bell */}
+            <button
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="relative p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 group"
+              aria-label="Notifications"
+            >
+              <Bell 
+                className="w-6 h-6 transition-colors duration-200"
+                style={{ color: '#757575' }}
+              />
+              <span 
+                className="absolute top-1 right-1 w-2 h-2 rounded-full"
+                style={{ backgroundColor: '#E53935' }}
+              ></span>
+              <div className="absolute top-0 right-0 w-1 h-1 bg-teal-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+            </button>
+            
+            {/* Chat Icon */}
+            <button
+              onClick={() => setShowChat(!showChat)}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 group"
+              aria-label="Messages"
+            >
+              <MessageCircle 
+                className="w-6 h-6 transition-colors duration-200"
+                style={{ color: '#757575' }}
+              />
+              <div className="absolute top-0 right-0 w-1 h-1 bg-teal-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+            </button>
+            
+            {/* Help Icon */}
+            <button
+              onClick={() => setShowHelp(!showHelp)}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 group"
+              aria-label="Help Center"
+            >
+              <HelpCircle 
+                className="w-6 h-6 transition-colors duration-200"
+                style={{ color: '#757575' }}
+              />
+              <div className="absolute top-0 right-0 w-1 h-1 bg-teal-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+            </button>
+            
+            {/* Profile Avatar */}
+            <div className="relative">
+              <button
+                onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                className="flex items-center space-x-2 p-1 rounded-lg hover:bg-gray-100 transition-all duration-200"
+                aria-label="Profile menu"
+              >
+                <div 
+                  className="w-9 h-9 rounded-full flex items-center justify-center border-2"
+                  style={{ 
+                    backgroundColor: '#009688',
+                    borderColor: '#009688'
+                  }}
+                >
+                  <span className="text-white text-sm font-bold">AS</span>
+                </div>
+                <ChevronDown 
+                  className="w-4 h-4 transition-colors duration-200"
+                  style={{ color: '#757575' }}
+                />
+              </button>
+              
+              {/* Profile Dropdown Menu */}
+              <AnimatePresence>
+                {showProfileDropdown && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute right-0 mt-2 w-45 bg-white rounded-lg shadow-lg border py-2 z-50"
+                    style={{
+                      width: '180px',
+                      borderColor: '#E0E0E0',
+                      boxShadow: '0px 4px 8px rgba(0,0,0,0.1)',
+                      borderRadius: '10px'
+                    }}
+                  >
+                    <a 
+                      href="#" 
+                      className="block px-4 py-2 text-sm transition-colors duration-200 hover:bg-gray-50"
+                      style={{ 
+                        color: '#212121',
+                        fontFamily: 'Inter, sans-serif'
+                      }}
+                      onMouseEnter={(e) => {
+                        const target = e.target as HTMLElement;
+                        target.style.backgroundColor = '#E0F2F1';
+                        target.style.color = '#009688';
+                      }}
+                      onMouseLeave={(e) => {
+                        const target = e.target as HTMLElement;
+                        target.style.backgroundColor = 'transparent';
+                        target.style.color = '#212121';
+                      }}
+                    >
+                      My Profile
+                    </a>
+                    <a 
+                      href="#" 
+                      className="block px-4 py-2 text-sm transition-colors duration-200 hover:bg-gray-50"
+                      style={{ 
+                        color: '#212121',
+                        fontFamily: 'Inter, sans-serif'
+                      }}
+                      onMouseEnter={(e) => {
+                        const target = e.target as HTMLElement;
+                        target.style.backgroundColor = '#E0F2F1';
+                        target.style.color = '#009688';
+                      }}
+                      onMouseLeave={(e) => {
+                        const target = e.target as HTMLElement;
+                        target.style.backgroundColor = 'transparent';
+                        target.style.color = '#212121';
+                      }}
+                    >
+                      Settings
+                    </a>
+                    <hr className="my-1" style={{ borderColor: '#E0E0E0' }} />
+                    <button
+                      onClick={handleBackToHome}
+                      className="block w-full text-left px-4 py-2 text-sm transition-colors duration-200 hover:bg-gray-50"
+                      style={{ 
+                        color: '#E53935',
+                        fontFamily: 'Inter, sans-serif'
+                      }}
+                    >
+                      Logout
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        </div>
+      </motion.header>
+
+      <div className="flex" style={{ marginTop: '72px' }}>
+        {/* Section 1.3: Sidebar Navigation - Exact Specifications */}
+        <motion.aside
+          className="fixed left-0 top-0 h-full border-r transition-all duration-300 ease-in-out"
+          style={{
+            width: sidebarCollapsed ? '80px' : '260px',
+            backgroundColor: '#F2F4F6',
+            borderColor: '#E0E0E0',
+            height: '100vh',
+            zIndex: 40
+          }}
+          initial={{ width: 260, x: -260 }}
+          animate={{ 
+            width: sidebarCollapsed ? 80 : 260,
+            x: 0
+          }}
+          transition={{ duration: 0.3, ease: "ease-in-out" }}
+        >
+          <nav className="p-6 space-y-2 h-full overflow-y-auto">
             {[
               { id: 'dashboard', label: 'Dashboard', icon: Home },
               { id: 'medications', label: 'My Medications', icon: Pill },
@@ -1295,50 +1452,133 @@ export default function PatientDashboard() {
               <button
                 key={item.id}
                 onClick={() => setActiveSection(item.id)}
-                className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-all duration-200 ${
                   activeSection === item.id
-                    ? 'bg-teal-600 text-white'
+                    ? 'text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
+                style={{
+                  backgroundColor: activeSection === item.id ? '#009688' : 'transparent',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: activeSection === item.id ? 500 : 400
+                }}
               >
                 <item.icon className="w-5 h-5 flex-shrink-0" />
                 {!sidebarCollapsed && (
-                  <span className="text-sm font-medium">{item.label}</span>
+                  <span className="text-sm font-medium truncate">{item.label}</span>
                 )}
               </button>
             ))}
+            
+            {/* Collapse Toggle Button */}
+            <div className="absolute bottom-6 left-6 right-6">
+              <button
+                onClick={toggleSidebar}
+                className="w-full flex items-center justify-center p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                aria-label="Toggle sidebar"
+              >
+                {sidebarCollapsed ? <ChevronRight className="w-5 h-5 text-gray-600" /> : <ChevronLeft className="w-5 h-5 text-gray-600" />}
+              </button>
+            </div>
           </nav>
         </motion.aside>
 
-        {/* Main Content */}
-        <main className="flex-1 p-6">
+        {/* Section 1.4: Main Content Area - Exact Specifications */}
+        <main 
+          className="flex-1 transition-all duration-300 ease-in-out"
+          style={{
+            marginLeft: sidebarCollapsed ? '80px' : '260px',
+            backgroundColor: '#FFFFFF',
+            padding: '24px',
+            maxWidth: '1200px',
+            marginTop: '72px'
+          }}
+        >
           <motion.div
             key={activeSection}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              lineHeight: 1.5
+            }}
           >
             {renderContent()}
           </motion.div>
         </main>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">© 2025 Zuruu Pharmaceutics</span>
-              <div className="flex items-center space-x-2">
-                <Shield className="w-4 h-4 text-teal-600" />
-                <span className="text-sm text-gray-600">HIPAA Compliant</span>
-              </div>
+      {/* Footer - HIPAA Compliance */}
+      <footer 
+        className="bg-white border-t mt-auto"
+        style={{ 
+          borderColor: '#E0E0E0',
+          marginTop: 'auto'
+        }}
+      >
+        <div 
+          className="flex items-center justify-between py-4 px-6"
+          style={{ maxWidth: '1440px', margin: '0 auto' }}
+        >
+          <div className="flex items-center space-x-4">
+            <span 
+              className="text-sm"
+              style={{ 
+                color: '#757575',
+                fontFamily: 'Inter, sans-serif'
+              }}
+            >
+              © 2025 Zuruu Pharmaceutics
+            </span>
+            <div className="flex items-center space-x-2">
+              <Shield 
+                className="w-4 h-4"
+                style={{ color: '#009688' }}
+              />
+              <span 
+                className="text-sm"
+                style={{ 
+                  color: '#757575',
+                  fontFamily: 'Inter, sans-serif'
+                }}
+              >
+                HIPAA Compliant
+              </span>
             </div>
-            <div className="flex items-center space-x-6">
-              <a href="#" className="text-sm text-gray-600 hover:text-gray-900">Privacy Policy</a>
-              <a href="#" className="text-sm text-gray-600 hover:text-gray-900">Terms</a>
-              <a href="#" className="text-sm text-gray-600 hover:text-gray-900">Data Security</a>
-            </div>
+          </div>
+          <div className="flex items-center space-x-6">
+            <a 
+              href="#" 
+              className="text-sm transition-colors duration-200 hover:opacity-80"
+              style={{ 
+                color: '#757575',
+                fontFamily: 'Inter, sans-serif'
+              }}
+            >
+              Privacy Policy
+            </a>
+            <a 
+              href="#" 
+              className="text-sm transition-colors duration-200 hover:opacity-80"
+              style={{ 
+                color: '#757575',
+                fontFamily: 'Inter, sans-serif'
+              }}
+            >
+              Terms
+            </a>
+            <a 
+              href="#" 
+              className="text-sm transition-colors duration-200 hover:opacity-80"
+              style={{ 
+                color: '#757575',
+                fontFamily: 'Inter, sans-serif'
+              }}
+            >
+              Data Security
+            </a>
           </div>
         </div>
       </footer>
