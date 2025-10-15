@@ -105,7 +105,8 @@ import {
   X,
   RefreshCw,
   ZoomIn,
-  ZoomOut
+  ZoomOut,
+  ArrowRight
 } from 'lucide-react';
 
 // Mock data interfaces
@@ -2651,6 +2652,729 @@ export default function PatientDashboard() {
     </div>
   );
 
+  const renderChronicDiseaseTracker = () => {
+    const [activeVitalTab, setActiveVitalTab] = useState('vitals');
+    const [showDataEntryModal, setShowDataEntryModal] = useState(false);
+    const [selectedVital, setSelectedVital] = useState('');
+    const [showAIInsights, setShowAIInsights] = useState(true);
+    const [timeRange, setTimeRange] = useState('30days');
+    const [alerts, setAlerts] = useState([
+      {
+        id: 1,
+        type: 'critical',
+        title: 'Blood Pressure Alert',
+        message: 'Reading 148/96 mmHg exceeds target range',
+        timestamp: '2024-10-15 14:30',
+        acknowledged: false,
+        vital: 'bloodPressure'
+      },
+      {
+        id: 2,
+        type: 'warning',
+        title: 'Glucose Trend Alert',
+        message: 'Glucose readings rising - check meal timing',
+        timestamp: '2024-10-15 12:00',
+        acknowledged: false,
+        vital: 'bloodGlucose'
+      },
+      {
+        id: 3,
+        type: 'info',
+        title: 'HbA1c Due',
+        message: 'HbA1c due for recheck (90 days elapsed)',
+        timestamp: '2024-10-15 09:00',
+        acknowledged: true,
+        vital: 'cholesterol'
+      }
+    ]);
+
+    // Mock vital data
+    const vitalsData = {
+      bloodPressure: {
+        name: 'Blood Pressure',
+        current: '128/82',
+        unit: 'mmHg',
+        status: 'normal',
+        trend: 'stable',
+        lastReading: '2024-10-15 08:30',
+        readings: [
+          { date: '2024-10-08', systolic: 130, diastolic: 85 },
+          { date: '2024-10-09', systolic: 128, diastolic: 82 },
+          { date: '2024-10-10', systolic: 125, diastolic: 80 },
+          { date: '2024-10-11', systolic: 132, diastolic: 88 },
+          { date: '2024-10-12', systolic: 128, diastolic: 82 },
+          { date: '2024-10-13', systolic: 126, diastolic: 81 },
+          { date: '2024-10-14', systolic: 128, diastolic: 82 }
+        ]
+      },
+      bloodGlucose: {
+        name: 'Blood Glucose (Fasting)',
+        current: '110',
+        unit: 'mg/dL',
+        status: 'slightly_high',
+        trend: 'improving',
+        lastReading: '2024-10-15 07:00',
+        readings: [
+          { date: '2024-10-08', value: 125 },
+          { date: '2024-10-09', value: 118 },
+          { date: '2024-10-10', value: 115 },
+          { date: '2024-10-11', value: 120 },
+          { date: '2024-10-12', value: 112 },
+          { date: '2024-10-13', value: 108 },
+          { date: '2024-10-14', value: 110 }
+        ]
+      },
+      cholesterol: {
+        name: 'Cholesterol',
+        current: '175',
+        unit: 'mg/dL',
+        status: 'normal',
+        trend: 'stable',
+        lastReading: '2024-10-10 09:00',
+        readings: [
+          { date: '2024-09-10', value: 180 },
+          { date: '2024-10-10', value: 175 }
+        ]
+      },
+      bmi: {
+        name: 'BMI',
+        current: '25.1',
+        unit: 'kg/m²',
+        status: 'borderline',
+        trend: 'stable',
+        lastReading: '2024-10-15 08:00',
+        readings: [
+          { date: '2024-10-08', value: 25.3 },
+          { date: '2024-10-09', value: 25.2 },
+          { date: '2024-10-10', value: 25.1 },
+          { date: '2024-10-11', value: 25.0 },
+          { date: '2024-10-12', value: 25.1 },
+          { date: '2024-10-13', value: 25.0 },
+          { date: '2024-10-14', value: 25.1 }
+        ]
+      }
+    };
+
+    const chronicConditions = [
+      { name: 'Type 2 Diabetes', status: 'active', icon: '🩺' },
+      { name: 'Hypertension', status: 'active', icon: '❤️' },
+      { name: 'Mild Asthma', status: 'inactive', icon: '🫁' }
+    ];
+
+    const medications = [
+      { name: 'Metformin 500mg', frequency: 'BID', condition: 'Diabetes' },
+      { name: 'Amlodipine 5mg', frequency: 'QD', condition: 'Hypertension' },
+      { name: 'Albuterol Inhaler', frequency: 'PRN', condition: 'Asthma' }
+    ];
+
+    const getStatusColor = (status: string) => {
+      switch (status) {
+        case 'normal': return 'bg-green-100 text-green-800 border-green-200';
+        case 'slightly_high': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        case 'borderline': return 'bg-orange-100 text-orange-800 border-orange-200';
+        case 'high': return 'bg-red-100 text-red-800 border-red-200';
+        default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      }
+    };
+
+    const getStatusIcon = (status: string) => {
+      switch (status) {
+        case 'normal': return '🟢';
+        case 'slightly_high': return '🟠';
+        case 'borderline': return '🟡';
+        case 'high': return '🔴';
+        default: return '⚪';
+      }
+    };
+
+    const getTrendIcon = (trend: string) => {
+      switch (trend) {
+        case 'improving': return <TrendingDown className="w-4 h-4 text-green-500" />;
+        case 'worsening': return <TrendingUp className="w-4 h-4 text-red-500" />;
+        case 'stable': return <Minus className="w-4 h-4 text-gray-500" />;
+        default: return <Minus className="w-4 h-4 text-gray-500" />;
+      }
+    };
+
+    const handleAddReading = (vitalType: string) => {
+      setSelectedVital(vitalType);
+      setShowDataEntryModal(true);
+    };
+
+    const handleAcknowledgeAlert = (alertId: number) => {
+      setAlerts(alerts.map(alert => 
+        alert.id === alertId ? { ...alert, acknowledged: true } : alert
+      ));
+    };
+
+    const handleDismissAlert = (alertId: number) => {
+      setAlerts(alerts.filter(alert => alert.id !== alertId));
+    };
+
+    const getAlertIcon = (type: string) => {
+      switch (type) {
+        case 'critical': return '🚨';
+        case 'warning': return '⚠️';
+        case 'info': return '🔔';
+        default: return '📢';
+      }
+    };
+
+    const getAlertColor = (type: string) => {
+      switch (type) {
+        case 'critical': return 'bg-red-50 border-red-200 text-red-800';
+        case 'warning': return 'bg-yellow-50 border-yellow-200 text-yellow-800';
+        case 'info': return 'bg-blue-50 border-blue-200 text-blue-800';
+        default: return 'bg-gray-50 border-gray-200 text-gray-800';
+      }
+    };
+
+    // Mobile responsive check
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+    return (
+      <div className="space-y-6">
+        {/* Header Section - Overview Bar */}
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-gray-900">My Health Tracker</h2>
+            <div className="flex items-center space-x-3">
+              <select
+                value={timeRange}
+                onChange={(e) => setTimeRange(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              >
+                <option value="7days">7 Days</option>
+                <option value="30days">30 Days</option>
+                <option value="6months">6 Months</option>
+              </select>
+              <button
+                onClick={() => setShowAIInsights(!showAIInsights)}
+                className={`p-2 rounded-lg transition-colors ${
+                  showAIInsights ? 'bg-teal-100 text-teal-600' : 'bg-gray-100 text-gray-600'
+                }`}
+              >
+                <Brain className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+          
+          {/* Real-time Vitals Overview */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {Object.entries(vitalsData).map(([key, vital]) => (
+              <motion.div
+                key={key}
+                className="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-all cursor-pointer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                onClick={() => handleAddReading(key)}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-600">{vital.name}</span>
+                  <span className="text-lg">{getStatusIcon(vital.status)}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-2xl font-bold text-gray-900">{vital.current}</div>
+                    <div className="text-sm text-gray-500">{vital.unit}</div>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    {getTrendIcon(vital.trend)}
+                  </div>
+                </div>
+                <div className="mt-2">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(vital.status)}`}>
+                    {vital.status.replace('_', ' ').toUpperCase()}
+                  </span>
+                </div>
+                <div className="mt-2 text-xs text-gray-500">
+                  Last: {vital.lastReading}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Notifications & Alerts */}
+        {alerts.filter(alert => !alert.acknowledged).length > 0 && (
+          <div className="space-y-3">
+            {alerts.filter(alert => !alert.acknowledged).map((alert) => (
+              <motion.div
+                key={alert.id}
+                className={`border-l-4 rounded-lg p-4 ${getAlertColor(alert.type)}`}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start space-x-3">
+                    <span className="text-xl">{getAlertIcon(alert.type)}</span>
+                    <div>
+                      <h4 className="font-semibold">{alert.title}</h4>
+                      <p className="text-sm mt-1">{alert.message}</p>
+                      <p className="text-xs mt-2 opacity-75">{alert.timestamp}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => handleAcknowledgeAlert(alert.id)}
+                      className="px-3 py-1 bg-white bg-opacity-50 rounded text-xs font-medium hover:bg-opacity-75 transition-colors"
+                    >
+                      Mark Reviewed
+                    </button>
+                    <button
+                      onClick={() => handleDismissAlert(alert.id)}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+
+        {/* Main Content Grid */}
+        <div className={`grid grid-cols-1 ${isMobile ? 'gap-4' : 'lg:grid-cols-4 gap-6'}`}>
+          {/* Patient Summary Sidebar */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* Patient Info */}
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-blue-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-semibold text-lg">JD</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900">John Doe</h3>
+                  <p className="text-sm text-gray-600">Patient ID: #12345</p>
+                </div>
+              </div>
+              
+              {/* Chronic Conditions */}
+              <div className="mb-4">
+                <h4 className="font-medium text-gray-900 mb-3">Chronic Conditions</h4>
+                <div className="space-y-2">
+                  {chronicConditions.map((condition, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <span className="text-lg">{condition.icon}</span>
+                      <span className={`text-sm ${condition.status === 'active' ? 'text-gray-900' : 'text-gray-500'}`}>
+                        {condition.status === 'active' ? '✅' : '⚪'} {condition.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Medication Summary */}
+              <div className="mb-4">
+                <h4 className="font-medium text-gray-900 mb-3">Current Medications</h4>
+                <div className="space-y-2">
+                  {medications.map((med, index) => (
+                    <div key={index} className="text-sm text-gray-700">
+                      <div className="font-medium">{med.name}</div>
+                      <div className="text-gray-500">{med.frequency} • {med.condition}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Next Follow-up */}
+              <div className="bg-blue-50 rounded-lg p-3">
+                <h4 className="font-medium text-blue-900 mb-1">Next Follow-up</h4>
+                <p className="text-sm text-blue-700">25 Oct 2025</p>
+                <p className="text-xs text-blue-600">Dr. Smith - Cardiology</p>
+              </div>
+
+              <button className="w-full mt-4 p-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-teal-500 hover:text-teal-600 transition-colors">
+                <Plus className="w-5 h-5 inline mr-2" />
+                Add New Condition
+              </button>
+            </div>
+
+            {/* AI Insights Panel */}
+            {showAIInsights && (
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+                <div className="flex items-center space-x-2 mb-4">
+                  <Brain className="w-5 h-5 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900">AI Health Insights</h3>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="bg-white rounded-lg p-3 shadow-sm">
+                    <h4 className="font-medium text-gray-900 mb-2">Daily Insights</h4>
+                    <p className="text-sm text-gray-700">
+                      Blood sugar rising after dinner. Possible dietary pattern.
+                    </p>
+                  </div>
+                  
+                  <div className="bg-white rounded-lg p-3 shadow-sm">
+                    <h4 className="font-medium text-gray-900 mb-2">Therapeutic Suggestions</h4>
+                    <p className="text-sm text-gray-700">
+                      Metformin dose may need titration.
+                    </p>
+                  </div>
+                  
+                  <div className="bg-white rounded-lg p-3 shadow-sm">
+                    <h4 className="font-medium text-gray-900 mb-2">Behavioral Recommendations</h4>
+                    <p className="text-sm text-gray-700">
+                      Increase morning walks to 30 mins/day.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Main Content Area */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Navigation Tabs */}
+            <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+              <div className={`flex ${isMobile ? 'flex-col space-y-2' : 'space-x-1'}`}>
+                {[
+                  { id: 'vitals', label: 'Vitals & Measurements', icon: Heart },
+                  { id: 'trends', label: 'AI Trends', icon: TrendingUp },
+                  { id: 'comparison', label: 'Compare Data', icon: BarChart3 },
+                  { id: 'timeline', label: 'Timeline & Reports', icon: Clock }
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveVitalTab(tab.id)}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                      activeVitalTab === tab.id
+                        ? 'bg-teal-100 text-teal-700'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`}
+                  >
+                    <tab.icon className="w-4 h-4" />
+                    <span className="text-sm font-medium">{tab.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Vitals & Measurements Tracker */}
+            {activeVitalTab === 'vitals' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {Object.entries(vitalsData).map(([key, vital]) => (
+                    <motion.div
+                      key={key}
+                      className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-gray-900">{vital.name}</h3>
+                        <button
+                          onClick={() => handleAddReading(key)}
+                          className="p-2 bg-teal-100 text-teal-600 rounded-lg hover:bg-teal-200 transition-colors"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
+                      
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <div className="text-3xl font-bold text-gray-900">{vital.current}</div>
+                          <div className="text-sm text-gray-500">{vital.unit}</div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          {getTrendIcon(vital.trend)}
+                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(vital.status)}`}>
+                            {vital.status.replace('_', ' ').toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* Mini Chart Placeholder */}
+                      <div className="h-20 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
+                        <div className="text-sm text-gray-500">Chart visualization</div>
+                      </div>
+                      
+                      <div className="text-xs text-gray-500">
+                        Last updated: {vital.lastReading}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* AI Trend Analysis */}
+            {activeVitalTab === 'trends' && (
+              <div className="space-y-6">
+                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">AI Trend Analysis & Predictions</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <h4 className="font-semibold text-blue-900 mb-2">AI Summary</h4>
+                      <p className="text-sm text-blue-800">
+                        Average fasting glucose has reduced by 12% since adding Metformin XR.
+                      </p>
+                    </div>
+                    
+                    <div className="bg-yellow-50 rounded-lg p-4">
+                      <h4 className="font-semibold text-yellow-900 mb-2">AI Flags</h4>
+                      <p className="text-sm text-yellow-800">
+                        BP control fluctuated in last 2 weeks — possible missed doses.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 space-y-4">
+                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <Brain className="w-5 h-5 text-purple-600" />
+                        <h4 className="font-semibold text-gray-900">Predicted BP in next 7 days: 134/88 (moderate risk)</h4>
+                      </div>
+                      <div className="h-16 bg-gray-50 rounded flex items-center justify-center">
+                        <span className="text-sm text-gray-500">Prediction chart</span>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <TrendingDown className="w-5 h-5 text-green-600" />
+                        <h4 className="font-semibold text-gray-900">HbA1c trajectory improving — estimated 6.7% next test</h4>
+                      </div>
+                      <div className="h-16 bg-gray-50 rounded flex items-center justify-center">
+                        <span className="text-sm text-gray-500">Trend chart</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Comparison Dashboard */}
+            {activeVitalTab === 'comparison' && (
+              <div className="space-y-6">
+                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Data Comparison Dashboard</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4">
+                      <h4 className="font-semibold text-blue-900 mb-2">Before vs After Medication</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-blue-800">Blood Pressure</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm text-red-600">140/90</span>
+                            <ArrowRight className="w-4 h-4 text-blue-600" />
+                            <span className="text-sm text-green-600">128/82</span>
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-blue-800">Glucose (Fasting)</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm text-red-600">125 mg/dL</span>
+                            <ArrowRight className="w-4 h-4 text-blue-600" />
+                            <span className="text-sm text-green-600">110 mg/dL</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-3 text-xs text-blue-700">
+                        📈 12% improvement in glucose control
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4">
+                      <h4 className="font-semibold text-green-900 mb-2">Time Period Comparison</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-green-800">Last 7 Days</span>
+                          <span className="text-sm font-medium text-green-600">Stable</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-green-800">Last 30 Days</span>
+                          <span className="text-sm font-medium text-green-600">Improving</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-green-800">Last 6 Months</span>
+                          <span className="text-sm font-medium text-green-600">Significant Progress</span>
+                        </div>
+                      </div>
+                      <div className="mt-3 text-xs text-green-700">
+                        📊 Overall health trend: Positive
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="font-semibold text-gray-900 mb-3">Parameter Correlation Analysis</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="bg-white rounded-lg p-3 border border-gray-200">
+                        <h5 className="font-medium text-gray-900 mb-2">Glucose vs Weight</h5>
+                        <div className="h-16 bg-gray-100 rounded flex items-center justify-center">
+                          <span className="text-sm text-gray-500">Correlation chart</span>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-2">Strong negative correlation (-0.78)</p>
+                      </div>
+                      
+                      <div className="bg-white rounded-lg p-3 border border-gray-200">
+                        <h5 className="font-medium text-gray-900 mb-2">BP vs Medication Adherence</h5>
+                        <div className="h-16 bg-gray-100 rounded flex items-center justify-center">
+                          <span className="text-sm text-gray-500">Adherence chart</span>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-2">Direct relationship (0.85)</p>
+                      </div>
+                      
+                      <div className="bg-white rounded-lg p-3 border border-gray-200">
+                        <h5 className="font-medium text-gray-900 mb-2">Exercise vs All Metrics</h5>
+                        <div className="h-16 bg-gray-100 rounded flex items-center justify-center">
+                          <span className="text-sm text-gray-500">Impact chart</span>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-2">Positive impact on all vitals</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Timeline & Reports */}
+            {activeVitalTab === 'timeline' && (
+              <div className="space-y-6">
+                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Health Timeline</h3>
+                  
+                  <div className="space-y-4">
+                    {[
+                      { date: '2024-10-15', type: 'vitals', title: 'BP Reading: 128/82', description: 'Normal range', icon: '❤️' },
+                      { date: '2024-10-14', type: 'medication', title: 'Started Losartan', description: 'New antihypertensive', icon: '💊' },
+                      { date: '2024-10-10', type: 'report', title: 'Lab Results Uploaded', description: 'Cholesterol panel', icon: '📄' },
+                      { date: '2024-10-08', type: 'appointment', title: 'Doctor Visit', description: 'Follow-up consultation', icon: '📞' }
+                    ].map((event, index) => (
+                      <div key={index} className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
+                        <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-lg">{event.icon}</span>
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-medium text-gray-900">{event.title}</h4>
+                            <span className="text-sm text-gray-500">{event.date}</span>
+                          </div>
+                          <p className="text-sm text-gray-600 mt-1">{event.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Data Entry Modal */}
+        <AnimatePresence>
+          {showDataEntryModal && (
+            <motion.div
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowDataEntryModal(false)}
+            >
+              <motion.div
+                className="bg-white rounded-xl p-6 max-w-md w-full mx-4"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-gray-900">Add Reading</h3>
+                  <button
+                    onClick={() => setShowDataEntryModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Metric
+                    </label>
+                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                      <option value="bloodPressure">Blood Pressure</option>
+                      <option value="bloodGlucose">Blood Glucose</option>
+                      <option value="cholesterol">Cholesterol</option>
+                      <option value="bmi">BMI</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Value
+                    </label>
+                    <input
+                      type="number"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      placeholder="Enter reading"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Date & Time
+                    </label>
+                    <input
+                      type="datetime-local"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Notes (Optional)
+                    </label>
+                    <textarea
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      rows={3}
+                      placeholder="Add any notes about this reading"
+                    />
+                  </div>
+                  
+                  <div className="flex space-x-3 pt-4">
+                    <button className="flex-1 bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition-colors">
+                      Add Reading
+                    </button>
+                    <button 
+                      onClick={() => setShowDataEntryModal(false)}
+                      className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">Export Options</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button className="flex items-center justify-center space-x-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
+                        <FileText className="w-4 h-4" />
+                        <span className="text-sm">PDF Report</span>
+                      </button>
+                      <button className="flex items-center justify-center space-x-2 px-3 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
+                        <Download className="w-4 h-4" />
+                        <span className="text-sm">CSV Export</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  };
+
   const renderInteractionChecker = () => {
     const [smartMode, setSmartMode] = useState(true);
     const [showSettings, setShowSettings] = useState(false);
@@ -3543,6 +4267,8 @@ export default function PatientDashboard() {
         return renderDashboard();
       case 'medications':
         return renderMedications();
+      case 'chronic-disease-tracker':
+        return renderChronicDiseaseTracker();
       case 'interaction-checker':
         return renderInteractionChecker();
       case 'refill-reminders':
@@ -3978,6 +4704,7 @@ export default function PatientDashboard() {
             {[
               { id: 'dashboard', label: 'Dashboard', icon: Home },
               { id: 'medications', label: 'My Medications', icon: Pill },
+              { id: 'chronic-disease-tracker', label: 'My Health Tracker', icon: Heart },
               { id: 'interaction-checker', label: 'Safety & Interactions', icon: Shield },
               { id: 'refill-reminders', label: 'Refill Reminders', icon: Bell },
               { id: 'appointments', label: 'My Appointments', icon: Calendar },
