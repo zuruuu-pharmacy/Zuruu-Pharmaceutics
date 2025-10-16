@@ -2652,6 +2652,662 @@ export default function PatientDashboard() {
     </div>
   );
 
+  const renderPatientChat = () => {
+    const [activeContact, setActiveContact] = useState('ali-raza');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [activeFilter, setActiveFilter] = useState('all');
+    const [showVideoCall, setShowVideoCall] = useState(false);
+    const [showFileModal, setShowFileModal] = useState(false);
+    const [showAISummary, setShowAISummary] = useState(false);
+    const [newMessage, setNewMessage] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
+
+    // Mock contacts data
+    const contacts = [
+      {
+        id: 'ali-raza',
+        name: 'Ali Raza',
+        role: 'Patient',
+        condition: 'Type 2 Diabetes',
+        avatar: 'AR',
+        lastMessage: 'Updated glucose log',
+        lastTime: '2 min ago',
+        unreadCount: 2,
+        status: 'online',
+        isUrgent: false
+      },
+      {
+        id: 'sarah-khan',
+        name: 'Sarah Khan',
+        role: 'Patient',
+        condition: 'Hypertension',
+        avatar: 'SK',
+        lastMessage: 'BP reading: 128/82',
+        lastTime: '15 min ago',
+        unreadCount: 0,
+        status: 'online',
+        isUrgent: false
+      },
+      {
+        id: 'dr-smith',
+        name: 'Dr. Smith',
+        role: 'Doctor',
+        condition: 'Cardiology',
+        avatar: 'DS',
+        lastMessage: 'Review lab results',
+        lastTime: '1 hour ago',
+        unreadCount: 1,
+        status: 'offline',
+        isUrgent: true
+      },
+      {
+        id: 'pharmacist-john',
+        name: 'John Wilson',
+        role: 'Pharmacist',
+        condition: 'Medication Review',
+        avatar: 'JW',
+        lastMessage: 'Refill ready for pickup',
+        lastTime: '3 hours ago',
+        unreadCount: 0,
+        status: 'online',
+        isUrgent: false
+      }
+    ];
+
+    // Mock chat messages
+    const chatMessages = {
+      'ali-raza': [
+        {
+          id: 1,
+          sender: 'ali-raza',
+          message: 'Hi, I have a question about my Metformin dosage',
+          timestamp: '10:30 AM',
+          type: 'text',
+          status: 'delivered'
+        },
+        {
+          id: 2,
+          sender: 'pharmacist',
+          message: 'Hello Ali! I can help you with that. What specific concerns do you have?',
+          timestamp: '10:32 AM',
+          type: 'text',
+          status: 'read'
+        },
+        {
+          id: 3,
+          sender: 'ali-raza',
+          message: 'I\'ve been experiencing some stomach upset after taking it',
+          timestamp: '10:35 AM',
+          type: 'text',
+          status: 'delivered'
+        },
+        {
+          id: 4,
+          sender: 'pharmacist',
+          message: 'That\'s a common side effect. Try taking it with food. If it persists, we may need to adjust the timing or consider an alternative.',
+          timestamp: '10:37 AM',
+          type: 'text',
+          status: 'read'
+        },
+        {
+          id: 5,
+          sender: 'ali-raza',
+          message: 'Updated glucose log',
+          timestamp: '2 min ago',
+          type: 'text',
+          status: 'delivered'
+        }
+      ],
+      'sarah-khan': [
+        {
+          id: 1,
+          sender: 'sarah-khan',
+          message: 'BP reading: 128/82',
+          timestamp: '15 min ago',
+          type: 'text',
+          status: 'delivered'
+        }
+      ]
+    };
+
+    // Mock patient summary data
+    const patientSummary = {
+      'ali-raza': {
+        name: 'Ali Raza',
+        age: 45,
+        gender: 'Male',
+        conditions: ['Type 2 Diabetes', 'Hypertension'],
+        medications: ['Metformin 500mg BID', 'Amlodipine 5mg QD'],
+        allergies: ['Penicillin'],
+        lastConsultation: '2024-10-10 - Medication review and glucose monitoring',
+        aiNotes: [
+          'Adherence has dropped 12% this month',
+          'BP readings have improved since last dose adjustment',
+          'Patient reports stomach upset with Metformin'
+        ]
+      }
+    };
+
+    const getStatusColor = (status: string) => {
+      switch (status) {
+        case 'online': return 'bg-green-500';
+        case 'offline': return 'bg-gray-400';
+        case 'in-call': return 'bg-blue-500';
+        default: return 'bg-gray-400';
+      }
+    };
+
+    const getStatusIcon = (status: string) => {
+      switch (status) {
+        case 'online': return '🟢';
+        case 'offline': return '⚪';
+        case 'in-call': return '🔵';
+        default: return '⚪';
+      }
+    };
+
+    const filteredContacts = contacts.filter(contact => {
+      const matchesSearch = contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           contact.condition.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      switch (activeFilter) {
+        case 'active':
+          return matchesSearch && contact.status === 'online';
+        case 'recent':
+          return matchesSearch && contact.lastTime.includes('min ago') || contact.lastTime.includes('hour ago');
+        case 'urgent':
+          return matchesSearch && contact.isUrgent;
+        default:
+          return matchesSearch;
+      }
+    });
+
+    const handleSendMessage = () => {
+      if (newMessage.trim()) {
+        // In a real app, this would send the message via WebSocket
+        setNewMessage('');
+        setIsTyping(false);
+      }
+    };
+
+    const handleStartVideoCall = () => {
+      setShowVideoCall(true);
+    };
+
+    const handleEndVideoCall = () => {
+      setShowVideoCall(false);
+    };
+
+    return (
+      <div className="h-full flex flex-col bg-white">
+        {/* Header Section */}
+        <div className="bg-white border-b border-gray-200 p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-blue-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-semibold">JD</span>
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Consultation Center</h2>
+                <p className="text-sm text-gray-600">Secure communication with healthcare providers</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setShowAISummary(!showAISummary)}
+                className={`p-2 rounded-lg transition-colors ${
+                  showAISummary ? 'bg-teal-100 text-teal-600' : 'bg-gray-100 text-gray-600'
+                }`}
+                title="AI Summary"
+              >
+                <Brain className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handleStartVideoCall}
+                className="p-2 bg-teal-100 text-teal-600 rounded-lg hover:bg-teal-200 transition-colors"
+                title="Video Call"
+              >
+                <Video className="w-5 h-5" />
+              </button>
+              <button
+                className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
+                title="Settings"
+              >
+                <Settings className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="flex-1 flex overflow-hidden">
+          {/* Left Panel - Contact List */}
+          <div className="w-80 border-r border-gray-200 bg-gray-50 flex flex-col">
+            {/* Search Bar */}
+            <div className="p-4 border-b border-gray-200">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <input
+                  type="text"
+                  placeholder="Search patients, conditions..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Filter Tabs */}
+            <div className="p-4 border-b border-gray-200">
+              <div className="flex space-x-1">
+                {[
+                  { id: 'all', label: 'All', count: contacts.length },
+                  { id: 'active', label: 'Active', count: contacts.filter(c => c.status === 'online').length },
+                  { id: 'recent', label: 'Recent', count: contacts.filter(c => c.lastTime.includes('min ago') || c.lastTime.includes('hour ago')).length },
+                  { id: 'urgent', label: 'Urgent', count: contacts.filter(c => c.isUrgent).length }
+                ].map((filter) => (
+                  <button
+                    key={filter.id}
+                    onClick={() => setActiveFilter(filter.id)}
+                    className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                      activeFilter === filter.id
+                        ? 'bg-teal-100 text-teal-700'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`}
+                  >
+                    {filter.label} ({filter.count})
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Contact List */}
+            <div className="flex-1 overflow-y-auto">
+              {filteredContacts.map((contact) => (
+                <motion.div
+                  key={contact.id}
+                  onClick={() => setActiveContact(contact.id)}
+                  className={`p-4 border-b border-gray-200 cursor-pointer transition-colors ${
+                    activeContact === contact.id ? 'bg-teal-50 border-teal-200' : 'hover:bg-white'
+                  }`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="relative">
+                      <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-blue-500 rounded-full flex items-center justify-center">
+                        <span className="text-white font-semibold">{contact.avatar}</span>
+                      </div>
+                      <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${getStatusColor(contact.status)}`}></div>
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-sm font-semibold text-gray-900 truncate">{contact.name}</h3>
+                        <span className="text-xs text-gray-500">{contact.lastTime}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs text-gray-600 truncate">{contact.condition}</p>
+                        {contact.unreadCount > 0 && (
+                          <span className="bg-teal-500 text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center">
+                            {contact.unreadCount}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500 truncate mt-1">{contact.lastMessage}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Center Panel - Chat Window */}
+          <div className="flex-1 flex flex-col">
+            {/* Chat Header */}
+            <div className="bg-white border-b border-gray-200 p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-blue-500 rounded-full flex items-center justify-center">
+                    <span className="text-white font-semibold">
+                      {contacts.find(c => c.id === activeContact)?.avatar || 'AR'}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">
+                      {contacts.find(c => c.id === activeContact)?.name || 'Ali Raza'}
+                    </h3>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-gray-600">
+                        {contacts.find(c => c.id === activeContact)?.role || 'Patient'}
+                      </span>
+                      <span className="text-lg">
+                        {getStatusIcon(contacts.find(c => c.id === activeContact)?.status || 'online')}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={handleStartVideoCall}
+                    className="p-2 bg-teal-100 text-teal-600 rounded-lg hover:bg-teal-200 transition-colors"
+                    title="Video Call"
+                  >
+                    <Video className="w-5 h-5" />
+                  </button>
+                  <button
+                    className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
+                    title="Audio Call"
+                  >
+                    <Phone className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setShowFileModal(true)}
+                    className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
+                    title="Attach File"
+                  >
+                    <Paperclip className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Chat Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {chatMessages[activeContact as keyof typeof chatMessages]?.map((message) => (
+                <motion.div
+                  key={message.id}
+                  className={`flex ${message.sender === 'pharmacist' ? 'justify-end' : 'justify-start'}`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
+                    message.sender === 'pharmacist'
+                      ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white'
+                      : 'bg-gray-100 text-gray-900'
+                  }`}>
+                    <p className="text-sm">{message.message}</p>
+                    <div className={`flex items-center justify-between mt-1 ${
+                      message.sender === 'pharmacist' ? 'text-teal-100' : 'text-gray-500'
+                    }`}>
+                      <span className="text-xs">{message.timestamp}</span>
+                      {message.sender === 'pharmacist' && (
+                        <span className="text-xs">
+                          {message.status === 'read' ? '✓✓' : message.status === 'delivered' ? '✓✓' : '✓'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+              
+              {isTyping && (
+                <div className="flex justify-start">
+                  <div className="bg-gray-100 px-4 py-2 rounded-2xl">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Message Input */}
+            <div className="bg-white border-t border-gray-200 p-4">
+              <div className="flex items-center space-x-3">
+                <button
+                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                  title="Voice Message"
+                >
+                  <Mic className="w-5 h-5" />
+                </button>
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    placeholder="Type your message..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  />
+                  <button
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
+                    title="Emoji"
+                  >
+                    <Smile className="w-4 h-4" />
+                  </button>
+                </div>
+                <button
+                  onClick={handleSendMessage}
+                  disabled={!newMessage.trim()}
+                  className="p-2 bg-teal-500 text-white rounded-full hover:bg-teal-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                >
+                  <Send className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Panel - Patient Summary */}
+          <div className="w-80 border-l border-gray-200 bg-gray-50 p-4 overflow-y-auto">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Patient Summary</h3>
+            
+            {patientSummary[activeContact as keyof typeof patientSummary] && (
+              <div className="space-y-6">
+                {/* Profile Snapshot */}
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <h4 className="font-semibold text-gray-900 mb-3">Profile Snapshot</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-600">Name:</span>
+                      <span className="text-sm font-medium">{patientSummary[activeContact as keyof typeof patientSummary].name}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-600">Age:</span>
+                      <span className="text-sm font-medium">{patientSummary[activeContact as keyof typeof patientSummary].age}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-600">Gender:</span>
+                      <span className="text-sm font-medium">{patientSummary[activeContact as keyof typeof patientSummary].gender}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Conditions */}
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <h4 className="font-semibold text-gray-900 mb-3">Conditions</h4>
+                  <div className="space-y-2">
+                    {patientSummary[activeContact as keyof typeof patientSummary].conditions.map((condition, index) => (
+                      <span key={index} className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-2 mb-2">
+                        {condition}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Medications */}
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <h4 className="font-semibold text-gray-900 mb-3">Active Medications</h4>
+                  <div className="space-y-2">
+                    {patientSummary[activeContact as keyof typeof patientSummary].medications.map((medication, index) => (
+                      <div key={index} className="text-sm text-gray-700">
+                        {medication}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Allergies */}
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <h4 className="font-semibold text-gray-900 mb-3">Allergies</h4>
+                  <div className="space-y-2">
+                    {patientSummary[activeContact as keyof typeof patientSummary].allergies.map((allergy, index) => (
+                      <span key={index} className="inline-block bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full mr-2 mb-2">
+                        {allergy}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* AI Notes */}
+                {showAISummary && (
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <Brain className="w-5 h-5 text-blue-600" />
+                      <h4 className="font-semibold text-gray-900">AI Notes</h4>
+                    </div>
+                    <div className="space-y-2">
+                      {patientSummary[activeContact as keyof typeof patientSummary].aiNotes.map((note, index) => (
+                        <div key={index} className="text-sm text-gray-700 bg-white rounded p-2">
+                          {note}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Quick Actions */}
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <h4 className="font-semibold text-gray-900 mb-3">Quick Actions</h4>
+                  <div className="space-y-2">
+                    <button className="w-full text-left px-3 py-2 bg-teal-50 text-teal-700 rounded-lg hover:bg-teal-100 transition-colors">
+                      Refill Medication
+                    </button>
+                    <button className="w-full text-left px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
+                      Schedule Follow-up
+                    </button>
+                    <button className="w-full text-left px-3 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
+                      Generate Report
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Video Call Modal */}
+        <AnimatePresence>
+          {showVideoCall && (
+            <motion.div
+              className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div
+                className="bg-white rounded-xl p-6 max-w-4xl w-full mx-4"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-gray-900">Video Consultation</h3>
+                  <button
+                    onClick={handleEndVideoCall}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="bg-gray-900 rounded-lg aspect-video flex items-center justify-center">
+                    <div className="text-white text-center">
+                      <div className="w-16 h-16 bg-teal-500 rounded-full mx-auto mb-2 flex items-center justify-center">
+                        <span className="text-white font-semibold text-lg">JD</span>
+                      </div>
+                      <p className="text-sm">You (Pharmacist)</p>
+                    </div>
+                  </div>
+                  <div className="bg-gray-900 rounded-lg aspect-video flex items-center justify-center">
+                    <div className="text-white text-center">
+                      <div className="w-16 h-16 bg-blue-500 rounded-full mx-auto mb-2 flex items-center justify-center">
+                        <span className="text-white font-semibold text-lg">AR</span>
+                      </div>
+                      <p className="text-sm">Ali Raza (Patient)</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-center space-x-4">
+                  <button className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors">
+                    <Phone className="w-5 h-5" />
+                  </button>
+                  <button className="p-3 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors">
+                    <Mic className="w-5 h-5" />
+                  </button>
+                  <button className="p-3 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors">
+                    <Video className="w-5 h-5" />
+                  </button>
+                  <button className="p-3 bg-teal-500 text-white rounded-full hover:bg-teal-600 transition-colors">
+                    <Share className="w-5 h-5" />
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* File Upload Modal */}
+        <AnimatePresence>
+          {showFileModal && (
+            <motion.div
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowFileModal(false)}
+            >
+              <motion.div
+                className="bg-white rounded-xl p-6 max-w-md w-full mx-4"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-gray-900">Share File</h3>
+                  <button
+                    onClick={() => setShowFileModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                    <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600 mb-2">Drag and drop files here</p>
+                    <p className="text-sm text-gray-500">or click to browse</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    <button className="flex items-center justify-center space-x-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
+                      <Camera className="w-4 h-4" />
+                      <span className="text-sm">Take Photo</span>
+                    </button>
+                    <button className="flex items-center justify-center space-x-2 px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
+                      <FileText className="w-4 h-4" />
+                      <span className="text-sm">Upload Document</span>
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  };
+
   const renderChronicDiseaseTracker = () => {
     const [activeVitalTab, setActiveVitalTab] = useState('vitals');
     const [showDataEntryModal, setShowDataEntryModal] = useState(false);
@@ -4279,8 +4935,8 @@ export default function PatientDashboard() {
         return renderHealthRecords();
       case 'ai-assistant':
         return renderAIAssistant();
-      case 'chat':
-        return renderChat();
+      case 'patient-chat':
+        return renderPatientChat();
       case 'billing':
         return renderBilling();
       case 'reports':
@@ -4710,7 +5366,7 @@ export default function PatientDashboard() {
               { id: 'appointments', label: 'My Appointments', icon: Calendar },
               { id: 'health-records', label: 'Health Records', icon: FileText },
               { id: 'ai-assistant', label: 'AI Health Assistant', icon: Brain },
-              { id: 'chat', label: 'Chat / Consultation', icon: MessageCircle },
+              { id: 'patient-chat', label: 'Consultation Center', icon: MessageCircle },
               { id: 'billing', label: 'Billing & Payments', icon: CreditCard },
               { id: 'reports', label: 'Reports & Analytics', icon: BarChart3 },
               { id: 'settings', label: 'Settings', icon: Settings }
