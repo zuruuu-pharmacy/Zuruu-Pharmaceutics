@@ -1,26 +1,48 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Pill, 
-  Users, 
-  FileText, 
-  AlertTriangle, 
   Search, 
-  Plus, 
-  BarChart3, 
-  Clock, 
-  Shield, 
+  Bell, 
+  MessageSquare, 
+  User, 
+  Settings, 
+  LogOut,
+  BarChart3,
+  Users,
+  FileText,
+  AlertTriangle,
+  History,
+  RefreshCw,
+  Package,
+  TrendingUp,
+  MessageCircle,
+  Menu,
+  X,
+  Mic,
+  MicOff,
+  ChevronDown,
+  ChevronRight,
+  Plus,
+  Filter,
+  Download,
+  Eye,
+  Edit,
+  CheckCircle,
+  Clock,
+  AlertCircle,
   Heart,
   Activity,
-  TrendingUp,
+  Shield,
+  Zap,
   Calendar,
-  Bell,
-  Settings,
-  LogOut,
-  User,
+  PieChart,
+  LineChart,
+  Thermometer,
+  Droplets,
+  Scale,
+  Pill,
   Stethoscope,
   ClipboardList,
   TestTube,
@@ -28,622 +50,1096 @@ import {
   BookOpen,
   Award,
   Target,
-  Zap
+  Brain,
+  Phone,
+  Video,
+  Send,
+  Paperclip,
+  Volume2,
+  VolumeX,
+  Sun,
+  Moon,
+  Wifi,
+  WifiOff,
+  Database,
+  Cloud,
+  Lock,
+  Unlock,
+  HelpCircle,
+  Info,
+  Check,
+  X as XIcon,
+  ArrowRight,
+  ArrowLeft,
+  Home,
+  Star,
+  ThumbsUp,
+  ThumbsDown,
+  Smile,
+  Frown,
+  Meh,
+  TrendingDown,
+  Minus,
+  Maximize,
+  Minimize,
+  RotateCcw,
+  Bookmark,
+  BookmarkCheck,
+  ThumbsUp as ThumbsUpIcon,
+  ThumbsDown as ThumbsDownIcon,
+  Smile as SmileIcon,
+  Frown as FrownIcon,
+  Meh as MehIcon,
+  TrendingDown as TrendingDownIcon,
+  Minus as MinusIcon,
+  Maximize as MaximizeIcon,
+  Minimize as MinimizeIcon,
+  RotateCcw as RotateCcwIcon,
+  Bookmark as BookmarkIcon,
+  BookmarkCheck as BookmarkCheckIcon
 } from 'lucide-react';
 
 export default function PharmacistDashboard() {
-  const router = useRouter();
-  const [activeFeature, setActiveFeature] = useState<string>('overview');
-  const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [notifications, setNotifications] = useState([
+    { id: 1, type: 'refill', message: '5 refills pending', time: '2m ago', urgent: true },
+    { id: 2, type: 'side-effect', message: '2 patients reported mild side effects', time: '15m ago', urgent: false },
+    { id: 3, type: 'low-stock', message: 'Amoxicillin stock low', time: '1h ago', urgent: true }
+  ]);
 
-  const handleFeatureClick = (feature: string) => {
-    setIsLoading(true);
-    setActiveFeature(feature);
-    
-    // Simulate loading
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
+  // Update time every minute
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const toggleVoiceInput = () => {
+    setIsListening(!isListening);
+    // Simulate voice input
+    setTimeout(() => setIsListening(false), 3000);
   };
 
-  const handleBackToHome = () => {
-    router.push('/');
-  };
+  const navigationItems = [
+    { id: 'overview', label: 'Dashboard Overview', icon: BarChart3 },
+    { id: 'patients', label: 'Patient & Health Management', icon: Users },
+    { id: 'prescriptions', label: 'Prescription Management', icon: FileText },
+    { id: 'interactions', label: 'AI Drug Interaction Checker', icon: AlertTriangle },
+    { id: 'history', label: 'Medication History Tracker', icon: History },
+    { id: 'refills', label: 'Refill & Adherence Monitor', icon: RefreshCw },
+    { id: 'inventory', label: 'Inventory & Stock Management', icon: Package },
+    { id: 'analytics', label: 'Analytics & Reports', icon: TrendingUp },
+    { id: 'communication', label: 'Pharmacist–Patient Communication', icon: MessageCircle },
+    { id: 'settings', label: 'Settings & Preferences', icon: Settings }
+  ];
 
-  const renderFeatureContent = () => {
-    switch (activeFeature) {
-      case 'overview':
-        return (
-          <div className="space-y-8">
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <motion.div
-                className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Active Prescriptions</p>
-                    <p className="text-3xl font-bold text-blue-600">247</p>
-                  </div>
-                  <Pill className="w-8 h-8 text-blue-500" />
-                </div>
-                <p className="text-xs text-green-600 mt-2">+12% from last month</p>
-              </motion.div>
+  const renderOverview = () => (
+    <div className="space-y-6">
+      {/* AI Suggestion */}
+      <motion.div
+        className="bg-gradient-to-r from-teal-50 to-blue-50 border border-teal-200 rounded-xl p-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div className="flex items-center space-x-3">
+          <Brain className="w-6 h-6 text-teal-600" />
+          <div>
+            <p className="font-semibold text-gray-900">AI Suggestion</p>
+            <p className="text-sm text-gray-700">Today, 5 refills are pending and 2 patients reported mild side effects.</p>
+          </div>
+        </div>
+      </motion.div>
 
-              <motion.div
-                className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Patients Served</p>
-                    <p className="text-3xl font-bold text-green-600">1,234</p>
-                  </div>
-                  <Users className="w-8 h-8 text-green-500" />
-                </div>
-                <p className="text-xs text-green-600 mt-2">+8% from last month</p>
-              </motion.div>
-
-              <motion.div
-                className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Drug Interactions</p>
-                    <p className="text-3xl font-bold text-orange-600">23</p>
-                  </div>
-                  <AlertTriangle className="w-8 h-8 text-orange-500" />
-                </div>
-                <p className="text-xs text-red-600 mt-2">-3 from yesterday</p>
-              </motion.div>
-
-              <motion.div
-                className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Inventory Value</p>
-                    <p className="text-3xl font-bold text-purple-600">$45.2K</p>
-                  </div>
-                  <BarChart3 className="w-8 h-8 text-purple-500" />
-                </div>
-                <p className="text-xs text-green-600 mt-2">+5% from last month</p>
-              </motion.div>
+      {/* Metrics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { title: 'Total Patients', value: '1,247', growth: '+8%', color: 'blue', icon: Users },
+          { title: 'Prescriptions Today', value: '89', growth: '+12%', color: 'purple', icon: FileText },
+          { title: 'Refill Alerts', value: '23', growth: '-3%', color: 'orange', icon: RefreshCw },
+          { title: 'Inventory Status', value: 'Good', growth: '5 Low', color: 'green', icon: Package }
+        ].map((metric, index) => (
+          <motion.div
+            key={metric.title}
+            className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: index * 0.1 }}
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">{metric.title}</p>
+                <p className={`text-3xl font-bold text-${metric.color}-600`}>{metric.value}</p>
+                <p className="text-xs text-green-600 mt-2">{metric.growth}</p>
+              </div>
+              <metric.icon className={`w-8 h-8 text-${metric.color}-500`} />
             </div>
+          </motion.div>
+        ))}
+      </div>
 
-            {/* Recent Activity */}
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Recent Activity</h3>
+      {/* Data Panels */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Patient Activity Overview */}
+        <motion.div
+          className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Patient Activity Overview</h3>
+            <div className="flex space-x-2">
+              <button className="px-3 py-1 text-xs bg-teal-100 text-teal-700 rounded-full">Week</button>
+              <button className="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">Month</button>
+            </div>
+          </div>
+          <div className="h-48 bg-gray-50 rounded-lg flex items-center justify-center">
+            <div className="text-center">
+              <LineChart className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+              <p className="text-sm text-gray-500">Patient Activity Chart</p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Prescription Trends */}
+        <motion.div
+          className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Prescription Trends</h3>
+            <Filter className="w-5 h-5 text-gray-400" />
+          </div>
+          <div className="h-48 bg-gray-50 rounded-lg flex items-center justify-center">
+            <div className="text-center">
+              <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+              <p className="text-sm text-gray-500">Drug Categories Chart</p>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* AI Insights Widget */}
+      <motion.div
+        className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.6 }}
+      >
+        <div className="flex items-center space-x-3 mb-4">
+          <Brain className="w-6 h-6 text-teal-600" />
+          <h3 className="text-lg font-semibold text-gray-900">AI Insights</h3>
+          <span className="px-2 py-1 text-xs bg-teal-100 text-teal-700 rounded-full">92% Confidence</span>
+        </div>
+        <p className="text-gray-700 mb-4">Top 3 drugs with side effect reports this week:</p>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+            <span className="font-medium">Metformin</span>
+            <span className="text-sm text-red-600">3 reports</span>
+          </div>
+          <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+            <span className="font-medium">Atorvastatin</span>
+            <span className="text-sm text-yellow-600">2 reports</span>
+          </div>
+          <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+            <span className="font-medium">Lisinopril</span>
+            <span className="text-sm text-orange-600">1 report</span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Quick Tables */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Upcoming Refills */}
+        <motion.div
+          className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.7 }}
+        >
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Upcoming Refills</h3>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+              <div>
+                <p className="font-medium text-gray-900">John Doe</p>
+                <p className="text-sm text-gray-600">Metformin 500mg</p>
+                <p className="text-xs text-gray-500">Due: Oct 20</p>
+              </div>
+              <button className="px-3 py-1 text-xs bg-teal-100 text-teal-700 rounded-full hover:bg-teal-200 transition-colors">
+                Send Reminder
+              </button>
+            </div>
+            <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+              <div>
+                <p className="font-medium text-gray-900">Ayesha</p>
+                <p className="text-sm text-gray-600">Atorvastatin 20mg</p>
+                <p className="text-xs text-gray-500">Due: Oct 22</p>
+              </div>
+              <button className="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors">
+                Refill Now
+              </button>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Low Stock Medicines */}
+        <motion.div
+          className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+        >
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Low Stock Medicines</h3>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 border border-red-200 bg-red-50 rounded-lg">
+              <div>
+                <p className="font-medium text-gray-900">Amoxicillin</p>
+                <p className="text-sm text-gray-600">18 units remaining</p>
+              </div>
+              <span className="text-red-600 font-semibold">🔴 Critical</span>
+            </div>
+            <div className="flex items-center justify-between p-3 border border-yellow-200 bg-yellow-50 rounded-lg">
+              <div>
+                <p className="font-medium text-gray-900">Ibuprofen</p>
+                <p className="text-sm text-gray-600">35 units remaining</p>
+              </div>
+              <span className="text-yellow-600 font-semibold">🟠 Low</span>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+
+  const renderPatients = () => (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+      {/* Left Panel - Patient List */}
+      <div className="lg:col-span-1 bg-white rounded-xl shadow-lg border border-gray-100">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Patient List</h3>
+            <button className="p-2 text-teal-600 hover:bg-teal-50 rounded-lg transition-colors">
+              <Plus className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search patients..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+        <div className="p-6 space-y-3 max-h-96 overflow-y-auto">
+          {[
+            { name: 'John Doe', age: 45, status: 'Stable', lastVisit: '2 days ago' },
+            { name: 'Sarah Wilson', age: 32, status: 'Under Observation', lastVisit: '1 week ago' },
+            { name: 'Michael Brown', age: 58, status: 'Stable', lastVisit: '3 days ago' },
+            { name: 'Emily Davis', age: 28, status: 'Stable', lastVisit: '5 days ago' }
+          ].map((patient, index) => (
+            <motion.div
+              key={patient.name}
+              className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+                  <User className="w-5 h-5 text-teal-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-gray-900">{patient.name}</p>
+                  <p className="text-sm text-gray-600">Age: {patient.age}</p>
+                  <div className="flex items-center space-x-2 mt-1">
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      patient.status === 'Stable' 
+                        ? 'bg-green-100 text-green-700' 
+                        : 'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {patient.status}
+                    </span>
+                    <span className="text-xs text-gray-500">{patient.lastVisit}</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Right Panel - Patient Details */}
+      <div className="lg:col-span-2 bg-white rounded-xl shadow-lg border border-gray-100">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center">
+              <User className="w-8 h-8 text-teal-600" />
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900">John Doe</h3>
+              <p className="text-gray-600">Age: 45 | Male | ID: #12345</p>
+              <div className="flex items-center space-x-2 mt-2">
+                <span className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">Stable</span>
+                <span className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">3 Active Rx</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="grid grid-cols-4 gap-4 mb-6">
+            <button className="p-3 text-center border border-teal-200 bg-teal-50 rounded-lg">
+              <User className="w-6 h-6 text-teal-600 mx-auto mb-2" />
+              <span className="text-sm font-medium text-teal-700">Profile</span>
+            </button>
+            <button className="p-3 text-center border border-gray-200 rounded-lg hover:bg-gray-50">
+              <History className="w-6 h-6 text-gray-600 mx-auto mb-2" />
+              <span className="text-sm font-medium text-gray-700">Medication</span>
+            </button>
+            <button className="p-3 text-center border border-gray-200 rounded-lg hover:bg-gray-50">
+              <AlertTriangle className="w-6 h-6 text-gray-600 mx-auto mb-2" />
+              <span className="text-sm font-medium text-gray-700">Adverse Events</span>
+            </button>
+            <button className="p-3 text-center border border-gray-200 rounded-lg hover:bg-gray-50">
+              <Activity className="w-6 h-6 text-gray-600 mx-auto mb-2" />
+              <span className="text-sm font-medium text-gray-700">Vitals</span>
+            </button>
+          </div>
+          <div className="space-y-4">
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <h4 className="font-semibold text-gray-900 mb-2">Current Medications</h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                  <div>
+                    <p className="font-medium">Metformin 500mg</p>
+                    <p className="text-sm text-gray-600">Twice daily with meals</p>
+                  </div>
+                  <span className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">Active</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                  <div>
+                    <p className="font-medium">Atorvastatin 20mg</p>
+                    <p className="text-sm text-gray-600">Once daily at bedtime</p>
+                  </div>
+                  <span className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">Active</span>
+                </div>
+              </div>
+            </div>
+            <div className="p-4 bg-teal-50 rounded-lg">
+              <div className="flex items-center space-x-2 mb-2">
+                <Brain className="w-5 h-5 text-teal-600" />
+                <h4 className="font-semibold text-gray-900">AI Summary</h4>
+              </div>
+              <p className="text-sm text-gray-700">Adherence Score: 92% | Risk Level: Low | Next refill due in 5 days</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderPrescriptions = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900">Prescription Management</h2>
+        <button className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors flex items-center space-x-2">
+          <Plus className="w-4 h-4" />
+          <span>Add New Prescription</span>
+        </button>
+      </div>
+      
+      <div className="bg-white rounded-xl shadow-lg border border-gray-100">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center space-x-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search prescriptions..."
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+            </div>
+            <button className="p-2 text-gray-400 hover:text-gray-600">
+              <Filter className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="space-y-4">
+            {[
+              { 
+                patient: 'John Doe', 
+                doctor: 'Dr. Smith', 
+                medication: 'Metformin 500mg', 
+                dosage: 'Twice daily', 
+                status: 'Active',
+                date: '2024-01-15'
+              },
+              { 
+                patient: 'Sarah Wilson', 
+                doctor: 'Dr. Johnson', 
+                medication: 'Lisinopril 10mg', 
+                dosage: 'Once daily', 
+                status: 'Refill Due',
+                date: '2024-01-10'
+              }
+            ].map((prescription, index) => (
+              <motion.div
+                key={index}
+                className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
+                      <Pill className="w-6 h-6 text-teal-600" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900">{prescription.medication}</p>
+                      <p className="text-sm text-gray-600">{prescription.patient} • {prescription.doctor}</p>
+                      <p className="text-xs text-gray-500">{prescription.dosage} • {prescription.date}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <span className={`px-3 py-1 text-xs rounded-full ${
+                      prescription.status === 'Active' 
+                        ? 'bg-green-100 text-green-700' 
+                        : 'bg-orange-100 text-orange-700'
+                    }`}>
+                      {prescription.status}
+                    </span>
+                    <div className="flex space-x-2">
+                      <button className="p-2 text-gray-400 hover:text-blue-600">
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button className="p-2 text-gray-400 hover:text-green-600">
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button className="p-2 text-gray-400 hover:text-teal-600">
+                        <CheckCircle className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderDrugInteractionChecker = () => {
+    const [drugs, setDrugs] = useState(['']);
+    const [interactions, setInteractions] = useState<Array<{
+      drugs: string[];
+      severity: string;
+      description: string;
+      recommendation: string;
+    }>>([]);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+    const addDrugInput = () => {
+      if (drugs.length < 10) {
+        setDrugs([...drugs, '']);
+      }
+    };
+
+    const updateDrug = (index: number, value: string) => {
+      const newDrugs = [...drugs];
+      newDrugs[index] = value;
+      setDrugs(newDrugs);
+    };
+
+    const removeDrug = (index: number) => {
+      if (drugs.length > 1) {
+        const newDrugs = drugs.filter((_, i) => i !== index);
+        setDrugs(newDrugs);
+      }
+    };
+
+    const checkInteractions = () => {
+      setIsAnalyzing(true);
+      // Simulate AI analysis
+      setTimeout(() => {
+        setInteractions([
+          {
+            drugs: ['Warfarin', 'Aspirin'],
+            severity: 'Severe',
+            description: 'Increased bleeding risk due to additive anticoagulant effects',
+            recommendation: 'Monitor INR closely and consider alternative pain management'
+          },
+          {
+            drugs: ['Metformin', 'Alcohol'],
+            severity: 'Moderate',
+            description: 'Increased risk of lactic acidosis and hypoglycemia',
+            recommendation: 'Advise patient to limit alcohol consumption and monitor blood glucose'
+          }
+        ]);
+        setIsAnalyzing(false);
+      }, 2000);
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-gray-900">AI Drug Interaction Checker</h2>
+          <div className="flex items-center space-x-2">
+            <Brain className="w-6 h-6 text-teal-600" />
+            <span className="text-sm text-gray-600">Powered by AI</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Input Section */}
+          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Medications</h3>
+            <div className="space-y-3">
+              {drugs.map((drug, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <input
+                    type="text"
+                    value={drug}
+                    onChange={(e) => updateDrug(index, e.target.value)}
+                    placeholder={`Medication ${index + 1}`}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  />
+                  {drugs.length > 1 && (
+                    <button
+                      onClick={() => removeDrug(index)}
+                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <XIcon className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              ))}
+              {drugs.length < 10 && (
+                <button
+                  onClick={addDrugInput}
+                  className="w-full p-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-teal-500 hover:text-teal-600 transition-colors flex items-center justify-center space-x-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Another Medication</span>
+                </button>
+              )}
+            </div>
+            <button
+              onClick={checkInteractions}
+              disabled={isAnalyzing || drugs.every(d => !d.trim())}
+              className="w-full mt-6 bg-teal-600 text-white py-3 rounded-lg hover:bg-teal-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center space-x-2"
+            >
+              {isAnalyzing ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Analyzing...</span>
+                </>
+              ) : (
+                <>
+                  <Search className="w-4 h-4" />
+                  <span>Check Interactions</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* Results Section */}
+          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Interaction Results</h3>
+            {interactions.length === 0 ? (
+              <div className="text-center py-8">
+                <AlertTriangle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500">Enter medications to check for interactions</p>
+              </div>
+            ) : (
               <div className="space-y-4">
-                <div className="flex items-center space-x-4 p-3 bg-blue-50 rounded-lg">
-                  <Pill className="w-5 h-5 text-blue-500" />
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">New prescription for John Doe</p>
-                    <p className="text-sm text-gray-600">Metformin 500mg - 2 hours ago</p>
-                  </div>
-                  <span className="text-xs text-gray-500">2h ago</span>
-                </div>
-                <div className="flex items-center space-x-4 p-3 bg-green-50 rounded-lg">
-                  <Users className="w-5 h-5 text-green-500" />
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">Patient consultation completed</p>
-                    <p className="text-sm text-gray-600">Sarah Wilson - Diabetes management</p>
-                  </div>
-                  <span className="text-xs text-gray-500">4h ago</span>
-                </div>
-                <div className="flex items-center space-x-4 p-3 bg-orange-50 rounded-lg">
-                  <AlertTriangle className="w-5 h-5 text-orange-500" />
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">Drug interaction alert</p>
-                    <p className="text-sm text-gray-600">Warfarin + Aspirin interaction detected</p>
-                  </div>
-                  <span className="text-xs text-gray-500">6h ago</span>
-                </div>
+                {interactions.map((interaction, index) => (
+                  <motion.div
+                    key={index}
+                    className={`p-4 rounded-lg border ${
+                      interaction.severity === 'Severe' 
+                        ? 'bg-red-50 border-red-200' 
+                        : interaction.severity === 'Moderate'
+                        ? 'bg-yellow-50 border-yellow-200'
+                        : 'bg-green-50 border-green-200'
+                    }`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                  >
+                    <div className="flex items-start space-x-3">
+                      <AlertTriangle className={`w-5 h-5 mt-0.5 ${
+                        interaction.severity === 'Severe' 
+                          ? 'text-red-500' 
+                          : interaction.severity === 'Moderate'
+                          ? 'text-yellow-500'
+                          : 'text-green-500'
+                      }`} />
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <h4 className="font-semibold text-gray-900">
+                            {interaction.drugs.join(' + ')}
+                          </h4>
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            interaction.severity === 'Severe' 
+                              ? 'bg-red-100 text-red-700' 
+                              : interaction.severity === 'Moderate'
+                              ? 'bg-yellow-100 text-yellow-700'
+                              : 'bg-green-100 text-green-700'
+                          }`}>
+                            {interaction.severity}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-700 mb-2">{interaction.description}</p>
+                        <div className="p-3 bg-white rounded-lg border">
+                          <p className="text-sm font-medium text-gray-900 mb-1">Recommendation:</p>
+                          <p className="text-sm text-gray-700">{interaction.recommendation}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
+            )}
+          </div>
+        </div>
+
+        {/* AI Voice Assistant */}
+        <motion.div
+          className="bg-gradient-to-r from-teal-50 to-blue-50 border border-teal-200 rounded-xl p-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="flex items-center space-x-3">
+            <Volume2 className="w-6 h-6 text-teal-600" />
+            <div>
+              <p className="font-semibold text-gray-900">AI Voice Assistant</p>
+              <p className="text-sm text-gray-700">
+                "Interaction found between warfarin and aspirin — risk of bleeding increased."
+              </p>
+            </div>
+            <button className="ml-auto p-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors">
+              <Volume2 className="w-4 h-4" />
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  };
+
+  const renderInventory = () => {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterCategory, setFilterCategory] = useState('all');
+    const [stockData] = useState([
+      { name: 'Amoxicillin 500mg', category: 'Antibiotic', stock: 18, status: 'critical', expiry: '2024-12-15' },
+      { name: 'Ibuprofen 400mg', category: 'Analgesic', stock: 35, status: 'low', expiry: '2025-06-20' },
+      { name: 'Metformin 500mg', category: 'Antidiabetic', stock: 150, status: 'good', expiry: '2025-08-10' },
+      { name: 'Atorvastatin 20mg', category: 'Cardiovascular', stock: 89, status: 'good', expiry: '2025-09-15' },
+      { name: 'Paracetamol 500mg', category: 'Analgesic', stock: 12, status: 'critical', expiry: '2024-11-30' }
+    ]);
+
+    const filteredStock = stockData.filter(item => {
+      const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = filterCategory === 'all' || item.category === filterCategory;
+      return matchesSearch && matchesCategory;
+    });
+
+    const getStatusColor = (status: string) => {
+      switch (status) {
+        case 'critical': return 'text-red-600 bg-red-100';
+        case 'low': return 'text-yellow-600 bg-yellow-100';
+        case 'good': return 'text-green-600 bg-green-100';
+        default: return 'text-gray-600 bg-gray-100';
+      }
+    };
+
+    const getStatusIcon = (status: string) => {
+      switch (status) {
+        case 'critical': return '🔴';
+        case 'low': return '🟠';
+        case 'good': return '🟢';
+        default: return '⚪';
+      }
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-gray-900">Inventory & Stock Management</h2>
+          <div className="flex items-center space-x-3">
+            <button className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors flex items-center space-x-2">
+              <Plus className="w-4 h-4" />
+              <span>Add New Batch</span>
+            </button>
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+              <Download className="w-4 h-4" />
+              <span>Export Report</span>
+            </button>
+          </div>
+        </div>
+
+        {/* AI Predictive Module */}
+        <motion.div
+          className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-xl p-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="flex items-center space-x-3">
+            <Brain className="w-6 h-6 text-orange-600" />
+            <div>
+              <p className="font-semibold text-gray-900">AI Predictive Module</p>
+              <p className="text-sm text-gray-700">Next shortage forecast: Paracetamol in 12 days</p>
             </div>
           </div>
-        );
+        </motion.div>
 
-      case 'prescriptions':
-        return (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-900">Prescription Management</h2>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                <Plus className="w-4 h-4 inline mr-2" />
-                New Prescription
+        {/* Search and Filters */}
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search medications..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+            <div className="flex space-x-3">
+              <select
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              >
+                <option value="all">All Categories</option>
+                <option value="Antibiotic">Antibiotic</option>
+                <option value="Analgesic">Analgesic</option>
+                <option value="Antidiabetic">Antidiabetic</option>
+                <option value="Cardiovascular">Cardiovascular</option>
+              </select>
+              <button className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors flex items-center space-x-2">
+                <Filter className="w-4 h-4" />
+                <span>Filter</span>
               </button>
             </div>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Pending Prescriptions</h3>
-                <div className="space-y-3">
-                  <div className="p-3 border border-gray-200 rounded-lg">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-medium text-gray-900">Dr. Smith - Patient: John Doe</p>
-                        <p className="text-sm text-gray-600">Lisinopril 10mg, 30 tablets</p>
-                        <p className="text-xs text-gray-500">Prescribed: 2 hours ago</p>
-                      </div>
-                      <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Pending</span>
-                    </div>
-                  </div>
-                  <div className="p-3 border border-gray-200 rounded-lg">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-medium text-gray-900">Dr. Johnson - Patient: Jane Smith</p>
-                        <p className="text-sm text-gray-600">Metformin 500mg, 60 tablets</p>
-                        <p className="text-xs text-gray-500">Prescribed: 4 hours ago</p>
-                      </div>
-                      <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Pending</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          </div>
+        </div>
 
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Fills</h3>
-                <div className="space-y-3">
-                  <div className="p-3 border border-gray-200 rounded-lg">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-medium text-gray-900">Atorvastatin 20mg</p>
-                        <p className="text-sm text-gray-600">Patient: Robert Brown</p>
-                        <p className="text-xs text-gray-500">Filled: 1 hour ago</p>
-                      </div>
-                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Completed</span>
-                    </div>
-                  </div>
-                  <div className="p-3 border border-gray-200 rounded-lg">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-medium text-gray-900">Omeprazole 20mg</p>
-                        <p className="text-sm text-gray-600">Patient: Lisa Davis</p>
-                        <p className="text-xs text-gray-500">Filled: 3 hours ago</p>
-                      </div>
-                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Completed</span>
-                    </div>
-                  </div>
-                </div>
+        {/* Stock Status Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <motion.div
+            className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Critical Stock</p>
+                <p className="text-3xl font-bold text-red-600">2</p>
+              </div>
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
               </div>
             </div>
-          </div>
-        );
+          </motion.div>
 
+          <motion.div
+            className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Low Stock</p>
+                <p className="text-3xl font-bold text-yellow-600">1</p>
+              </div>
+              <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                <Clock className="w-6 h-6 text-yellow-600" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Good Stock</p>
+                <p className="text-3xl font-bold text-green-600">2</p>
+              </div>
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Stock Table */}
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100">
+          <div className="p-6 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">Current Stock</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Medication</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiry</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredStock.map((item, index) => (
+                  <motion.tr
+                    key={item.name}
+                    className="hover:bg-gray-50"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center mr-3">
+                          <Pill className="w-5 h-5 text-teal-600" />
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{item.name}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">{item.category}</span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.stock} units</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 text-xs rounded-full flex items-center space-x-1 ${getStatusColor(item.status)}`}>
+                        <span>{getStatusIcon(item.status)}</span>
+                        <span className="capitalize">{item.status}</span>
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.expiry}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex space-x-2">
+                        <button className="text-teal-600 hover:text-teal-900">Reorder</button>
+                        <button className="text-blue-600 hover:text-blue-900">Edit</button>
+                      </div>
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return renderOverview();
       case 'patients':
-        return (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-900">Patient Management</h2>
-              <div className="flex space-x-3">
-                <button className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
-                  <Search className="w-4 h-4 inline mr-2" />
-                  Search Patients
-                </button>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                  <Plus className="w-4 h-4 inline mr-2" />
-                  Add Patient
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Patient List</h3>
-                <div className="space-y-3">
-                  <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                          <User className="w-5 h-5 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900">John Doe</p>
-                          <p className="text-sm text-gray-600">DOB: 1985-03-15 | ID: #12345</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium text-gray-900">3 Active Rx</p>
-                        <p className="text-xs text-gray-500">Last visit: 2 days ago</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                          <User className="w-5 h-5 text-green-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900">Jane Smith</p>
-                          <p className="text-sm text-gray-600">DOB: 1990-07-22 | ID: #12346</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium text-gray-900">1 Active Rx</p>
-                        <p className="text-xs text-gray-500">Last visit: 1 week ago</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-                <div className="space-y-3">
-                  <button className="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className="flex items-center space-x-3">
-                      <Stethoscope className="w-5 h-5 text-blue-500" />
-                      <span className="font-medium text-gray-900">Patient Consultation</span>
-                    </div>
-                  </button>
-                  <button className="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className="flex items-center space-x-3">
-                      <ClipboardList className="w-5 h-5 text-green-500" />
-                      <span className="font-medium text-gray-900">Medication Review</span>
-                    </div>
-                  </button>
-                  <button className="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className="flex items-center space-x-3">
-                      <TestTube className="w-5 h-5 text-purple-500" />
-                      <span className="font-medium text-gray-900">Lab Results</span>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'inventory':
-        return (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-900">Inventory Management</h2>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                <Plus className="w-4 h-4 inline mr-2" />
-                Add Medication
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Low Stock Alert</h3>
-                <div className="space-y-3">
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="font-medium text-gray-900">Metformin 500mg</p>
-                        <p className="text-sm text-gray-600">Current stock: 15 units</p>
-                      </div>
-                      <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Low Stock</span>
-                    </div>
-                  </div>
-                  <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="font-medium text-gray-900">Lisinopril 10mg</p>
-                        <p className="text-sm text-gray-600">Current stock: 25 units</p>
-                      </div>
-                      <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Warning</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Medications</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center p-3 border border-gray-200 rounded-lg">
-                    <div>
-                      <p className="font-medium text-gray-900">Atorvastatin 20mg</p>
-                      <p className="text-sm text-gray-600">Stock: 150 units</p>
-                    </div>
-                    <span className="text-green-600 font-semibold">Good</span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 border border-gray-200 rounded-lg">
-                    <div>
-                      <p className="font-medium text-gray-900">Omeprazole 20mg</p>
-                      <p className="text-sm text-gray-600">Stock: 120 units</p>
-                    </div>
-                    <span className="text-green-600 font-semibold">Good</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
+        return renderPatients();
+      case 'prescriptions':
+        return renderPrescriptions();
       case 'interactions':
-        return (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-900">Drug Interaction Checker</h2>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                <Search className="w-4 h-4 inline mr-2" />
-                Check Interactions
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Alerts</h3>
-                <div className="space-y-3">
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <div className="flex items-start space-x-3">
-                      <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5" />
-                      <div>
-                        <p className="font-medium text-gray-900">Severe Interaction</p>
-                        <p className="text-sm text-gray-600">Warfarin + Aspirin</p>
-                        <p className="text-xs text-gray-500">Increased bleeding risk</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <div className="flex items-start space-x-3">
-                      <AlertTriangle className="w-5 h-5 text-yellow-500 mt-0.5" />
-                      <div>
-                        <p className="font-medium text-gray-900">Moderate Interaction</p>
-                        <p className="text-sm text-gray-600">Metformin + Alcohol</p>
-                        <p className="text-xs text-gray-500">Increased hypoglycemia risk</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Check</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Medication 1</label>
-                    <input
-                      type="text"
-                      placeholder="Enter medication name"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Medication 2</label>
-                    <input
-                      type="text"
-                      placeholder="Enter medication name"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                  <button className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                    Check Interactions
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'tools':
-        return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900">Pharmacy Tools</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <motion.div
-                className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 cursor-pointer"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Calculator className="w-8 h-8 text-blue-500 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Dose Calculator</h3>
-                <p className="text-gray-600 text-sm">Calculate accurate medication dosages based on patient weight, age, and condition.</p>
-              </motion.div>
-
-              <motion.div
-                className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 cursor-pointer"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <BookOpen className="w-8 h-8 text-green-500 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Drug Information</h3>
-                <p className="text-gray-600 text-sm">Access comprehensive drug information, side effects, and contraindications.</p>
-              </motion.div>
-
-              <motion.div
-                className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 cursor-pointer"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <FileText className="w-8 h-8 text-purple-500 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Prescription Generator</h3>
-                <p className="text-gray-600 text-sm">Generate professional prescriptions with proper formatting and dosage instructions.</p>
-              </motion.div>
-
-              <motion.div
-                className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 cursor-pointer"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Award className="w-8 h-8 text-orange-500 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Continuing Education</h3>
-                <p className="text-gray-600 text-sm">Access pharmacy continuing education courses and certification programs.</p>
-              </motion.div>
-
-              <motion.div
-                className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 cursor-pointer"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Target className="w-8 h-8 text-red-500 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Therapeutic Monitoring</h3>
-                <p className="text-gray-600 text-sm">Monitor therapeutic drug levels and adjust dosages for optimal patient outcomes.</p>
-              </motion.div>
-
-              <motion.div
-                className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 cursor-pointer"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Zap className="w-8 h-8 text-yellow-500 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Quick Reference</h3>
-                <p className="text-gray-600 text-sm">Fast access to common drug interactions, dosing guidelines, and clinical protocols.</p>
-              </motion.div>
-            </div>
-          </div>
-        );
-
+        return renderDrugInteractionChecker();
+      case 'inventory':
+        return renderInventory();
       default:
         return (
           <div className="text-center py-12">
-            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-gray-600">Loading feature...</p>
+            <div className="w-16 h-16 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-gray-600">Loading {activeTab}...</p>
           </div>
         );
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {/* Cinematic Hero Header */}
+    <div className="min-h-screen bg-gray-50">
+      {/* Top Navigation Bar */}
       <motion.header
-        className="relative bg-gradient-to-br from-blue-600 via-indigo-500 to-purple-500 text-white rounded-xl mx-4 mt-4 p-8 overflow-hidden"
-        initial={{ opacity: 0, y: 20 }}
+        className="bg-gradient-to-r from-teal-600 to-blue-600 text-white shadow-lg"
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.6 }}
       >
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-32 h-32 bg-white rounded-full -translate-x-16 -translate-y-16" />
-          <div className="absolute bottom-0 right-0 w-24 h-24 bg-white rounded-full translate-x-12 translate-y-12" />
-          <div className="absolute top-1/2 left-1/2 w-16 h-16 bg-white rounded-full -translate-x-8 -translate-y-8" />
-        </div>
-
-        <div className="relative z-10">
-          <div className="flex items-center justify-between">
-            <div>
-              <motion.h1
-                className="text-4xl font-bold mb-2"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
               >
-                Pharmacist Dashboard
-              </motion.h1>
-              <motion.p
-                className="text-xl text-blue-100 mb-4"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-              >
-                Professional pharmacy management and patient care
-              </motion.p>
-              <motion.div
-                className="flex items-center space-x-4"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-              >
-                <div className="flex items-center space-x-2">
-                  <Shield className="w-5 h-5" />
-                  <span className="text-sm">HIPAA Compliant</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Activity className="w-5 h-5" />
-                  <span className="text-sm">Real-time Updates</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Heart className="w-5 h-5" />
-                  <span className="text-sm">Patient-Centered</span>
-                </div>
-              </motion.div>
+                <Menu className="w-5 h-5" />
+              </button>
+              <h1 className="text-xl font-bold">Zuruu Pharmaceutics</h1>
             </div>
-            <motion.div
-              className="hidden lg:block"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-            >
-              <div className="w-32 h-32 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                <Pill className="w-16 h-16 text-white" />
+
+            {/* Search Bar */}
+            <div className="flex-1 max-w-md mx-8">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search patient, drug, or report..."
+                  className="w-full pl-10 pr-12 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/70 focus:ring-2 focus:ring-white/30 focus:border-transparent"
+                />
+                <button
+                  onClick={toggleVoiceInput}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-white/10 rounded transition-colors"
+                >
+                  {isListening ? (
+                    <MicOff className="w-4 h-4 text-red-300" />
+                  ) : (
+                    <Mic className="w-4 h-4 text-white/70" />
+                  )}
+                </button>
               </div>
-            </motion.div>
+            </div>
+
+            {/* Right Side */}
+            <div className="flex items-center space-x-4">
+              <button className="relative p-2 hover:bg-white/10 rounded-lg transition-colors">
+                <Bell className="w-5 h-5" />
+                {notifications.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                )}
+              </button>
+              <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                <MessageSquare className="w-5 h-5" />
+              </button>
+              <div className="relative">
+                <button className="flex items-center space-x-2 p-2 hover:bg-white/10 rounded-lg transition-colors">
+                  <User className="w-5 h-5" />
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </motion.header>
 
-      {/* Navigation Tabs */}
-      <motion.div
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.4 }}
-      >
-        <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-          <div className="flex flex-wrap">
-            {[
-              { id: 'overview', label: 'Overview', icon: BarChart3 },
-              { id: 'prescriptions', label: 'Prescriptions', icon: FileText },
-              { id: 'patients', label: 'Patients', icon: Users },
-              { id: 'inventory', label: 'Inventory', icon: Pill },
-              { id: 'interactions', label: 'Interactions', icon: AlertTriangle },
-              { id: 'tools', label: 'Tools', icon: Settings }
-            ].map((tab) => (
-              <motion.button
-                key={tab.id}
-                onClick={() => handleFeatureClick(tab.id)}
-                className={`flex-1 min-w-0 px-4 py-4 text-center transition-all duration-200 ${
-                  activeFeature === tab.id
-                    ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <tab.icon className="w-5 h-5 mx-auto mb-2" />
-                <span className="text-sm font-medium block truncate">{tab.label}</span>
-              </motion.button>
-            ))}
+      <div className="flex">
+        {/* Left Sidebar */}
+        <motion.aside
+          className={`bg-white shadow-lg transition-all duration-300 ${
+            sidebarCollapsed ? 'w-16' : 'w-64'
+          }`}
+          initial={{ x: -300 }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="p-4">
+            <div className="space-y-2">
+              {navigationItems.map((item) => (
+                <motion.button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-all duration-200 ${
+                    activeTab === item.id
+                      ? 'bg-teal-50 text-teal-600 border-l-4 border-teal-600'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <item.icon className="w-5 h-5 flex-shrink-0" />
+                  {!sidebarCollapsed && (
+                    <span className="font-medium">{item.label}</span>
+                  )}
+                </motion.button>
+              ))}
+            </div>
+          </div>
+        </motion.aside>
+
+        {/* Main Content */}
+        <main className="flex-1 p-6">
+          {/* Welcome Header */}
+          <motion.div
+            className="mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Welcome back, Dr. Smith 👋
+                </h2>
+                <p className="text-gray-600">
+                  {currentTime.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-500">Current Time</p>
+                <p className="text-lg font-semibold text-gray-900">
+                  {currentTime.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                  })}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Content */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {renderContent()}
+            </motion.div>
+          </AnimatePresence>
+        </main>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-gray-200 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-gray-500">
+              © 2025 Zuruu Pharmaceutics — Empowering Pharmacists with AI
+            </p>
+            <p className="text-sm text-gray-500">v2.1.5</p>
           </div>
         </div>
-      </motion.div>
-
-      {/* Main Content */}
-      <motion.div
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.6 }}
-      >
-        {isLoading ? (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-gray-600">Loading {activeFeature}...</p>
-          </div>
-        ) : (
-          renderFeatureContent()
-        )}
-      </motion.div>
-
-      {/* Back to Home Button */}
-      <motion.div
-        className="fixed bottom-6 left-6"
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, delay: 1.0 }}
-      >
-        <button
-          onClick={handleBackToHome}
-          className="bg-white text-gray-700 px-4 py-2 rounded-lg shadow-lg border border-gray-200 hover:bg-gray-50 transition-colors flex items-center space-x-2"
-        >
-          <LogOut className="w-4 h-4" />
-          <span>Back to Home</span>
-        </button>
-      </motion.div>
+      </footer>
     </div>
   );
 }
