@@ -50,6 +50,8 @@ const navigationItems = [
   { id: 'analytics', label: 'Analytics / Reports', icon: BarChart3, shortcut: 'Alt+8' },
   { id: 'adr', label: 'ADR (Adverse Reaction)', icon: AlertTriangle, shortcut: 'Alt+9' },
   { id: 'controlled', label: 'Controlled Substances', icon: Shield, shortcut: 'Alt+0' },
+  { id: 'security', label: 'Security & Compliance', icon: Shield, shortcut: 'Ctrl+1' },
+  { id: 'testing', label: 'Testing & QA', icon: Activity, shortcut: 'Ctrl+2' },
   { id: 'settings', label: 'Settings', icon: Settings }
 ];
 

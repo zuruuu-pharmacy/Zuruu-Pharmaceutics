@@ -3,6 +3,12 @@
 import React, { useState } from 'react';
 import { GlobalNavigation } from '@/components/layout/global-navigation';
 import { OverviewDashboard } from '@/components/dashboard/overview-dashboard';
+import ProductList from '@/components/inventory/product-list';
+import PrescriptionWorkflow from '@/components/prescriptions/prescription-workflow';
+import PatientManagement from '@/components/patients/patient-management';
+import AnalyticsDashboard from '@/components/analytics/analytics-dashboard';
+import SecurityCompliance from '@/components/security/security-compliance';
+import QAFramework from '@/components/testing/qa-framework';
 
 export default function Dashboard() {
   const [activeSection, setActiveSection] = useState('overview');
@@ -12,19 +18,9 @@ export default function Dashboard() {
       case 'overview':
         return <OverviewDashboard />;
       case 'inventory':
-        return (
-          <div className="p-6">
-            <h1 className="text-h1">Products / Inventory</h1>
-            <p className="text-body mt-2">Inventory management system coming soon...</p>
-          </div>
-        );
+        return <ProductList />;
       case 'prescriptions':
-        return (
-          <div className="p-6">
-            <h1 className="text-h1">Prescriptions</h1>
-            <p className="text-body mt-2">Prescription management system coming soon...</p>
-          </div>
-        );
+        return <PrescriptionWorkflow />;
       case 'refills':
         return (
           <div className="p-6">
@@ -33,12 +29,7 @@ export default function Dashboard() {
           </div>
         );
       case 'patients':
-        return (
-          <div className="p-6">
-            <h1 className="text-h1">Patients</h1>
-            <p className="text-body mt-2">Patient management system coming soon...</p>
-          </div>
-        );
+        return <PatientManagement />;
       case 'suppliers':
         return (
           <div className="p-6">
@@ -54,12 +45,7 @@ export default function Dashboard() {
           </div>
         );
       case 'analytics':
-        return (
-          <div className="p-6">
-            <h1 className="text-h1">Analytics / Reports</h1>
-            <p className="text-body mt-2">Analytics dashboard coming soon...</p>
-          </div>
-        );
+        return <AnalyticsDashboard />;
       case 'adr':
         return (
           <div className="p-6">
@@ -81,6 +67,10 @@ export default function Dashboard() {
             <p className="text-body mt-2">Settings panel coming soon...</p>
           </div>
         );
+      case 'security':
+        return <SecurityCompliance />;
+      case 'testing':
+        return <QAFramework />;
       default:
         return <OverviewDashboard />;
     }
