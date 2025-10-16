@@ -42,16 +42,17 @@ interface GlobalNavigationProps {
 const navigationItems = [
   { id: 'overview', label: 'Overview', icon: Home, shortcut: 'Alt+1' },
   { id: 'inventory', label: 'Products / Inventory', icon: Package, shortcut: 'Alt+2' },
-  { id: 'prescriptions', label: 'Prescriptions', icon: FileText, shortcut: 'Alt+3' },
-  { id: 'refills', label: 'Refill Queue', icon: RefreshCw, shortcut: 'Alt+4' },
-  { id: 'patients', label: 'Patients', icon: Users, shortcut: 'Alt+5' },
-  { id: 'suppliers', label: 'Suppliers', icon: Truck, shortcut: 'Alt+6' },
-  { id: 'sales', label: 'Sales / Revenue', icon: TrendingUp, shortcut: 'Alt+7' },
-  { id: 'analytics', label: 'Analytics / Reports', icon: BarChart3, shortcut: 'Alt+8' },
-  { id: 'adr', label: 'ADR (Adverse Reaction)', icon: AlertTriangle, shortcut: 'Alt+9' },
-  { id: 'controlled', label: 'Controlled Substances', icon: Shield, shortcut: 'Alt+0' },
-  { id: 'security', label: 'Security & Compliance', icon: Shield, shortcut: 'Ctrl+1' },
-  { id: 'testing', label: 'Testing & QA', icon: Activity, shortcut: 'Ctrl+2' },
+  { id: 'expiry', label: 'Expiry Management', icon: Clock, shortcut: 'Alt+3' },
+  { id: 'prescriptions', label: 'Prescriptions', icon: FileText, shortcut: 'Alt+4' },
+  { id: 'refills', label: 'Refill Queue', icon: RefreshCw, shortcut: 'Alt+5' },
+  { id: 'patients', label: 'Patients', icon: Users, shortcut: 'Alt+6' },
+  { id: 'suppliers', label: 'Suppliers', icon: Truck, shortcut: 'Alt+7' },
+  { id: 'sales', label: 'Sales / Revenue', icon: TrendingUp, shortcut: 'Alt+8' },
+  { id: 'analytics', label: 'Analytics / Reports', icon: BarChart3, shortcut: 'Alt+9' },
+  { id: 'adr', label: 'ADR (Adverse Reaction)', icon: AlertTriangle, shortcut: 'Alt+0' },
+  { id: 'controlled', label: 'Controlled Substances', icon: Shield, shortcut: 'Ctrl+1' },
+  { id: 'security', label: 'Security & Compliance', icon: Shield, shortcut: 'Ctrl+2' },
+  { id: 'testing', label: 'Testing & QA', icon: Activity, shortcut: 'Ctrl+3' },
   { id: 'settings', label: 'Settings', icon: Settings }
 ];
 

@@ -252,6 +252,10 @@ const ProductList: React.FC = () => {
             <Upload className="w-4 h-4 mr-2" />
             Import
           </Button>
+          <Button variant="outline" size="sm">
+            <AlertTriangle className="w-4 h-4 mr-2" />
+            Expiry Management
+          </Button>
           <Button size="sm">
             <Plus className="w-4 h-4 mr-2" />
             Add Product

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { GlobalNavigation } from '@/components/layout/global-navigation';
 import { OverviewDashboard } from '@/components/dashboard/overview-dashboard';
 import ProductList from '@/components/inventory/product-list';
+import ExpiryManagement from '@/components/inventory/expiry-management';
 import PrescriptionWorkflow from '@/components/prescriptions/prescription-workflow';
 import PatientManagement from '@/components/patients/patient-management';
 import AnalyticsDashboard from '@/components/analytics/analytics-dashboard';
@@ -19,6 +20,8 @@ export default function Dashboard() {
         return <OverviewDashboard />;
       case 'inventory':
         return <ProductList />;
+      case 'expiry':
+        return <ExpiryManagement />;
       case 'prescriptions':
         return <PrescriptionWorkflow />;
       case 'refills':
