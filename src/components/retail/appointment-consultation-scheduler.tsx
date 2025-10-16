@@ -11,7 +11,7 @@ import {
   Phone,
   Mail,
   Plus,
-  Sync,
+  RefreshCw,
   ChevronRight,
   ChevronLeft,
   ChevronDown,
@@ -52,7 +52,6 @@ import {
   ArrowUp,
   ArrowDown,
   RotateCcw,
-  RefreshCw,
   Bookmark,
   BookmarkCheck,
   ThumbsUp,
@@ -81,7 +80,6 @@ import {
   Smartphone,
   Tablet,
   Laptop,
-  Desktop,
   Wifi,
   WifiOff,
   Battery,
@@ -377,7 +375,7 @@ export default function AppointmentConsultationScheduler() {
         </Button>
         
         <Button variant="outline">
-          <Sync className="w-4 h-4 mr-2" />
+          <RefreshCw className="w-4 h-4 mr-2" />
           Sync Calendar
         </Button>
       </div>

@@ -16,7 +16,7 @@ import {
   AlertCircle,
   Info,
   Settings,
-  Sync,
+  RefreshCw,
   LogIn,
   Calendar,
   BarChart3,
@@ -41,7 +41,6 @@ import {
   Play,
   Pause,
   RotateCcw,
-  RefreshCw,
   Eye,
   EyeOff,
   Filter,
@@ -511,7 +510,7 @@ export default function LifestyleHealthGoalsTracker() {
             </div>
 
             <Button className="w-full bg-blue-600 hover:bg-blue-700">
-              <Sync className="w-4 h-4 mr-2" />
+              <RefreshCw className="w-4 h-4 mr-2" />
               Sync with Fitness Tracker
             </Button>
             <p className="text-xs text-gray-500 text-center">Last synced: 10:45 AM</p>
@@ -594,7 +593,7 @@ export default function LifestyleHealthGoalsTracker() {
             {/* Sleep Chart */}
             <div className="h-24">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={mockSleepData}>
+                <RechartsLineChart data={mockSleepData}>
                   <Line 
                     type="monotone" 
                     dataKey="hours" 
@@ -602,7 +601,7 @@ export default function LifestyleHealthGoalsTracker() {
                     strokeWidth={2}
                     dot={{ fill: '#8B5CF6', strokeWidth: 2, r: 3 }}
                   />
-                </LineChart>
+                </RechartsLineChart>
               </ResponsiveContainer>
             </div>
 

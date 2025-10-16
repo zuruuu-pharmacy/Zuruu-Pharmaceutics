@@ -69,7 +69,6 @@ import {
   Smartphone,
   Tablet,
   Laptop,
-  Desktop,
   Wifi,
   WifiOff,
   Battery,

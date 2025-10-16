@@ -71,7 +71,6 @@ import {
   Smartphone,
   Tablet,
   Laptop,
-  Desktop,
   Wifi,
   WifiOff,
   Battery,
@@ -270,7 +269,7 @@ const mockBillingRecords: BillingRecord[] = [
     providerName: 'City General Hospital',
     amount: 8500,
     paymentStatus: 'in-process',
-    claimStatus: 'under-review',
+    claimStatus: 'pending',
     category: 'hospital',
     breakdown: {
       doctorFees: 3000,

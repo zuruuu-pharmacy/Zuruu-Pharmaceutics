@@ -277,7 +277,7 @@ export default function AppointmentManagementPanel() {
           Book New
         </Button>
         
-        <Select value={filterStatus} onValueChange={setFilterStatus}>
+        <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as "all" | "completed" | "cancelled" | "upcoming")}>
           <SelectTrigger className="w-full sm:w-40">
             <SelectValue placeholder="Filter" />
           </SelectTrigger>

@@ -318,7 +318,7 @@ export default function PrescriptionManagementPanel() {
           Add New Prescription
         </Button>
         
-        <Select value={filterStatus} onValueChange={setFilterStatus}>
+        <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as "all" | "active" | "expired" | "refill-needed")}>
           <SelectTrigger className="w-full sm:w-32">
             <SelectValue placeholder="Filter" />
           </SelectTrigger>
@@ -330,7 +330,7 @@ export default function PrescriptionManagementPanel() {
           </SelectContent>
         </Select>
         
-        <Select value={sortBy} onValueChange={setSortBy}>
+        <Select value={sortBy} onValueChange={(value) => setSortBy(value as "date" | "doctor" | "medication-count")}>
           <SelectTrigger className="w-full sm:w-40">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>

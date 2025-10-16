@@ -64,6 +64,12 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { 
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
+import { 
   PieChart,
   Pie,
   Cell,
@@ -426,7 +432,7 @@ export default function AISymptomCheckerPanel() {
                   checked={lifestyle.sleepHours < 6}
                   onCheckedChange={(checked) => setLifestyle(prev => ({ ...prev, sleepHours: checked ? 5 : 8 }))}
                 />
-                <label htmlFor="sleep" className="text-sm text-gray-700">💤 Sleep < 6 hrs</label>
+                <label htmlFor="sleep" className="text-sm text-gray-700">💤 Sleep &lt; 6 hrs</label>
               </div>
               
               <div className="flex items-center space-x-2">

@@ -15,8 +15,10 @@ import {
   Lock,
   Unlock,
   Key,
+  Keyboard,
   User,
   Clock,
+  Timer,
   Wifi,
   WifiOff,
   Download,
@@ -53,7 +55,6 @@ import {
   Maximize,
   Minimize,
   Laptop,
-  Desktop,
   Battery,
   BatteryLow,
   Signal,
@@ -351,7 +352,7 @@ export default function AccessibilitySecurityResponsiveness() {
 
   const getDeviceIcon = (type: string) => {
     switch (type) {
-      case 'desktop': return <Desktop className="w-4 h-4" />;
+      case 'desktop': return <Monitor className="w-4 h-4" />;
       case 'tablet': return <Tablet className="w-4 h-4" />;
       case 'mobile': return <Smartphone className="w-4 h-4" />;
       default: return <Monitor className="w-4 h-4" />;
