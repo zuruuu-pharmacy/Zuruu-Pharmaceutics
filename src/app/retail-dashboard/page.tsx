@@ -43,7 +43,10 @@ import {
   ShoppingBag,
   Gift,
   Crown,
-  MessageSquare
+  MessageSquare,
+  Brain,
+  BookOpen,
+  Phone
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -74,6 +77,18 @@ import QualityAssurance from '@/components/retail/quality-assurance';
 import MultiLocationManagement from '@/components/retail/multi-location-management';
 import ThirdPartyIntegrations from '@/components/retail/third-party-integrations';
 import MobilePharmacyApp from '@/components/retail/mobile-pharmacy-app';
+import AIAnalyticsDashboard from '@/components/retail/ai-analytics-dashboard';
+import LabReportsPanel from '@/components/retail/lab-reports-panel';
+import AppointmentManagementPanel from '@/components/retail/appointment-management-panel';
+import PrescriptionManagementPanel from '@/components/retail/prescription-management-panel';
+import MedicationAdherenceAnalytics from '@/components/retail/medication-adherence-analytics';
+import AISymptomCheckerPanel from '@/components/retail/ai-symptom-checker-panel';
+import PatientEducationHub from '@/components/retail/patient-education-hub';
+import LifestyleHealthGoalsTracker from '@/components/retail/lifestyle-health-goals-tracker';
+import AppointmentConsultationScheduler from '@/components/retail/appointment-consultation-scheduler';
+import BillingInsurancePaymentManagement from '@/components/retail/billing-insurance-payment-management';
+import EmergencyContactSupportCenter from '@/components/retail/emergency-contact-support-center';
+import AccessibilitySecurityResponsiveness from '@/components/retail/accessibility-security-responsiveness';
 
 interface FeatureCard {
   id: string;
@@ -290,6 +305,114 @@ export default function RetailDashboard() {
       color: 'text-pink-500',
       status: 'active',
       component: MobilePharmacyApp
+    },
+    {
+      id: 'ai-analytics',
+      title: 'AI Analytics Dashboard',
+      description: 'AI-driven adherence tracking and behavioral insights',
+      icon: <Brain className="w-8 h-8" />,
+      color: 'text-teal-600',
+      status: 'active',
+      component: AIAnalyticsDashboard
+    },
+    {
+      id: 'lab-reports',
+      title: 'Lab Reports & Diagnostics',
+      description: 'View, analyze, and track diagnostic test results over time',
+      icon: <FileText className="w-8 h-8" />,
+      color: 'text-blue-600',
+      status: 'active',
+      component: LabReportsPanel
+    },
+    {
+      id: 'appointment-management',
+      title: 'Appointment Management',
+      description: 'Schedule, manage, and attend virtual consultations',
+      icon: <Calendar className="w-8 h-8" />,
+      color: 'text-teal-600',
+      status: 'active',
+      component: AppointmentManagementPanel
+    },
+    {
+      id: 'prescription-management',
+      title: 'Prescription Management',
+      description: 'Manage medications, refills, and prescription history',
+      icon: <Pill className="w-8 h-8" />,
+      color: 'text-purple-600',
+      status: 'active',
+      component: PrescriptionManagementPanel
+    },
+    {
+      id: 'adherence-analytics',
+      title: 'Adherence Analytics',
+      description: 'Track medication consistency and refill patterns with AI insights',
+      icon: <BarChart3 className="w-8 h-8" />,
+      color: 'text-teal-600',
+      status: 'active',
+      component: MedicationAdherenceAnalytics
+    },
+    {
+      id: 'symptom-checker',
+      title: 'AI Symptom Checker',
+      description: 'Get AI-powered health insights and risk assessment',
+      icon: <Brain className="w-8 h-8" />,
+      color: 'text-indigo-600',
+      status: 'active',
+      component: AISymptomCheckerPanel
+    },
+    {
+      id: 'education-hub',
+      title: 'Education Hub',
+      description: 'Learn about medications, conditions, and lifestyle management',
+      icon: <BookOpen className="w-8 h-8" />,
+      color: 'text-emerald-600',
+      status: 'active',
+      component: PatientEducationHub
+    },
+    {
+      id: 'lifestyle-tracker',
+      title: 'Lifestyle Tracker',
+      description: 'Track health goals, habits, and wellness metrics',
+      icon: <Target className="w-8 h-8" />,
+      color: 'text-cyan-600',
+      status: 'active',
+      component: LifestyleHealthGoalsTracker
+    },
+    {
+      id: 'appointment-scheduler',
+      title: 'Appointment Scheduler',
+      description: 'Book, manage, and track medical appointments and consultations',
+      icon: <Calendar className="w-8 h-8" />,
+      color: 'text-blue-600',
+      status: 'active',
+      component: AppointmentConsultationScheduler
+    },
+    {
+      id: 'billing-management',
+      title: 'Billing & Insurance',
+      description: 'Manage medical bills, insurance claims, and payment analytics',
+      icon: <CreditCard className="w-8 h-8" />,
+      color: 'text-green-600',
+      status: 'active',
+      component: BillingInsurancePaymentManagement
+    },
+    {
+      id: 'emergency-support',
+      title: 'Emergency & Support',
+      description: 'Access emergency services, contact healthcare providers, and get live support',
+      icon: <Phone className="w-8 h-8" />,
+      color: 'text-red-600',
+      status: 'active',
+      component: EmergencyContactSupportCenter
+    },
+    {
+      id: 'accessibility-security',
+      title: 'Accessibility & Security',
+      description: 'Manage accessibility settings, security preferences, and device optimization',
+      icon: <Settings className="w-8 h-8" />,
+      color: 'text-purple-600',
+      status: 'active',
+      component: AccessibilitySecurityResponsiveness
     }
   ], []);
 
@@ -791,6 +914,222 @@ export default function RetailDashboard() {
             </Button>
           </div>
           <MobilePharmacyApp />
+        </div>
+      );
+    }
+
+    if (activeFeature === 'ai-analytics') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              onClick={() => setActiveFeature('overview')}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Overview</span>
+            </Button>
+          </div>
+          <AIAnalyticsDashboard />
+        </div>
+      );
+    }
+
+    if (activeFeature === 'lab-reports') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              onClick={() => setActiveFeature('overview')}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Overview</span>
+            </Button>
+          </div>
+          <LabReportsPanel />
+        </div>
+      );
+    }
+
+    if (activeFeature === 'appointment-management') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              onClick={() => setActiveFeature('overview')}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Overview</span>
+            </Button>
+          </div>
+          <AppointmentManagementPanel />
+        </div>
+      );
+    }
+
+    if (activeFeature === 'prescription-management') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              onClick={() => setActiveFeature('overview')}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Overview</span>
+            </Button>
+          </div>
+          <PrescriptionManagementPanel />
+        </div>
+      );
+    }
+
+    if (activeFeature === 'adherence-analytics') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              onClick={() => setActiveFeature('overview')}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Overview</span>
+            </Button>
+          </div>
+          <MedicationAdherenceAnalytics />
+        </div>
+      );
+    }
+
+    if (activeFeature === 'symptom-checker') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              onClick={() => setActiveFeature('overview')}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Overview</span>
+            </Button>
+          </div>
+          <AISymptomCheckerPanel />
+        </div>
+      );
+    }
+
+    if (activeFeature === 'education-hub') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              onClick={() => setActiveFeature('overview')}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Overview</span>
+            </Button>
+          </div>
+          <PatientEducationHub />
+        </div>
+      );
+    }
+
+    if (activeFeature === 'lifestyle-tracker') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              onClick={() => setActiveFeature('overview')}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Overview</span>
+            </Button>
+          </div>
+          <LifestyleHealthGoalsTracker />
+        </div>
+      );
+    }
+
+    if (activeFeature === 'appointment-scheduler') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              onClick={() => setActiveFeature('overview')}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Overview</span>
+            </Button>
+          </div>
+          <AppointmentConsultationScheduler />
+        </div>
+      );
+    }
+
+    if (activeFeature === 'billing-management') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              onClick={() => setActiveFeature('overview')}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Overview</span>
+            </Button>
+          </div>
+          <BillingInsurancePaymentManagement />
+        </div>
+      );
+    }
+
+    if (activeFeature === 'emergency-support') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              onClick={() => setActiveFeature('overview')}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Overview</span>
+            </Button>
+          </div>
+          <EmergencyContactSupportCenter />
+        </div>
+      );
+    }
+
+    if (activeFeature === 'accessibility-security') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              onClick={() => setActiveFeature('overview')}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Overview</span>
+            </Button>
+          </div>
+          <AccessibilitySecurityResponsiveness />
         </div>
       );
     }
