@@ -244,6 +244,13 @@ export default function PatientDashboard() {
   const [isTyping, setIsTyping] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
 
+  // State for renderAIAnalytics
+  const [selectedTimeRange, setSelectedTimeRange] = useState('30days');
+  const [selectedMetric, setSelectedMetric] = useState('adherence');
+  const [showDetailedChart, setShowDetailedChart] = useState(false);
+  const [showAIRecommendations, setShowAIRecommendations] = useState(true);
+  const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
+
   // Mock notification data
   const notifications = [
     {
@@ -2700,6 +2707,519 @@ export default function PatientDashboard() {
     </div>
   );
 
+  const renderAIAnalytics = () => {
+
+    // Mock analytics data
+    const analyticsData = {
+      adherence: 87,
+      missedDoses: 3,
+      refillDelay: 1.2,
+      riskScore: 'moderate',
+      trends: {
+        adherence: '+5%',
+        missedDoses: '-2',
+        refillDelay: '-0.5',
+        riskScore: 'stable'
+      }
+    };
+
+    // Mock adherence data for charts
+    const adherenceData = [
+      { date: '2024-10-08', taken: 2, missed: 0, adherence: 100 },
+      { date: '2024-10-09', taken: 2, missed: 0, adherence: 100 },
+      { date: '2024-10-10', taken: 1, missed: 1, adherence: 50 },
+      { date: '2024-10-11', taken: 2, missed: 0, adherence: 100 },
+      { date: '2024-10-12', taken: 2, missed: 0, adherence: 100 },
+      { date: '2024-10-13', taken: 1, missed: 1, adherence: 50 },
+      { date: '2024-10-14', taken: 2, missed: 0, adherence: 100 }
+    ];
+
+    // Mock AI insights
+    const aiInsights = [
+      {
+        id: 1,
+        type: 'warning',
+        title: 'Weekend Adherence Drop',
+        message: 'Adherence has dropped 15% during weekends. Possible cause: irregular routine.',
+        confidence: 89,
+        action: 'Schedule Counseling'
+      },
+      {
+        id: 2,
+        type: 'prediction',
+        title: 'Refill Delay Predicted',
+        message: 'System predicts refill delay in next 5 days — send reminder?',
+        confidence: 76,
+        action: 'Send Refill Alert'
+      },
+      {
+        id: 3,
+        type: 'improvement',
+        title: 'Adherence Improving',
+        message: 'Your adherence improved 10% this week — great job!',
+        confidence: 95,
+        action: 'Generate Adherence Plan'
+      }
+    ];
+
+    // Mock refill intelligence data
+    const refillData = [
+      { date: '2024-09-15', status: 'on-time', medication: 'Metformin', delay: 0 },
+      { date: '2024-10-01', status: 'late', medication: 'Metformin', delay: 2 },
+      { date: '2024-10-15', status: 'on-time', medication: 'Amlodipine', delay: 0 }
+    ];
+
+    // Mock behavioral heatmap data
+    const heatmapData = [
+      { day: 'Mon', morning: 100, noon: 100, evening: 100, night: 0 },
+      { day: 'Tue', morning: 100, noon: 100, evening: 50, night: 0 },
+      { day: 'Wed', morning: 100, noon: 100, evening: 100, night: 0 },
+      { day: 'Thu', morning: 100, noon: 100, evening: 100, night: 0 },
+      { day: 'Fri', morning: 100, noon: 100, evening: 100, night: 0 },
+      { day: 'Sat', morning: 50, noon: 100, evening: 100, night: 0 },
+      { day: 'Sun', morning: 50, noon: 100, evening: 100, night: 0 }
+    ];
+
+    // Mock AI recommendations
+    const aiRecommendations = [
+      {
+        id: '1',
+        suggestion: 'Switch evening dose reminder to 8:30 PM — higher success likelihood',
+        confidence: 87,
+        reason: 'Based on your historical data, 8:30 PM has 15% higher adherence rate',
+        action: 'Apply'
+      },
+      {
+        id: '2',
+        suggestion: 'Suggest smaller packaging — user runs out early',
+        confidence: 72,
+        reason: 'You consistently refill 2-3 days before expected date',
+        action: 'Apply'
+      },
+      {
+        id: '3',
+        suggestion: 'Enable voice reminders for better consistency',
+        confidence: 65,
+        reason: 'Voice reminders have shown 20% improvement in similar cases',
+        action: 'Apply'
+      }
+    ];
+
+    const getRiskColor = (risk: string) => {
+      switch (risk) {
+        case 'low': return 'bg-green-100 text-green-800 border-green-200';
+        case 'moderate': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        case 'high': return 'bg-red-100 text-red-800 border-red-200';
+        default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      }
+    };
+
+    const getRiskIcon = (risk: string) => {
+      switch (risk) {
+        case 'low': return '🟢';
+        case 'moderate': return '🟡';
+        case 'high': return '🔴';
+        default: return '⚪';
+      }
+    };
+
+    const getHeatmapColor = (value: number) => {
+      if (value === 0) return 'bg-gray-200';
+      if (value === 50) return 'bg-yellow-300';
+      if (value === 100) return 'bg-teal-500';
+      return 'bg-gray-200';
+    };
+
+    return (
+      <div className="space-y-6">
+        {/* Header Summary Bar */}
+        <div className="bg-gradient-to-r from-teal-600 to-teal-500 rounded-lg p-6 text-white shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold">AI Analytics Dashboard</h2>
+            <div className="flex items-center space-x-3">
+              <select
+                value={selectedTimeRange}
+                onChange={(e) => setSelectedTimeRange(e.target.value)}
+                className="px-3 py-2 bg-white bg-opacity-20 text-white border border-white border-opacity-30 rounded-lg focus:ring-2 focus:ring-white focus:ring-opacity-50"
+              >
+                <option value="7days">7 Days</option>
+                <option value="30days">30 Days</option>
+                <option value="90days">90 Days</option>
+              </select>
+              <button
+                onClick={() => setShowAIRecommendations(!showAIRecommendations)}
+                className={`p-2 rounded-lg transition-colors ${
+                  showAIRecommendations ? 'bg-white bg-opacity-20' : 'bg-white bg-opacity-10'
+                }`}
+              >
+                <Brain className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <motion.div
+              className="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <Pill className="w-6 h-6" />
+                <span className="text-sm opacity-90">Adherence</span>
+              </div>
+              <div className="text-2xl font-bold">{analyticsData.adherence}%</div>
+              <div className="flex items-center text-sm">
+                <TrendingUp className="w-4 h-4 mr-1" />
+                <span>{analyticsData.trends.adherence} this week</span>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <AlertTriangle className="w-6 h-6" />
+                <span className="text-sm opacity-90">Missed Doses</span>
+              </div>
+              <div className="text-2xl font-bold">{analyticsData.missedDoses}</div>
+              <div className="flex items-center text-sm">
+                <TrendingDown className="w-4 h-4 mr-1" />
+                <span>{analyticsData.trends.missedDoses} in last 7 days</span>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <Clock className="w-6 h-6" />
+                <span className="text-sm opacity-90">Refill Delay</span>
+              </div>
+              <div className="text-2xl font-bold">{analyticsData.refillDelay} days</div>
+              <div className="flex items-center text-sm">
+                <TrendingDown className="w-4 h-4 mr-1" />
+                <span>{analyticsData.trends.refillDelay} avg improvement</span>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.3 }}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <Brain className="w-6 h-6" />
+                <span className="text-sm opacity-90">AI Risk Score</span>
+              </div>
+              <div className="text-2xl font-bold capitalize">{analyticsData.riskScore}</div>
+              <div className="flex items-center text-sm">
+                <span className="text-lg mr-1">{getRiskIcon(analyticsData.riskScore)}</span>
+                <span>{analyticsData.trends.riskScore}</span>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Interactive Charts Section */}
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-gray-900">Adherence Trends</h3>
+            <div className="flex items-center space-x-3">
+              <div className="flex space-x-1">
+                {[
+                  { id: 'adherence', label: 'Adherence', icon: TrendingUp },
+                  { id: 'missed', label: 'Missed Doses', icon: AlertTriangle },
+                  { id: 'refill', label: 'Refill Pattern', icon: Clock }
+                ].map((metric) => (
+                  <button
+                    key={metric.id}
+                    onClick={() => setSelectedMetric(metric.id)}
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      selectedMetric === metric.id
+                        ? 'bg-teal-100 text-teal-700'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`}
+                  >
+                    <metric.icon className="w-4 h-4" />
+                    <span>{metric.label}</span>
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => setShowDetailedChart(!showDetailedChart)}
+                className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                <Download className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Chart Placeholder */}
+          <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
+            <div className="text-center">
+              <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+              <p className="text-gray-500">Interactive Chart Visualization</p>
+              <p className="text-sm text-gray-400">Daily medication intake vs. missed doses</p>
+            </div>
+          </div>
+
+          {/* Chart Legend */}
+          <div className="flex items-center justify-center space-x-6">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-teal-500 rounded"></div>
+              <span className="text-sm text-gray-600">Taken Doses</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-red-500 rounded"></div>
+              <span className="text-sm text-gray-600">Missed Doses</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-gray-500 rounded"></div>
+              <span className="text-sm text-gray-600">Refill Delays</span>
+            </div>
+          </div>
+        </div>
+
+        {/* AI Prediction Panel */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center space-x-2 mb-4">
+              <Brain className="w-5 h-5 text-teal-600" />
+              <h3 className="text-lg font-semibold text-gray-900">AI Behavioral Insights</h3>
+            </div>
+            
+            <div className="space-y-4">
+              {aiInsights.map((insight) => (
+                <motion.div
+                  key={insight.id}
+                  className={`p-4 rounded-lg border ${
+                    insight.type === 'warning' ? 'bg-yellow-50 border-yellow-200' :
+                    insight.type === 'prediction' ? 'bg-blue-50 border-blue-200' :
+                    'bg-green-50 border-green-200'
+                  }`}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 mb-1">{insight.title}</h4>
+                      <p className="text-sm text-gray-700 mb-2">{insight.message}</p>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs text-gray-500">Confidence: {insight.confidence}%</span>
+                        <button className="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded hover:bg-teal-200 transition-colors">
+                          {insight.action}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Refill Intelligence Card */}
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center space-x-2 mb-4">
+              <Clock className="w-5 h-5 text-teal-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Refill Intelligence</h3>
+            </div>
+            
+            <div className="space-y-4">
+              {refillData.map((refill, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-lg">
+                      {refill.status === 'on-time' ? '💊' : refill.status === 'late' ? '⚠️' : '❌'}
+                    </span>
+                    <div>
+                      <p className="font-medium text-gray-900">{refill.medication}</p>
+                      <p className="text-sm text-gray-600">{refill.date}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-sm font-medium ${
+                      refill.delay === 0 ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {refill.delay === 0 ? 'On Time' : `${refill.delay} days late`}
+                    </p>
+                  </div>
+                </div>
+              ))}
+              
+              <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                <h4 className="font-semibold text-blue-900 mb-2">Smart Refill Insights</h4>
+                <p className="text-sm text-blue-800 mb-3">
+                  User delayed insulin refill twice in last month — potential adherence risk.
+                </p>
+                <div className="flex space-x-2">
+                  <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded text-sm hover:bg-blue-200 transition-colors">
+                    Activate Auto-Refill
+                  </button>
+                  <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200 transition-colors">
+                    Notify Pharmacist
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Behavioral Heatmap */}
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Adherence Heatmap (Last 7 Days)</h3>
+          
+          <div className="overflow-x-auto">
+            <div className="min-w-full">
+              {/* Header */}
+              <div className="grid grid-cols-8 gap-2 mb-2">
+                <div className="text-sm font-medium text-gray-600 text-center">Day</div>
+                <div className="text-sm font-medium text-gray-600 text-center">Morning</div>
+                <div className="text-sm font-medium text-gray-600 text-center">Noon</div>
+                <div className="text-sm font-medium text-gray-600 text-center">Evening</div>
+                <div className="text-sm font-medium text-gray-600 text-center">Night</div>
+                <div className="text-sm font-medium text-gray-600 text-center">Total</div>
+                <div className="text-sm font-medium text-gray-600 text-center">Status</div>
+                <div className="text-sm font-medium text-gray-600 text-center">Notes</div>
+              </div>
+              
+              {/* Heatmap Rows */}
+              {heatmapData.map((day, index) => {
+                const total = (day.morning + day.noon + day.evening + day.night) / 4;
+                return (
+                  <div key={index} className="grid grid-cols-8 gap-2 mb-1">
+                    <div className="text-sm font-medium text-gray-900 text-center py-2">{day.day}</div>
+                    <div className={`h-8 rounded ${getHeatmapColor(day.morning)} flex items-center justify-center`}>
+                      <span className="text-xs text-white font-medium">{day.morning}%</span>
+                    </div>
+                    <div className={`h-8 rounded ${getHeatmapColor(day.noon)} flex items-center justify-center`}>
+                      <span className="text-xs text-white font-medium">{day.noon}%</span>
+                    </div>
+                    <div className={`h-8 rounded ${getHeatmapColor(day.evening)} flex items-center justify-center`}>
+                      <span className="text-xs text-white font-medium">{day.evening}%</span>
+                    </div>
+                    <div className={`h-8 rounded ${getHeatmapColor(day.night)} flex items-center justify-center`}>
+                      <span className="text-xs text-white font-medium">{day.night}%</span>
+                    </div>
+                    <div className="text-sm text-gray-600 text-center py-2">{total}%</div>
+                    <div className="text-sm text-center py-2">
+                      <span className={`px-2 py-1 rounded text-xs ${
+                        total >= 90 ? 'bg-green-100 text-green-800' :
+                        total >= 70 ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {total >= 90 ? 'Excellent' : total >= 70 ? 'Good' : 'Needs Improvement'}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-500 text-center py-2">
+                      {day.morning < 100 ? 'Morning issues' : 'Consistent'}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          
+          {/* Heatmap Legend */}
+          <div className="mt-4 flex items-center justify-center space-x-6">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-teal-500 rounded"></div>
+              <span className="text-sm text-gray-600">100% Adherence</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-yellow-300 rounded"></div>
+              <span className="text-sm text-gray-600">50% Adherence</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-gray-200 rounded"></div>
+              <span className="text-sm text-gray-600">0% Adherence</span>
+            </div>
+          </div>
+        </div>
+
+        {/* AI Recommendation Engine */}
+        {showAIRecommendations && (
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+            <div className="flex items-center space-x-2 mb-4">
+              <Brain className="w-5 h-5 text-blue-600" />
+              <h3 className="text-lg font-semibold text-gray-900">AI Recommendations</h3>
+            </div>
+            
+            <div className="space-y-4">
+              {aiRecommendations.map((recommendation) => (
+                <motion.div
+                  key={recommendation.id}
+                  className="bg-white rounded-lg p-4 shadow-sm"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p className="text-gray-900 mb-2">{recommendation.suggestion}</p>
+                      <div className="flex items-center space-x-4">
+                        <span className="text-sm text-gray-500">
+                          Confidence: {recommendation.confidence}%
+                        </span>
+                        <button
+                          onClick={() => setSelectedSuggestion(selectedSuggestion === recommendation.id ? null : recommendation.id)}
+                          className="text-sm text-blue-600 hover:text-blue-800"
+                        >
+                          {selectedSuggestion === recommendation.id ? 'Hide Reason' : 'Show Reason'}
+                        </button>
+                      </div>
+                      {selectedSuggestion === recommendation.id && (
+                        <div className="mt-2 p-2 bg-blue-50 rounded text-sm text-blue-800">
+                          {recommendation.reason}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex space-x-2 ml-4">
+                      <button className="px-3 py-1 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200 transition-colors">
+                        Apply
+                      </button>
+                      <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200 transition-colors">
+                        Dismiss
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Export & Sharing */}
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Export & Share Analytics</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button className="flex items-center justify-center space-x-2 p-4 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors">
+              <FileText className="w-5 h-5" />
+              <span>Export PDF Report</span>
+            </button>
+            <button className="flex items-center justify-center space-x-2 p-4 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
+              <Download className="w-5 h-5" />
+              <span>Download CSV Data</span>
+            </button>
+            <button className="flex items-center justify-center space-x-2 p-4 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
+              <Share className="w-5 h-5" />
+              <span>Share with Doctor</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderPatientChat = () => {
 
     // Mock contacts data
@@ -4941,6 +5461,8 @@ export default function PatientDashboard() {
         return renderHealthRecords();
       case 'ai-assistant':
         return renderAIAssistant();
+      case 'ai-analytics':
+        return renderAIAnalytics();
       case 'patient-chat':
         return renderPatientChat();
       case 'billing':
@@ -5372,6 +5894,7 @@ export default function PatientDashboard() {
               { id: 'appointments', label: 'My Appointments', icon: Calendar },
               { id: 'health-records', label: 'Health Records', icon: FileText },
               { id: 'ai-assistant', label: 'AI Health Assistant', icon: Brain },
+              { id: 'ai-analytics', label: 'AI Analytics', icon: BarChart3 },
               { id: 'patient-chat', label: 'Consultation Center', icon: MessageCircle },
               { id: 'billing', label: 'Billing & Payments', icon: CreditCard },
               { id: 'reports', label: 'Reports & Analytics', icon: BarChart3 },
