@@ -187,6 +187,61 @@ export default function PatientDashboard() {
   const [darkMode, setDarkMode] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
   const [fontSize, setFontSize] = useState('medium');
+
+  // State for renderMedications
+  const [selectedMedication, setSelectedMedication] = useState<string | null>(null);
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
+  const [timeRange, setTimeRange] = useState('6months');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [showExportDropdown, setShowExportDropdown] = useState(false);
+
+  // State for renderChronicDiseaseTracker
+  const [activeVitalTab, setActiveVitalTab] = useState('vitals');
+  const [showDataEntryModal, setShowDataEntryModal] = useState(false);
+  const [selectedVital, setSelectedVital] = useState('');
+  const [showAIInsights, setShowAIInsights] = useState(true);
+  const [timeRangeTracker, setTimeRangeTracker] = useState('30days');
+  const [alerts, setAlerts] = useState([
+    {
+      id: 1,
+      type: 'critical',
+      title: 'Blood Pressure Alert',
+      message: 'Reading 148/96 mmHg exceeds target range',
+      timestamp: '2024-10-15 14:30',
+      acknowledged: false,
+      vital: 'bloodPressure'
+    },
+    {
+      id: 2,
+      type: 'warning',
+      title: 'Glucose Trend Alert',
+      message: 'Glucose readings rising - check meal timing',
+      timestamp: '2024-10-15 12:00',
+      acknowledged: false,
+      vital: 'bloodGlucose'
+    },
+    {
+      id: 3,
+      type: 'info',
+      title: 'HbA1c Due',
+      message: 'HbA1c due for recheck (90 days elapsed)',
+      timestamp: '2024-10-15 09:00',
+      acknowledged: true,
+      vital: 'cholesterol'
+    }
+  ]);
+
+  // State for renderPatientChat
+  const [activeContact, setActiveContact] = useState('ali-raza');
+  const [searchQueryChat, setSearchQueryChat] = useState('');
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [showVideoCall, setShowVideoCall] = useState(false);
+  const [showFileModal, setShowFileModal] = useState(false);
+  const [showAISummary, setShowAISummary] = useState(false);
+  const [newMessage, setNewMessage] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
 
   // Mock notification data
@@ -1793,13 +1848,6 @@ export default function PatientDashboard() {
   };
 
   const renderMedications = () => {
-    const [selectedMedication, setSelectedMedication] = useState<string | null>(null);
-    const [expandedCard, setExpandedCard] = useState<string | null>(null);
-    const [timeRange, setTimeRange] = useState('6months');
-    const [filterStatus, setFilterStatus] = useState('all');
-    const [searchTerm, setSearchTerm] = useState('');
-    const [zoomLevel, setZoomLevel] = useState(1);
-    const [showExportDropdown, setShowExportDropdown] = useState(false);
 
     // Debug logging
     console.log('renderMedications called');
@@ -2653,14 +2701,6 @@ export default function PatientDashboard() {
   );
 
   const renderPatientChat = () => {
-    const [activeContact, setActiveContact] = useState('ali-raza');
-    const [searchQuery, setSearchQuery] = useState('');
-    const [activeFilter, setActiveFilter] = useState('all');
-    const [showVideoCall, setShowVideoCall] = useState(false);
-    const [showFileModal, setShowFileModal] = useState(false);
-    const [showAISummary, setShowAISummary] = useState(false);
-    const [newMessage, setNewMessage] = useState('');
-    const [isTyping, setIsTyping] = useState(false);
 
     // Mock contacts data
     const contacts = [
@@ -2807,8 +2847,8 @@ export default function PatientDashboard() {
     };
 
     const filteredContacts = contacts.filter(contact => {
-      const matchesSearch = contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           contact.condition.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = contact.name.toLowerCase().includes(searchQueryChat.toLowerCase()) ||
+                           contact.condition.toLowerCase().includes(searchQueryChat.toLowerCase());
       
       switch (activeFilter) {
         case 'active':
@@ -2891,8 +2931,8 @@ export default function PatientDashboard() {
                 <input
                   type="text"
                   placeholder="Search patients, conditions..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={searchQueryChat}
+                  onChange={(e) => setSearchQueryChat(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 />
               </div>
@@ -3309,40 +3349,6 @@ export default function PatientDashboard() {
   };
 
   const renderChronicDiseaseTracker = () => {
-    const [activeVitalTab, setActiveVitalTab] = useState('vitals');
-    const [showDataEntryModal, setShowDataEntryModal] = useState(false);
-    const [selectedVital, setSelectedVital] = useState('');
-    const [showAIInsights, setShowAIInsights] = useState(true);
-    const [timeRange, setTimeRange] = useState('30days');
-    const [alerts, setAlerts] = useState([
-      {
-        id: 1,
-        type: 'critical',
-        title: 'Blood Pressure Alert',
-        message: 'Reading 148/96 mmHg exceeds target range',
-        timestamp: '2024-10-15 14:30',
-        acknowledged: false,
-        vital: 'bloodPressure'
-      },
-      {
-        id: 2,
-        type: 'warning',
-        title: 'Glucose Trend Alert',
-        message: 'Glucose readings rising - check meal timing',
-        timestamp: '2024-10-15 12:00',
-        acknowledged: false,
-        vital: 'bloodGlucose'
-      },
-      {
-        id: 3,
-        type: 'info',
-        title: 'HbA1c Due',
-        message: 'HbA1c due for recheck (90 days elapsed)',
-        timestamp: '2024-10-15 09:00',
-        acknowledged: true,
-        vital: 'cholesterol'
-      }
-    ]);
 
     // Mock vital data
     const vitalsData = {
@@ -3496,8 +3502,8 @@ export default function PatientDashboard() {
             <h2 className="text-2xl font-bold text-gray-900">My Health Tracker</h2>
             <div className="flex items-center space-x-3">
               <select
-                value={timeRange}
-                onChange={(e) => setTimeRange(e.target.value)}
+                value={timeRangeTracker}
+                onChange={(e) => setTimeRangeTracker(e.target.value)}
                 className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
               >
                 <option value="7days">7 Days</option>
