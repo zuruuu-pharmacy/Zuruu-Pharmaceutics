@@ -32,7 +32,6 @@ import {
   Shield, 
   Bug, 
   TestTube, 
-  Flask, 
   Microscope, 
   Search as SearchIcon, 
   CheckSquare, 
@@ -48,7 +47,6 @@ import {
   Zap as ZapIcon, 
   Flashlight, 
   Lightbulb, 
-  Candle, 
   Flame, 
   Droplets, 
   Wind, 
@@ -60,7 +58,6 @@ import {
   Thermometer, 
   Gauge, 
   Timer, 
-  Stopwatch, 
   Clock as ClockIcon, 
   Calendar as CalendarIcon, 
   CalendarDays, 
@@ -69,12 +66,7 @@ import {
   CalendarPlus, 
   CalendarMinus, 
   CalendarRange, 
-  CalendarSearch, 
-  CalendarHeart, 
-  CalendarStar, 
-  CalendarUser, 
-  CalendarClock, 
-  CalendarEvent, 
+  CalendarSearch,
   Calendar as CalendarIcon2,
   Info,
   HelpCircle,
@@ -99,7 +91,6 @@ import {
   Smartphone,
   Tablet,
   Laptop,
-  Desktop,
   Headphones,
   Speaker,
   Mic as MicIcon,
@@ -134,7 +125,6 @@ import {
   Zap as ZapIcon2,
   Flashlight as FlashlightIcon,
   Lightbulb as LightbulbIcon,
-  Candle as CandleIcon,
   Flame as FlameIcon,
   Droplets as DropletsIcon,
   Wind as WindIcon,
@@ -146,7 +136,6 @@ import {
   Thermometer as ThermometerIcon,
   Gauge as GaugeIcon,
   Timer as TimerIcon,
-  Stopwatch as StopwatchIcon,
   Clock as ClockIcon2,
   Calendar as CalendarIcon3,
   CalendarDays as CalendarDaysIcon,
@@ -156,11 +145,6 @@ import {
   CalendarMinus as CalendarMinusIcon,
   CalendarRange as CalendarRangeIcon,
   CalendarSearch as CalendarSearchIcon,
-  CalendarHeart as CalendarHeartIcon,
-  CalendarStar as CalendarStarIcon,
-  CalendarUser as CalendarUserIcon,
-  CalendarClock as CalendarClockIcon,
-  CalendarEvent as CalendarEventIcon,
   Calendar as CalendarIcon4
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -378,7 +362,7 @@ const QAFramework: React.FC = () => {
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'unit': return <TestTube className="w-4 h-4" />;
-      case 'integration': return <Flask className="w-4 h-4" />;
+      case 'integration': return <Activity className="w-4 h-4" />;
       case 'e2e': return <Play className="w-4 h-4" />;
       case 'security': return <Shield className="w-4 h-4" />;
       case 'performance': return <Zap className="w-4 h-4" />;

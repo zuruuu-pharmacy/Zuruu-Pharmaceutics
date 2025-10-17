@@ -296,7 +296,7 @@ export default function BlogPage() {
                 {blogCategories.map((category) => (
                   <Button
                     key={category.id}
-                    variant={selectedCategory === category.id ? "default" : "outline"}
+                    variant={selectedCategory === category.id ? "primary" : "outline"}
                     onClick={() => handleCategoryChange(category.id)}
                     className="flex items-center gap-2"
                   >
@@ -617,7 +617,7 @@ export default function BlogPage() {
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                   <Button
                     key={page}
-                    variant={currentPage === page ? "default" : "outline"}
+                    variant={currentPage === page ? "primary" : "outline"}
                     size="sm"
                     onClick={() => handlePageChange(page)}
                     className="w-10 h-10"

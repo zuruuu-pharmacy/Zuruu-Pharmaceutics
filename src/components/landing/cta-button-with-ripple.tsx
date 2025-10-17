@@ -8,8 +8,8 @@ import { CTARippleAnimation } from "./lottie-micro-animations";
 interface CTAButtonWithRippleProps {
   children: React.ReactNode;
   onClick?: () => void;
-  variant?: "default" | "outline" | "secondary" | "ghost" | "link" | "destructive";
-  size?: "default" | "sm" | "lg" | "icon";
+  variant?: "primary" | "secondary" | "accent" | "destructive" | "outline" | "ghost" | "success" | "warning" | "info";
+  size?: "sm" | "md" | "lg" | "xl" | "icon";
   className?: string;
   disabled?: boolean;
 }
@@ -17,8 +17,8 @@ interface CTAButtonWithRippleProps {
 export function CTAButtonWithRipple({ 
   children, 
   onClick, 
-  variant = "default",
-  size = "default",
+  variant = "primary",
+  size = "md",
   className = "",
   disabled = false
 }: CTAButtonWithRippleProps) {

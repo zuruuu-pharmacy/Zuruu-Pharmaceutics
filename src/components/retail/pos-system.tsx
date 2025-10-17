@@ -482,7 +482,7 @@ export default function POSSystem() {
                       {paymentMethods.map((method) => (
                         <Button
                           key={method.id}
-                          variant={paymentMethod === method.id ? "default" : "outline"}
+                          variant={paymentMethod === method.id ? "primary" : "outline"}
                           onClick={() => setPaymentMethod(method.id)}
                           className="justify-start"
                         >

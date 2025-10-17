@@ -329,8 +329,8 @@ const PrescriptionWorkflow: React.FC = () => {
           prescription={selectedPrescription}
           onClose={() => setSelectedPrescription(null)}
           onStatusChange={(status) => {
-            setPrescriptions(prev => prev.map(p => 
-              p.id === selectedPrescription.id ? { ...p, status } : p
+            setPrescriptions(prev => prev.map(p =>
+              p.id === selectedPrescription.id ? { ...p, status: status as any } : p   
             ));
           }}
           onInteractionCheck={runInteractionCheck}
@@ -382,6 +382,19 @@ const PrescriptionDetailModal: React.FC<{
   const checkPrescriberVerification = (license: string) => {
     const prescriber = mockPrescribers.find(p => p.license === license);
     return prescriber || { registrationStatus: 'unverified' };
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'intake': return 'info';
+      case 'verification': return 'warning';
+      case 'interaction-check': return 'warning';
+      case 'stock-check': return 'warning';
+      case 'pharmacist-approval': return 'warning';
+      case 'dispense': return 'success';
+      case 'complete': return 'success';
+      default: return 'default';
+    }
   };
 
   return (

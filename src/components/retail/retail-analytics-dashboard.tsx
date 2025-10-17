@@ -335,7 +335,7 @@ export function RetailAnalyticsDashboard({ onRefresh }: RetailAnalyticsDashboard
             {(['1d', '7d', '30d', '90d'] as const).map((period) => (
               <Button
                 key={period}
-                variant={timeframe === period ? 'default' : 'outline'}
+                variant={timeframe === period ? 'primary' : 'outline'}
                 size="sm"
                 onClick={() => setTimeframe(period)}
               >

@@ -27,7 +27,9 @@ import {
   Building2,
   HelpCircle,
   Sun,
-  Moon
+  Moon,
+  Clock,
+  Activity
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

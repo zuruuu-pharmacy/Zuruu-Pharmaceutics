@@ -1325,7 +1325,7 @@ export default function PharmacistDashboard() {
   };
 
   const renderCommunication = () => {
-    const [selectedPatient, setSelectedPatient] = useState(null);
+    const [selectedPatient, setSelectedPatient] = useState<{ id: number; name: string; status: string; lastMessage: string; time: string; } | null>(null);
     const [message, setMessage] = useState('');
     const [patients] = useState([
       { id: 1, name: 'John Doe', status: 'online', lastMessage: 'Thank you for the reminder', time: '2m ago' },

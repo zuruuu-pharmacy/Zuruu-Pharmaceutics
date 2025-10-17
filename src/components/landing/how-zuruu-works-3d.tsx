@@ -541,7 +541,7 @@ function ProcessFlow3D() {
         style={{ transformStyle: "preserve-3d" }}
       >
         <Button
-          variant={isPlaying ? "destructive" : "default"}
+          variant={isPlaying ? "destructive" : "primary"}
           onClick={isPlaying ? stopAutoPlay : startAutoPlay}
           className="gap-3 px-8 py-4 text-lg"
           size="lg"

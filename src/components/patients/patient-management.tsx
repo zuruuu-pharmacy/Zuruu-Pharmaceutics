@@ -40,7 +40,6 @@ import {
   CheckCircle,
   XCircle,
   Info,
-  Warning,
   Bell,
   Settings,
   Lock,

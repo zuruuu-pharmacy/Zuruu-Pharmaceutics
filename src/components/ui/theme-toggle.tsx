@@ -26,7 +26,7 @@ export function ThemeToggle() {
         return (
           <Button
             key={themeOption.value}
-            variant={isActive ? "default" : "ghost"}
+            variant={isActive ? "primary" : "ghost"}
             size="sm"
             onClick={() => setTheme(themeOption.value as any)}
             className="relative h-8 w-8 p-0"

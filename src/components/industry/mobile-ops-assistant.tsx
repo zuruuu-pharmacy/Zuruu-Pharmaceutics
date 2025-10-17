@@ -325,7 +325,7 @@ export const MobileOpsAssistant: React.FC = () => {
             ].map(({ key, label, icon: Icon }) => (
               <Button
                 key={key}
-                variant={viewMode === key ? 'default' : 'outline'}
+                variant={viewMode === key ? 'primary' : 'outline'}
                 size="sm"
                 onClick={() => setViewMode(key as any)}
               >

@@ -232,7 +232,7 @@ function ProcessFlow() {
         transition={{ duration: 0.8, delay: 0.6 }}
       >
         <Button
-          variant={isPlaying ? "destructive" : "default"}
+          variant={isPlaying ? "destructive" : "primary"}
           onClick={isPlaying ? stopAutoPlay : startAutoPlay}
           className="gap-2"
         >

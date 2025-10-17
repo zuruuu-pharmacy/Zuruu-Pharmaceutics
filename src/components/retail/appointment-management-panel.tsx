@@ -291,7 +291,7 @@ export default function AppointmentManagementPanel() {
         
         <div className="flex border rounded-lg">
           <Button
-            variant={viewMode === 'month' ? 'default' : 'ghost'}
+            variant={viewMode === 'month' ? 'primary' : 'ghost'}
             size="sm"
             onClick={() => setViewMode('month')}
             className="rounded-r-none"
@@ -299,7 +299,7 @@ export default function AppointmentManagementPanel() {
             Month
           </Button>
           <Button
-            variant={viewMode === 'week' ? 'default' : 'ghost'}
+            variant={viewMode === 'week' ? 'primary' : 'ghost'}
             size="sm"
             onClick={() => setViewMode('week')}
             className="rounded-l-none"
@@ -713,14 +713,14 @@ export default function AppointmentManagementPanel() {
                   {/* Control Bar */}
                   <div className="flex items-center justify-center space-x-4">
                     <Button
-                      variant={isMicOn ? "default" : "destructive"}
+                      variant={isMicOn ? "primary" : "destructive"}
                       size="sm"
                       onClick={() => setIsMicOn(!isMicOn)}
                     >
                       {isMicOn ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
                     </Button>
                     <Button
-                      variant={isCameraOn ? "default" : "destructive"}
+                      variant={isCameraOn ? "primary" : "destructive"}
                       size="sm"
                       onClick={() => setIsCameraOn(!isCameraOn)}
                     >

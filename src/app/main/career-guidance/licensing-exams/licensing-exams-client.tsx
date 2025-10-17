@@ -40,7 +40,7 @@ export function LicensingExamsClient() {
                   <p><strong>Registration Body:</strong> {path.body}</p>
                   <p><strong>Details:</strong> {path.details}</p>
                   <a href={path.link} target="_blank" rel="noopener noreferrer">
-                    <Button variant="link" className="p-0">
+                    <Button variant="ghost" className="p-0">
                         Visit Official Website <ExternalLink className="ml-2"/>
                     </Button>
                   </a>

@@ -554,7 +554,7 @@ export default function AppointmentConsultationScheduler() {
           ].map((type) => (
             <Button
               key={type.id}
-              variant={selectedAppointmentType === type.id ? 'default' : 'outline'}
+              variant={selectedAppointmentType === type.id ? 'primary' : 'outline'}
               className={`h-auto p-4 flex flex-col items-center space-y-2 ${
                 selectedAppointmentType === type.id ? 'bg-teal-600 hover:bg-teal-700' : ''
               }`}
