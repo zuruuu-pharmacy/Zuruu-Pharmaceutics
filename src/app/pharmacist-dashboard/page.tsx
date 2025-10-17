@@ -129,6 +129,7 @@ export default function PharmacistDashboard() {
     { id: 'patients', label: 'Patient & Health Management', icon: Users },
     { id: 'prescriptions', label: 'Prescription Management', icon: FileText },
     { id: 'interactions', label: 'AI Drug Interaction Checker', icon: AlertTriangle },
+    { id: 'chronic-disease', label: 'Chronic Disease Tracker', icon: Stethoscope },
     { id: 'history', label: 'Medication History Tracker', icon: History },
     { id: 'refills', label: 'Refill & Adherence Monitor', icon: RefreshCw },
     { id: 'inventory', label: 'Inventory & Stock Management', icon: Package },
@@ -1154,6 +1155,22 @@ export default function PharmacistDashboard() {
     );
   };
 
+  const renderChronicDisease = () => {
+    // Import the ChronicDiseaseManagement component
+    const ChronicDiseaseManagement = React.lazy(() => import('@/components/chronic-disease/chronic-disease-management'));
+    
+    return (
+      <React.Suspense fallback={
+        <div className="text-center py-12">
+          <div className="w-16 h-16 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading Chronic Disease Tracker...</p>
+        </div>
+      }>
+        <ChronicDiseaseManagement onNavigateToDashboard={() => setActiveTab('overview')} />
+      </React.Suspense>
+    );
+  };
+
   const renderSettings = () => {
     const [activeSettingsTab, setActiveSettingsTab] = useState('profile');
     const [settings, setSettings] = useState({
@@ -1421,6 +1438,8 @@ export default function PharmacistDashboard() {
         return renderPrescriptions();
       case 'interactions':
         return renderInteractions();
+      case 'chronic-disease':
+        return renderChronicDisease();
       case 'inventory':
         return renderInventory();
       case 'refills':
