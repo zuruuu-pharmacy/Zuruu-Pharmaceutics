@@ -1340,6 +1340,22 @@ export default function PharmacistDashboard() {
     );
   };
 
+  const renderInventory = () => {
+    // Import the InventoryManagement component
+    const InventoryManagement = React.lazy(() => import('@/components/inventory/inventory-management'));
+    
+    return (
+      <React.Suspense fallback={
+        <div className="text-center py-12">
+          <div className="w-16 h-16 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading Inventory Management...</p>
+        </div>
+      }>
+        <InventoryManagement onNavigateToDashboard={() => setActiveTab('overview')} />
+      </React.Suspense>
+    );
+  };
+
   const renderSettings = () => {
     const [activeSettingsTab, setActiveSettingsTab] = useState('profile');
     const [settings, setSettings] = useState({
