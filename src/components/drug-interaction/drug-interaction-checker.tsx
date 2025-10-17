@@ -56,10 +56,9 @@ import {
   Mail,
   Phone,
   Calendar,
-  BarChart3,
-  PieChart,
-  LineChart,
-  Scatter
+  BarChart3, 
+  PieChart, 
+  LineChart
 } from 'lucide-react';
 
 import { 

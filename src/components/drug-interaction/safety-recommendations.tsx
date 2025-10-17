@@ -40,7 +40,6 @@ import {
   BarChart3, 
   PieChart, 
   LineChart, 
-  Scatter, 
   Database, 
   Cloud, 
   Wifi, 
