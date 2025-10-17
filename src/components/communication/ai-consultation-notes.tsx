@@ -31,7 +31,8 @@ import {
   Calendar,
   Stethoscope,
   Shield,
-  TrendingUp
+  TrendingUp,
+  X
 } from 'lucide-react';
 
 interface ConsultationNote {
@@ -120,7 +121,7 @@ export default function AIConsultationNotes({
     
     // Simulate AI processing
     setTimeout(() => {
-      const generatedNote = {
+      const generatedNote: ConsultationNote = {
         ...note,
         content: {
           subjective: 'Patient reports mild nausea and dizziness after starting Metformin 500mg. No other symptoms reported. Patient is concerned about side effects and wants to know if this is normal.',
@@ -130,7 +131,7 @@ export default function AIConsultationNotes({
         },
         aiConfidence: 87,
         keywords: ['nausea', 'dizziness', 'metformin', 'side effects', 'gastrointestinal'],
-        riskLevel: 'low',
+        riskLevel: 'low' as const,
         medicationsDiscussed: ['Metformin 500mg'],
         sideEffectsReported: ['nausea', 'dizziness'],
         recommendations: [

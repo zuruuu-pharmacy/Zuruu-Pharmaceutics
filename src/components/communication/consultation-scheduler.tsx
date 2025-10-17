@@ -63,7 +63,7 @@ export default function ConsultationScheduler({
 }: ConsultationSchedulerProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState<'day' | 'week' | 'month'>('day');
+  const [viewMode, setViewMode] = useState<'day' | 'week' | 'month' | 'list'>('day');
   const [showAddSlot, setShowAddSlot] = useState(false);
   const [showAISuggestions, setShowAISuggestions] = useState(false);
   const [filterType, setFilterType] = useState<'all' | 'video' | 'voice' | 'chat'>('all');

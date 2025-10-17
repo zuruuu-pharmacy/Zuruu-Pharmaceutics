@@ -32,7 +32,6 @@ import {
   PieChart,
   LineChart,
   BarChart,
-  Scatter,
   AreaChart
 } from 'lucide-react';
 
