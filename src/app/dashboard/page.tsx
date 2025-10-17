@@ -10,6 +10,8 @@ import PatientManagement from '@/components/patients/patient-management';
 import AnalyticsDashboard from '@/components/analytics/analytics-dashboard';
 import SecurityCompliance from '@/components/security/security-compliance';
 import QAFramework from '@/components/testing/qa-framework';
+import RefillAdherenceTracker from '@/components/refill/refill-adherence-tracker';
+import ChronicDiseaseTracker from '@/components/chronic/chronic-disease-tracker';
 
 export default function Dashboard() {
   const [activeSection, setActiveSection] = useState('overview');
@@ -25,12 +27,7 @@ export default function Dashboard() {
       case 'prescriptions':
         return <PrescriptionWorkflow />;
       case 'refills':
-        return (
-          <div className="p-6">
-            <h1 className="text-h1">Refill Queue</h1>
-            <p className="text-body mt-2">Refill management system coming soon...</p>
-          </div>
-        );
+        return <RefillAdherenceTracker />;
       case 'patients':
         return <PatientManagement />;
       case 'suppliers':
@@ -47,6 +44,8 @@ export default function Dashboard() {
             <p className="text-body mt-2">Sales analytics system coming soon...</p>
           </div>
         );
+      case 'chronic':
+        return <ChronicDiseaseTracker />;
       case 'analytics':
         return <AnalyticsDashboard />;
       case 'adr':

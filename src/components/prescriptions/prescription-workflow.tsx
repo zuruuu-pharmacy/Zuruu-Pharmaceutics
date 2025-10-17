@@ -156,6 +156,14 @@ const PrescriptionWorkflow: React.FC = () => {
   const [showInteractionModal, setShowInteractionModal] = useState(false);
   const [interactions, setInteractions] = useState<Interaction[]>([]);
   const [allergies, setAllergies] = useState<Allergy[]>([]);
+  // Top bar filters/search and RBAC
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'intake' | 'verification' | 'interaction-check' | 'stock-check' | 'pharmacist-approval' | 'dispense' | 'complete'>('all');
+  const [doctorFilter, setDoctorFilter] = useState<string>('all');
+  const [dateFrom, setDateFrom] = useState<string>('');
+  const [dateTo, setDateTo] = useState<string>('');
+  const [queueSearch, setQueueSearch] = useState('');
+  const [role] = useState<'assistant' | 'pharmacist' | 'admin'>('pharmacist');
 
   const getStepStatus = (stepIndex: number, prescription: Prescription) => {
     const stepId = workflowSteps[stepIndex].id;
@@ -209,6 +217,61 @@ const PrescriptionWorkflow: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Top Bar — Search, Filters, Quick Actions */}
+      <Card>
+        <CardContent className="p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 items-end">
+            <div className="lg:col-span-2">
+              <label className="block text-sm mb-1">Search (patient, Rx ID, doctor)</label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--c-neutral-500)]" />
+                <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10" placeholder="e.g. John, RX-0456, Dr. Smith" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm mb-1">Status</label>
+              <select value={statusFilter} onChange={e => setStatusFilter(e.target.value as any)} className="w-full px-3 py-2 border rounded-lg border-[var(--c-neutral-300)]">
+                <option value="all">All</option>
+                <option value="intake">Pending (Intake)</option>
+                <option value="verification">Verification</option>
+                <option value="interaction-check">Interaction Check</option>
+                <option value="stock-check">Stock Check</option>
+                <option value="pharmacist-approval">Pharmacist Approval</option>
+                <option value="dispense">Dispensed</option>
+                <option value="complete">Completed</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm mb-1">Doctor</label>
+              <select value={doctorFilter} onChange={e => setDoctorFilter(e.target.value)} className="w-full px-3 py-2 border rounded-lg border-[var(--c-neutral-300)]">
+                <option value="all">All</option>
+                {Array.from(new Set(prescriptions.map(p => p.prescriberName))).map(name => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm mb-1">From</label>
+              <Input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-sm mb-1">To</label>
+              <Input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} />
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={() => setShowUploadModal(true)}>
+                <Upload className="w-4 h-4 mr-2" /> Upload
+              </Button>
+              <Button variant="outline">
+                <QrCode className="w-4 h-4 mr-2" /> Scan QR
+              </Button>
+              <Button variant="outline">
+                <Download className="w-4 h-4 mr-2" /> Report
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -248,6 +311,40 @@ const PrescriptionWorkflow: React.FC = () => {
               </div>
             ))}
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Left Queue + Prescriptions List */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Prescription Queue</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="mb-3"><Input placeholder="Search queue..." value={queueSearch} onChange={e => setQueueSearch(e.target.value)} /></div>
+          <div className="space-y-3 max-h-64 overflow-y-auto mb-6">
+            {prescriptions
+              .filter(p => (statusFilter === 'all' ? true : p.status === statusFilter))
+              .filter(p => (doctorFilter === 'all' ? true : p.prescriberName === doctorFilter))
+              .filter(p => !searchTerm || `${p.patientName} ${p.id} ${p.prescriberName}`.toLowerCase().includes(searchTerm.toLowerCase()))
+              .filter(p => !queueSearch || `${p.patientName} ${p.id}`.toLowerCase().includes(queueSearch.toLowerCase()))
+              .map(p => (
+                <motion.div key={p.id} whileHover={{ scale: 1.01 }} className={`p-3 border rounded-lg cursor-pointer ${
+                  p.status === 'intake' ? 'border-amber-300' : p.status === 'dispense' || p.status === 'complete' ? 'border-emerald-300' : ''
+                }`}
+                  onClick={() => setSelectedPrescription(p)}
+                  title={`Rx ${p.id} — ${p.patientName}\nDoctor: ${p.prescriberName}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">{p.patientName} <span className="text-xs text-[var(--c-neutral-500)]">({p.patientId})</span></p>
+                      <p className="text-xs text-[var(--c-neutral-600)]">{p.prescriberName} • {new Date(p.createdAt).toLocaleDateString()}</p>
+                    </div>
+                    <Badge variant={getStatusColor(p.status) as any}>{p.status.replace('-', ' ')}</Badge>
+                  </div>
+                </motion.div>
+              ))}
+          </div>
+          <CardHeader className="px-0 pt-0"><CardTitle>Active Prescriptions</CardTitle></CardHeader>
         </CardContent>
       </Card>
 
@@ -360,6 +457,107 @@ const PrescriptionWorkflow: React.FC = () => {
           }}
         />
       )}
+
+      {/* Right Panel — AI summary & tools (simple blocks) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>AI Validation Summary</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2 text-sm">
+              <li className="flex items-center"><CheckCircle className="w-4 h-4 text-emerald-500 mr-2" /> Doctor verified</li>
+              <li className="flex items-center"><CheckCircle className="w-4 h-4 text-emerald-500 mr-2" /> Patient details complete</li>
+              <li className="flex items-center"><AlertTriangle className="w-4 h-4 text-amber-500 mr-2" /> Duplicate therapy check</li>
+              <li className="flex items-center"><AlertTriangle className="w-4 h-4 text-amber-500 mr-2" /> Interaction risk scan</li>
+            </ul>
+            <div className="mt-3 flex gap-2">
+              <Button variant="outline"><FileText className="w-4 h-4 mr-2" /> Full Report</Button>
+              <Button variant="outline"><Brain className="w-4 h-4 mr-2" /> Explain</Button>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Interaction Checker</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-[var(--c-neutral-600)] mb-2">Cross-check combinations with AI.</p>
+            <Button className="w-full" onClick={() => runInteractionCheck((selectedPrescription || prescriptions[0]).medications)}><Brain className="w-4 h-4 mr-2" /> Run Checker</Button>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Allergies & Suggestions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm">No allergies recorded in profile.</p>
+            <ul className="list-disc pl-5 text-sm space-y-1 mt-2">
+              <li>Consider generic equivalent</li>
+              <li>Adjust duration per condition</li>
+            </ul>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Bottom Actions — with RBAC and audit-lock */}
+      <Card>
+        <CardContent className="p-4 flex flex-wrap gap-2 justify-between items-center">
+          <div className="flex gap-2">
+            <Button variant="outline" disabled={role === 'assistant'}><FileText className="w-4 h-4 mr-2" /> Save Draft</Button>
+            <Button variant="outline" disabled={role === 'assistant'}><Shield className="w-4 h-4 mr-2" /> Validate Prescription</Button>
+            <Button disabled={role === 'assistant' || (selectedPrescription?.status === 'complete') }>
+              <CheckCircle className="w-4 h-4 mr-2" /> Approve & Dispense
+            </Button>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" disabled={role === 'assistant'}><AlertTriangle className="w-4 h-4 mr-2" /> Reject</Button>
+            <Button variant="outline" disabled={role === 'assistant'}><Mail className="w-4 h-4 mr-2" /> Send Back</Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Audit Trail & Reports */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Audit Trail</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span>RX-0456 validated</span>
+                <span className="text-[var(--c-neutral-500)]">by Pharmacist • 10:45</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Interaction check completed</span>
+                <span className="text-[var(--c-neutral-500)]">10:43</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Prescription Metrics</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div>
+                <p className="text-2xl font-bold">24</p>
+                <p className="text-xs text-[var(--c-neutral-600)]">Today</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold">76%</p>
+                <p className="text-xs text-[var(--c-neutral-600)]">AI Auto-Validated</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold">8%</p>
+                <p className="text-xs text-[var(--c-neutral-600)]">Rejected</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

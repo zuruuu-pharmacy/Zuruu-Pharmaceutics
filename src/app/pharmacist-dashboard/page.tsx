@@ -1325,154 +1325,18 @@ export default function PharmacistDashboard() {
   };
 
   const renderCommunication = () => {
-    const [selectedPatient, setSelectedPatient] = useState<{ id: number; name: string; status: string; lastMessage: string; time: string; } | null>(null);
-    const [message, setMessage] = useState('');
-    const [patients] = useState([
-      { id: 1, name: 'John Doe', status: 'online', lastMessage: 'Thank you for the reminder', time: '2m ago' },
-      { id: 2, name: 'Sarah Wilson', status: 'offline', lastMessage: 'When should I take this medication?', time: '1h ago' },
-      { id: 3, name: 'Michael Brown', status: 'online', lastMessage: 'I have a question about side effects', time: '5m ago' },
-      { id: 4, name: 'Emily Davis', status: 'offline', lastMessage: 'Can I refill my prescription?', time: '2h ago' }
-    ]);
-
-    const [messages] = useState([
-      { id: 1, sender: 'patient', message: 'Hi, I have a question about my medication', time: '10:30 AM' },
-      { id: 2, sender: 'pharmacist', message: 'Hello! I\'m here to help. What would you like to know?', time: '10:32 AM' },
-      { id: 3, sender: 'patient', message: 'I\'m experiencing some mild nausea after taking Metformin', time: '10:35 AM' },
-      { id: 4, sender: 'pharmacist', message: 'That\'s a common side effect. Try taking it with food. If it persists, let me know.', time: '10:37 AM' }
-    ]);
-
+    // Import the CommunicationDashboard component
+    const CommunicationDashboard = React.lazy(() => import('@/components/communication/communication-dashboard'));
+    
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
-        {/* Patient List */}
-        <div className="lg:col-span-1 bg-white rounded-xl shadow-lg border border-gray-100">
-          <div className="p-6 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Patient Messages</h3>
-          </div>
-          <div className="p-6 space-y-3 max-h-96 overflow-y-auto">
-            {patients.map((patient, index) => (
-              <motion.div
-                key={patient.id}
-                onClick={() => setSelectedPatient(patient)}
-                className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                  selectedPatient?.id === patient.id
-                    ? 'border-teal-200 bg-teal-50'
-                    : 'border-gray-200 hover:bg-gray-50'
-                }`}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="relative">
-                    <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
-                      <User className="w-5 h-5 text-teal-600" />
-                    </div>
-                    <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${
-                      patient.status === 'online' ? 'bg-green-500' : 'bg-gray-400'
-                    }`}></div>
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">{patient.name}</p>
-                    <p className="text-sm text-gray-600 truncate">{patient.lastMessage}</p>
-                    <p className="text-xs text-gray-500">{patient.time}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+      <React.Suspense fallback={
+        <div className="text-center py-12">
+          <div className="w-16 h-16 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading Communication Dashboard...</p>
         </div>
-
-        {/* Chat Window */}
-        <div className="lg:col-span-2 bg-white rounded-xl shadow-lg border border-gray-100 flex flex-col">
-          {selectedPatient ? (
-            <>
-              {/* Chat Header */}
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
-                      <User className="w-5 h-5 text-teal-600" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">{selectedPatient.name}</p>
-                      <p className="text-sm text-gray-600">
-                        {selectedPatient.status === 'online' ? 'Online' : 'Offline'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                      <Phone className="w-5 h-5" />
-                    </button>
-                    <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
-                      <Video className="w-5 h-5" />
-                    </button>
-                    <button className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors">
-                      <Paperclip className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Messages */}
-              <div className="flex-1 p-6 space-y-4 overflow-y-auto">
-                {messages.map((msg, index) => (
-                  <motion.div
-                    key={msg.id}
-                    className={`flex ${msg.sender === 'pharmacist' ? 'justify-end' : 'justify-start'}`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                  >
-                    <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                      msg.sender === 'pharmacist'
-                        ? 'bg-teal-600 text-white'
-                        : 'bg-gray-100 text-gray-900'
-                    }`}>
-                      <p className="text-sm">{msg.message}</p>
-                      <p className={`text-xs mt-1 ${
-                        msg.sender === 'pharmacist' ? 'text-teal-100' : 'text-gray-500'
-                      }`}>
-                        {msg.time}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Message Input */}
-              <div className="p-6 border-t border-gray-200">
-                <div className="flex items-center space-x-3">
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Type your message..."
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                    />
-                  </div>
-                  <button className="p-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors">
-                    <Send className="w-5 h-5" />
-                  </button>
-                </div>
-                <div className="mt-3 flex items-center space-x-4 text-sm text-gray-500">
-                  <span>🔒 End-to-end encrypted</span>
-                  <span>📎 File sharing available</span>
-                  <span>🎤 Voice messages supported</span>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-center">
-                <MessageSquare className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">Select a patient to start chatting</p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      }>
+        <CommunicationDashboard />
+      </React.Suspense>
     );
   };
 
