@@ -1138,6 +1138,22 @@ export default function PharmacistDashboard() {
     );
   };
 
+  const renderInteractions = () => {
+    // Import the DrugInteractionManagement component
+    const DrugInteractionManagement = React.lazy(() => import('@/components/drug-interaction/drug-interaction-management'));
+    
+    return (
+      <React.Suspense fallback={
+        <div className="text-center py-12">
+          <div className="w-16 h-16 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading AI Drug Interaction Checker...</p>
+        </div>
+      }>
+        <DrugInteractionManagement onNavigateToDashboard={() => setActiveTab('overview')} />
+      </React.Suspense>
+    );
+  };
+
   const renderSettings = () => {
     const [activeSettingsTab, setActiveSettingsTab] = useState('profile');
     const [settings, setSettings] = useState({
@@ -1404,7 +1420,7 @@ export default function PharmacistDashboard() {
       case 'prescriptions':
         return renderPrescriptions();
       case 'interactions':
-        return renderDrugInteractionChecker();
+        return renderInteractions();
       case 'inventory':
         return renderInventory();
       case 'refills':
