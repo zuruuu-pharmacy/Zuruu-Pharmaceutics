@@ -23,7 +23,12 @@ export default function Dashboard() {
       case 'inventory':
         return <ProductList />;
       case 'expiry':
-        return <ExpiryManagement />;
+        return <ExpiryManagement 
+          onViewItem={() => {}}
+          onEditItem={() => {}}
+          onGenerateReport={() => {}}
+          onNotifySupplier={() => {}}
+        />;
       case 'prescriptions':
         return <PrescriptionWorkflow />;
       case 'refills':
