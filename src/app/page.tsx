@@ -43,6 +43,7 @@ import { FooterSection } from "@/components/landing/footer-section";
 import { DemoModal } from "@/components/landing/demo-modal";
 import { DashboardAccessModal } from "@/components/landing/dashboard-access-modal";
 import { EnhancedLoginModal } from "@/components/landing/enhanced-login-modal";
+import { ProfessionalPatientModal } from "@/components/landing/professional-patient-modal";
 
 // Removed access code requirement - direct login/signup only
 
@@ -50,6 +51,7 @@ import { EnhancedLoginModal } from "@/components/landing/enhanced-login-modal";
 export default function RoleSelectionPage() {
   const [pharmacistModalOpen, setPharmacistModalOpen] = useState(false);
   const [patientOptionsModalOpen, setPatientOptionsModalOpen] = useState(false);
+  const [professionalPatientModalOpen, setProfessionalPatientModalOpen] = useState(false);
   const [patientLoginModalOpen, setPatientLoginModalOpen] = useState(false);
   const [studentLoginModalOpen, setStudentLoginModalOpen] = useState(false);
   const [demoModalOpen, setDemoModalOpen] = useState(false);
@@ -130,7 +132,7 @@ export default function RoleSelectionPage() {
       
       {/* Cinematic Hero Video Section */}
       <CinematicHeroVideo
-        onPatientClick={() => setPatientOptionsModalOpen(true)}
+        onPatientClick={() => setProfessionalPatientModalOpen(true)}
         onPharmacistClick={() => setPharmacistModalOpen(true)}
         onStudentClick={openStudentLogin}
         onDemoClick={handleDemoClick}
@@ -478,6 +480,17 @@ export default function RoleSelectionPage() {
           </motion.div>
         </DialogContent>
       </Dialog>
+
+      {/* Professional Patient Modal */}
+      <ProfessionalPatientModal
+        isOpen={professionalPatientModalOpen}
+        onClose={() => setProfessionalPatientModalOpen(false)}
+        onSuccess={(patientData) => {
+          // Store patient data and redirect to dashboard
+          console.log('Patient data:', patientData);
+          router.push('/dashboard');
+        }}
+      />
 
       {/* Enhanced Patient Login Modal */}
       <Dialog open={patientLoginModalOpen} onOpenChange={setPatientLoginModalOpen}>
