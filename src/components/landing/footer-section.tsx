@@ -170,7 +170,7 @@ export function FooterSection() {
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.8 }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {/* Brand Section */}
             <motion.div
               className="lg:col-span-1"
@@ -323,7 +323,7 @@ export function FooterSection() {
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 1.2 }}
         >
-          <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-6 lg:gap-8">
             {/* Left: Brand */}
             <div className="flex items-center gap-4">
               <h3 className="text-xl font-bold text-white">
@@ -358,7 +358,7 @@ export function FooterSection() {
 
             {/* Right: Newsletter & Payment Methods */}
             <motion.div
-              className="flex flex-col lg:flex-row items-center gap-6"
+              className="flex flex-col sm:flex-row items-center gap-4 lg:gap-6"
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 2 }}
