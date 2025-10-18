@@ -127,10 +127,6 @@ export default function RoleSelectionPage() {
 
   return (
     <div className="relative">
-      {/* Skip to content link for accessibility */}
-      <a href="#main-content" className="skip-to-content">
-        Skip to main content
-      </a>
       
       {/* Cinematic Hero Video Section */}
       <CinematicHeroVideo

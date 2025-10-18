@@ -35,19 +35,11 @@ export function ScrollHeader({ onPatientClick, onPharmacistClick, onStudentClick
 
   return (
     <>
-      {/* Skip to Content Link */}
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#1F59FF] focus:text-white focus:rounded-lg focus:font-medium focus:transition-all focus:duration-200"
-      >
-        Skip to main content
-      </a>
-
       {/* Header */}
       <motion.header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
           isScrolled 
-            ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200/50' 
+            ? 'bg-white/95 backdrop-blur-md shadow-lg' 
             : 'bg-transparent'
         }`}
         initial={{ opacity: 0, y: -20 }}
@@ -250,7 +242,7 @@ export function ScrollHeader({ onPatientClick, onPharmacistClick, onStudentClick
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 20 }}
                     transition={{ duration: 0.2 }}
-                    className="hidden lg:flex items-center space-x-2 ml-2 pl-2 border-l border-gray-200"
+                    className="hidden lg:flex items-center space-x-2 ml-2 pl-2"
                   >
                     <Button
                       variant="outline"

@@ -1108,17 +1108,17 @@ export default function PharmacistDashboard() {
   };
 
   const renderCommunication = () => {
-    // Import the CommunicationDashboard component
-    const CommunicationDashboard = React.lazy(() => import('@/components/communication/communication-dashboard'));
+    // Import the PatientChatManagement component
+    const PatientChatManagement = React.lazy(() => import('@/components/patient-chat/patient-chat-management'));
     
     return (
       <React.Suspense fallback={
         <div className="text-center py-12">
           <div className="w-16 h-16 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading Communication Dashboard...</p>
+          <p className="text-gray-600">Loading Patient Chat & Tele-Consultation System...</p>
         </div>
       }>
-        <CommunicationDashboard />
+        <PatientChatManagement onNavigateToDashboard={() => setActiveTab('overview')} />
       </React.Suspense>
     );
   };
@@ -1141,7 +1141,7 @@ export default function PharmacistDashboard() {
 
   const renderInteractions = () => {
     // Import the DrugInteractionManagement component
-    const DrugInteractionManagement = React.lazy(() => import('@/components/drug-interaction/drug-interaction-management'));
+    const DrugInteractionManagement = React.lazy(() => import('@/components/drug-interaction-checker/drug-interaction-management'));
     
     return (
       <React.Suspense fallback={
