@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,7 @@ export function ProfessionalPatientModal({ isOpen, onClose, onSuccess }: Profess
   const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [patientData, setPatientData] = useState<PatientData | null>(null);
+  const [countdown, setCountdown] = useState(3);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -92,8 +93,22 @@ export function ProfessionalPatientModal({ isOpen, onClose, onSuccess }: Profess
       setStep('dashboard');
       toast({
         title: "Welcome Back!",
-        description: `Hello ${name}, your profile has been loaded successfully.`,
+        description: `Hello ${name}, redirecting to your dashboard...`,
       });
+      
+      // Start countdown and auto-redirect
+      setCountdown(3);
+      const countdownInterval = setInterval(() => {
+        setCountdown(prev => {
+          if (prev <= 1) {
+            clearInterval(countdownInterval);
+            onSuccess(existingPatient);
+            onClose();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
     } else {
       // New patient registration
       const newPatientData: PatientData = {
@@ -109,8 +124,22 @@ export function ProfessionalPatientModal({ isOpen, onClose, onSuccess }: Profess
       setStep('dashboard');
       toast({
         title: "Profile Created!",
-        description: `Welcome ${name}! Your personalized dashboard has been created.`,
+        description: `Welcome ${name}! Redirecting to your dashboard...`,
       });
+      
+      // Start countdown and auto-redirect
+      setCountdown(3);
+      const countdownInterval = setInterval(() => {
+        setCountdown(prev => {
+          if (prev <= 1) {
+            clearInterval(countdownInterval);
+            onSuccess(newPatientData);
+            onClose();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
     }
     
     setIsLoading(false);
@@ -128,6 +157,7 @@ export function ProfessionalPatientModal({ isOpen, onClose, onSuccess }: Profess
     setName('');
     setPhone('');
     setPatientData(null);
+    setCountdown(3);
   };
 
   const handleClose = () => {
@@ -244,6 +274,13 @@ export function ProfessionalPatientModal({ isOpen, onClose, onSuccess }: Profess
                   </div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome, {patientData.name}!</h2>
                   <p className="text-gray-600 text-sm">Your personalized health dashboard is ready</p>
+                  {countdown > 0 && (
+                    <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                      <p className="text-blue-700 text-sm text-center">
+                        Redirecting to dashboard in <span className="font-bold text-blue-800">{countdown}</span> seconds...
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Dashboard Preview */}
