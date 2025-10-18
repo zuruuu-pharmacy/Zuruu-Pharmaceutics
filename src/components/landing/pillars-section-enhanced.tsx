@@ -160,8 +160,8 @@ export function PillarsSectionEnhanced() {
           </p>
         </motion.div>
 
-        {/* Desktop Horizontal Carousel */}
-        <div className="hidden lg:block">
+        {/* Horizontal Carousel */}
+        <div>
           <PillarsCarousel>
             {pillars.map((pillar, index) => (
               <motion.div
@@ -228,74 +228,6 @@ export function PillarsSectionEnhanced() {
           </PillarsCarousel>
         </div>
 
-        {/* Mobile Vertical Stack */}
-        <div className="lg:hidden grid gap-6">
-          {pillars.map((pillar, index) => (
-            <motion.div
-              key={pillar.id}
-              initial={{ opacity: 0, y: 50 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-              transition={{ duration: 0.6, delay: 0.5 + index * 0.12 }}
-              onHoverStart={() => setHoveredCard(pillar.id)}
-              onHoverEnd={() => setHoveredCard(null)}
-            >
-              <Card 
-                className={`${pillar.bgColor} ${pillar.borderColor} ${pillar.hoverColor} border-2 group hover:shadow-xl transition-all duration-300 cursor-pointer`}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    {/* Icon */}
-                    <motion.div
-                      className={`w-12 h-12 bg-gradient-to-br ${pillar.color} rounded-xl flex items-center justify-center shadow-lg flex-shrink-0`}
-                      whileHover={{ rotate: 5, scale: 1.05 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <pillar.icon className="w-6 h-6 text-white" />
-                    </motion.div>
-
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-display font-bold text-gray-800 mb-2">
-                        {pillar.title}
-                      </h3>
-                      <p className="text-gray-600 text-sm leading-relaxed font-primary mb-3">
-                        {pillar.description}
-                      </p>
-
-                      {/* Hover State - Stats */}
-                      <motion.div
-                        className="mb-3"
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={hoveredCard === pillar.id ? { opacity: 1, height: "auto" } : { opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <div className="flex items-center space-x-2">
-                          <div className="text-2xl font-display font-bold text-gray-800">
-                            {pillar.stat}
-                          </div>
-                          <div className="text-sm text-gray-500 font-primary">
-                            {pillar.statLabel}
-                          </div>
-                        </div>
-                      </motion.div>
-
-                      {/* CTA Button */}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="group-hover:bg-gray-800 group-hover:text-white group-hover:border-gray-800 transition-colors duration-300 font-primary"
-                        onClick={() => handleCTAClick(pillar.id)}
-                      >
-                        {pillar.ctaText}
-                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
 
         {/* Trust Badges */}
         <motion.div
